@@ -1,17 +1,7 @@
 from morphadorner import MorphAdornerToolkit
+from generators import BiranGenerator
 
 m = MorphAdornerToolkit('./morph/')
-vlemmas = m.lemmatizeWords(['persevering', 'betrayed'])
-nlemmas = m.lemmatizeWords(['chairs', 'geese'])
-vsyllables = m.splitSyllables(['persevering', 'betrayed'])
-print(str(vsyllables))
-
-vpasts = m.conjugateVerbs(vlemmas, 'PAST')
-print(str(vpasts))
-nplurals = m.inflectNouns(nlemmas, 'plural')
-nsingulars = m.inflectNouns(nlemmas, 'singular')
-print(str(nplurals))
-print(str(nsingulars))
-
-vtenses = m.tenseVerbs(vlemmas, vpasts)
-print(str(vtenses))
+bg = BiranGenerator('./corpora/wiki.vocab.txt', './corpora/wikisimple.vocab.txt', './corpora/wiki.5.bin.txt', './corpora/simplewiki.5.bin.txt', m)
+subs = bg.getSubstitutions('./corpora/lexmturk_test.txt')
+print(str(subs))
