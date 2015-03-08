@@ -6,6 +6,222 @@ import subprocess
 import nltk
 import kenlm
 
+class KauchakGenerator:
+
+	def __init__(self, mat, parallel_pos_file, alignments_file, stop_words):
+		self.mat = mat
+		self.parallel_pos_file = parallel_pos_file
+		self.alignments_file = alignments_file
+		self.stop_words = set([word.strip() for word in open(stop_words)])
+		
+	def getSubstitutions(self, victor_corpus):
+		#Get candidate->pos map:
+		print('Getting POS map...')
+		target_pos = self.getPOSMap(victor_corpus)
+
+		#Get initial set of substitutions:
+		print('Getting initial set of substitutions...')
+		substitutions_initial = self.getInitialSet(victor_corpus, target_pos)
+		
+		#Get final substitutions:
+		print('Inflecting substitutions...')
+		substitutions_inflected = self.getInflectedSet(substitutions_initial, target_pos)
+		
+		#Return final set:
+		print('Finished!')
+		return substitutions_inflected
+	
+	def getInflectedSet(self, substitutions_initial, target_pos):
+		#Create second set of filtered substitutions:
+		substitutions_stemmed = {}
+
+		keys = sorted(list(substitutions_initial.keys()))
+		nounverbs = []
+		cands = set([])
+		for key in keys:
+			for key_pos in substitutions_initial[key].keys():
+				if key_pos.startswith('v') or key_pos.startswith('n'):
+					nounverbs.append(key)
+					for cand in substitutions_initial[key][key_pos]:
+						cands.add(cand)
+		cands = sorted(list(cands))
+
+		stemk = self.getStems(nounverbs)
+		stemc = self.getStems(cands)
+
+		#Create third set of filtered substitutions:
+		substitutions_inflected = {}
+
+		singularsk = []
+		pluralsk = []
+		verbsk = []
+
+		singulars = []
+		plurals = []
+		verbs = []
+
+		for key in keys:
+			for poskey in substitutions_initial[key].keys():
+				if poskey.startswith('n'):
+					singularsk.append(stemk[key])
+					for cand in substitutions_initial[key][poskey]:
+						singulars.append(stemc[cand])
+					pluralsk.append(stemk[key])
+					for cand in substitutions_initial[key][poskey]:
+						plurals.append(stemc[cand])
+				elif poskey.startswith('v'):
+					verbsk.append(stemk[key])
+					for candn in substitutions_initial[key][poskey]:
+						verbs.append(stemc[candn])
+
+		singularskr = self.getPlurals(singularsk)
+		pluralskr = self.getSingulars(pluralsk)
+		verbskr = self.getInflections(verbsk)
+
+		singularsr = self.getPlurals(singulars)
+		pluralsr = self.getSingulars(plurals)
+		verbsr = self.getInflections(verbs)
+
+		for key in keys:
+			for poskey in substitutions_initial[key].keys():
+				if poskey.startswith('n'):
+					if singularskr[stemk[key]] not in substitutions_inflected.keys():
+						substitutions_inflected[singularskr[stemk[key]]] = set([])
+					if pluralskr[stemk[key]] not in substitutions_inflected.keys():
+						substitutions_inflected[pluralskr[stemk[key]]] = set([])
+					for cand in substitutions_initial[key]:
+						substitutions_inflected[singularskr[stemk[key]]].add(singularsr[stemc[cand]])
+						substitutions_inflected[pluralskr[stemk[key]]].add(pluralsr[stemc[cand]])
+				elif poskey.startswith('v'):
+					if verbskr[stemk[key]]['PAST_PERFECT_PARTICIPLE'] not in substitutions_inflected.keys():
+						substitutions_inflected[verbskr[stemk[key]]['PAST_PERFECT_PARTICIPLE']] = set([])
+					if verbskr[stemk[key]]['PAST_PARTICIPLE'] not in substitutions_inflected.keys():
+						substitutions_inflected[verbskr[stemk[key]]['PAST_PARTICIPLE']] = set([])
+					if verbskr[stemk[key]]['PRESENT_PARTICIPLE'] not in substitutions_inflected.keys():
+						substitutions_inflected[verbskr[stemk[key]]['PRESENT_PARTICIPLE']] = set([])
+					for candn in substitutions_initial[key]:
+						substitutions_inflected[verbskr[stemk[key]]['PAST_PERFECT_PARTICIPLE']].add(verbsr[stemc[candn]]['PAST_PERFECT_PARTICIPLE'])
+						substitutions_inflected[verbskr[stemk[key]]['PAST_PARTICIPLE']].add(verbsr[stemc[candn]]['PAST_PARTICIPLE'])
+						substitutions_inflected[verbskr[stemk[key]]['PRESENT_PARTICIPLE']].add(verbsr[stemc[candn]]['PRESENT_PARTICIPLE'])
+				else:
+					if key not in substitutions_inflected:
+						substitutions_inflected[key] = set([])
+					for cand in substitutions_inflected[key][poskey]:
+						substitutions_inflected[key].add(cand)
+		return substitutions_inflected
+	
+	def getInitialSet(self, victor_corpus, pos_map):
+		substitutions_initial = {}
+	
+		targets = set([line.strip().split('\t')[1].strip() for line in open(victor_corpus)])
+	
+		fparallel = open(self.parallel_pos_file)
+		falignments = open(self.alignments_file)
+		
+		for line in fparallel:
+			data = line.strip().split('\t')
+			source = data[0].strip().split(' ')
+			target = data[1].strip().split(' ')
+
+			alignments = set(falignments.readline().strip().split(' '))
+
+			for alignment in alignments:
+				adata = alignment.strip().split('-')
+				left = int(adata[0].strip())
+				right = int(adata[1].strip())
+				leftraw = source[left].strip()
+				leftp = leftraw.split('|||')[1].strip().lower()
+				leftw = leftraw.split('|||')[0].strip()
+				rightraw = target[right].strip()
+				rightp = rightraw.split('|||')[1].strip().lower()
+				rightw = rightraw.split('|||')[0].strip()
+				
+				if leftw in targets and leftp in pos_map[leftw] and len(leftw)>0 and len(rightw)>0 and leftp!='nnp' and rightp!='nnp' and rightp==leftp and leftw not in stop_words and rightw not in stop_words and leftw!=rightw:
+						if leftw in substitutions_initial.keys():
+							if leftp in substitutions_initial[leftw].keys():
+								substitutions_initial[leftw][leftp].add(rightw)
+							else:
+								substitutions_initial[leftw][leftp] = set(rightw)
+						else:
+							substitutions_initial[leftw] = {leftp:set([rightw])}
+		fparallel.close()
+		falignments.close()
+		return substitutions_initial
+
+	def getPOSMap(self, path):
+		result = {}
+		lex = open(path)
+		for line in lex:
+			data = line.strip().split('\t')
+			sent = data[0].strip().lower().split(' ')
+			target = data[1].strip().lower()
+			head = int(data[2].strip())
+
+			posd = nltk.pos_tag(sent)
+			postarget = posd[head][1].lower().strip()
+			if target in result.keys():
+				result[target].add(postarget)
+			else:
+				result[target] = set([postarget])
+		lex.close()
+		return result	
+		
+	def getInflections(self, verbstems):
+		data1 = self.mat.conjugateVerbs(verbstems, 'PAST_PERFECT_PARTICIPLE')
+		data2 = self.mat.conjugateVerbs(verbstems, 'PAST_PARTICIPLE')
+		data3 = self.mat.conjugateVerbs(verbstems, 'PRESENT_PARTICIPLE')
+
+		result = {}
+		for i in range(0, len(verbstems)):
+			result[verbstems[i]] = {'PAST_PERFECT_PARTICIPLE': data1[i], 'PAST_PARTICIPLE': data2[i], 'PRESENT_PARTICIPLE': data3[i]}
+		return result
+
+	def getSingulars(self, plurstems):
+		data = self.mat.inflectNouns(plurstems, 'singular')
+		result = {}
+		for i in range(0, len(plurstems)):
+			result[plurstems[i]] = data[i]
+		return result
+
+	def getPlurals(self, singstems):
+		data = self.mat.inflectNouns(singstems, 'plural')
+		result = {}
+		for i in range(0, len(singstems)):
+			result[singstems[i]] = data[i]
+		return result
+
+	def getStems(self, sings):
+		data = self.mat.lemmatizeWords(sings)
+		result = {}
+		for i in range(0, len(data)):
+			stem = data[i]
+			sing = sings[i]
+			if len(stem.strip())>0:
+				result[sing] = stem.strip()
+			else:
+				result[sing] = sing
+		return result
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 class YamamotoGenerator:
 
 	def __init__(self, mat, dictionary_key):
@@ -111,11 +327,6 @@ class YamamotoGenerator:
 			result[verbstems[i]] = {'PAST_PERFECT_PARTICIPLE': data1[i], 'PAST_PARTICIPLE': data2[i], 'PRESENT_PARTICIPLE': data3[i]}
 		return result
 
-	def getComplexity(self, word, clm, slm):
-		C = (clm.score(word, bos=False, eos=False))/(slm.score(word, bos=False, eos=False))
-		L = float(len(word))
-		return C*L
-
 	def getSingulars(self, plurstems):
 		data = self.mat.inflectNouns(plurstems, 'singular')
 		result = {}
@@ -174,13 +385,6 @@ class YamamotoGenerator:
 				substitutions_initial[target] = candidates
 		lex.close()
 		return substitutions_initial
-
-	def cleanLemma(self, lem):
-		result = ''
-		aux = lem.strip().split('_')
-		for word in aux:
-			result += word + ' '
-		return result.strip()
 
 	def getPOSMap(self, path):
 		result = {}
@@ -298,11 +502,6 @@ class MerriamGenerator:
 			result[verbstems[i]] = {'PAST_PERFECT_PARTICIPLE': data1[i], 'PAST_PARTICIPLE': data2[i], 'PRESENT_PARTICIPLE': data3[i]}
 		return result
 
-	def getComplexity(self, word, clm, slm):
-		C = (clm.score(word, bos=False, eos=False))/(slm.score(word, bos=False, eos=False))
-		L = float(len(word))
-		return C*L
-
 	def getSingulars(self, plurstems):
 		data = self.mat.inflectNouns(plurstems, 'singular')
 		result = {}
@@ -360,13 +559,6 @@ class MerriamGenerator:
 				substitutions_initial[target] = cands
 		lex.close()		
 		return substitutions_initial
-
-	def cleanLemma(self, lem):
-		result = ''
-		aux = lem.strip().split('_')
-		for word in aux:
-			result += word + ' '
-		return result.strip()
 
 	def getPOSMap(self, path):
 		result = {}
@@ -483,11 +675,6 @@ class WordnetGenerator:
 			result[verbstems[i]] = {'PAST_PERFECT_PARTICIPLE': data1[i], 'PAST_PARTICIPLE': data2[i], 'PRESENT_PARTICIPLE': data3[i]}
 		return result
 
-	def getComplexity(self, word, clm, slm):
-		C = (clm.score(word, bos=False, eos=False))/(slm.score(word, bos=False, eos=False))
-		L = float(len(word))
-		return C*L
-
 	def getSingulars(self, plurstems):
 		data = self.mat.inflectNouns(plurstems, 'singular')
 		result = {}
@@ -557,7 +744,7 @@ class WordnetGenerator:
 #Class for the Biran Generator:
 class BiranGenerator:
 
-	def __init__(self, complex_vocab, simple_vocab, complex_lm, simple_lm, mat):
+	def __init__(self, mat, complex_vocab, simple_vocab, complex_lm, simple_lm):
 		self.complex_vocab = self.getVocab(complex_vocab)
 		self.simple_vocab = self.getVocab(simple_vocab)
 		self.complex_lm = kenlm.LanguageModel(complex_lm)
