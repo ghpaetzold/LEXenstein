@@ -209,23 +209,19 @@ class YamamotoGenerator:
 		self.dictionary_key = dictionary_key
 
 	def getSubstitutions(self, victor_corpus):
-		#Get candidate->pos map:
-		print('Getting POS map...')
-		target_pos = self.getPOSMap(victor_corpus)
-
 		#Get initial set of substitutions:
 		print('Getting initial set of substitutions...')
 		substitutions_initial = self.getInitialSet(victor_corpus)
 
 		#Get final substitutions:
 		print('Inflecting substitutions...')
-		substitutions_inflected = self.getInflectedSet(substitutions_initial, target_pos)
+		substitutions_inflected = self.getInflectedSet(substitutions_initial)
 
 		#Return final set:
 		print('Finished!')
 		return substitutions_inflected
 
-	def getInflectedSet(self, substitutions_initial, target_pos):
+	def getInflectedSet(self, substitutions_initial):
 		#Create second set of filtered substitutions:
 		substitutions_stemmed = {}
 
@@ -233,10 +229,11 @@ class YamamotoGenerator:
 		nounverbs = []
 		cands = set([])
 		for key in keys:
-			if target_pos[key].startswith('v') or target_pos[key].startswith('n'):
-				nounverbs.append(key)
-				for cand in substitutions_initial[key]:
-					cands.add(cand)
+			for key_pos in substitutions_initial[key].keys():
+				if key_pos.startswith('v') or key_pos.startswith('n'):
+					nounverbs.append(key)
+					for cand in substitutions_initial[key][key_pos]:
+						cands.add(cand)
 		cands = sorted(list(cands))
 
 		stemk = self.getStems(nounverbs)
@@ -254,18 +251,18 @@ class YamamotoGenerator:
 		verbs = []
 
 		for key in keys:
-			poskey = target_pos[key]
-			if poskey.startswith('n'):
-				singularsk.append(stemk[key])
-				for cand in substitutions_initial[key]:
-					singulars.append(stemc[cand])
-				pluralsk.append(stemk[key])
-				for cand in substitutions_initial[key]:
-					plurals.append(stemc[cand])
-			elif poskey.startswith('v'):
-				verbsk.append(stemk[key])
-				for candn in substitutions_initial[key]:
-					verbs.append(stemc[candn])
+			for poskey in substitutions_initial[key].keys():
+				if poskey.startswith('n'):
+					singularsk.append(stemk[key])
+					for cand in substitutions_initial[key][poskey]:
+						singulars.append(stemc[cand])
+					pluralsk.append(stemk[key])
+					for cand in substitutions_initial[key][poskey]:
+						plurals.append(stemc[cand])
+				elif poskey.startswith('v'):
+					verbsk.append(stemk[key])
+					for candn in substitutions_initial[key][poskey]:
+						verbs.append(stemc[candn])
 
 		singularskr = self.getPlurals(singularsk)
 		pluralskr = self.getSingulars(pluralsk)
@@ -276,21 +273,31 @@ class YamamotoGenerator:
 		verbsr = self.getInflections(verbs)
 
 		for key in keys:
-			poskey = target_pos[key]
-			if poskey.startswith('n'):
-				substitutions_inflected[singularskr[stemk[key]]] = set([])
-				substitutions_inflected[pluralskr[stemk[key]]] = set([])
-				for cand in substitutions_initial[key]:
-					substitutions_inflected[singularskr[stemk[key]]].add(singularsr[stemc[cand]])
-					substitutions_inflected[pluralskr[stemk[key]]].add(pluralsr[stemc[cand]])
-			elif poskey.startswith('v'):
-				substitutions_inflected[verbskr[stemk[key]]['PAST_PERFECT_PARTICIPLE']] = set([])
-				substitutions_inflected[verbskr[stemk[key]]['PAST_PARTICIPLE']] = set([])
-				substitutions_inflected[verbskr[stemk[key]]['PRESENT_PARTICIPLE']] = set([])
-				for candn in substitutions_initial[key]:
-					substitutions_inflected[verbskr[stemk[key]]['PAST_PERFECT_PARTICIPLE']].add(verbsr[stemc[candn]]['PAST_PERFECT_PARTICIPLE'])
-					substitutions_inflected[verbskr[stemk[key]]['PAST_PARTICIPLE']].add(verbsr[stemc[candn]]['PAST_PARTICIPLE'])
-					substitutions_inflected[verbskr[stemk[key]]['PRESENT_PARTICIPLE']].add(verbsr[stemc[candn]]['PRESENT_PARTICIPLE'])
+			for poskey in substitutions_initial[key].keys():
+				if poskey.startswith('n'):
+					if singularskr[stemk[key]] not in substitutions_inflected.keys():
+						substitutions_inflected[singularskr[stemk[key]]] = set([])
+					if pluralskr[stemk[key]] not in substitutions_inflected.keys():
+						substitutions_inflected[pluralskr[stemk[key]]] = set([])
+					for cand in substitutions_initial[key][poskey]:
+						substitutions_inflected[singularskr[stemk[key]]].add(singularsr[stemc[cand]])
+						substitutions_inflected[pluralskr[stemk[key]]].add(pluralsr[stemc[cand]])
+				elif poskey.startswith('v'):
+					if verbskr[stemk[key]]['PAST_PERFECT_PARTICIPLE'] not in substitutions_inflected.keys():
+						substitutions_inflected[verbskr[stemk[key]]['PAST_PERFECT_PARTICIPLE']] = set([])
+					if verbskr[stemk[key]]['PAST_PARTICIPLE'] not in substitutions_inflected.keys():
+						substitutions_inflected[verbskr[stemk[key]]['PAST_PARTICIPLE']] = set([])
+					if verbskr[stemk[key]]['PRESENT_PARTICIPLE'] not in substitutions_inflected.keys():
+						substitutions_inflected[verbskr[stemk[key]]['PRESENT_PARTICIPLE']] = set([])
+					for candn in substitutions_initial[key][poskey]:
+						substitutions_inflected[verbskr[stemk[key]]['PAST_PERFECT_PARTICIPLE']].add(verbsr[stemc[candn]]['PAST_PERFECT_PARTICIPLE'])
+						substitutions_inflected[verbskr[stemk[key]]['PAST_PARTICIPLE']].add(verbsr[stemc[candn]]['PAST_PARTICIPLE'])
+						substitutions_inflected[verbskr[stemk[key]]['PRESENT_PARTICIPLE']].add(verbsr[stemc[candn]]['PRESENT_PARTICIPLE'])
+				else:
+					if key not in substitutions_inflected:
+						substitutions_inflected[key] = set([])
+					for cand in substitutions_initial[key][poskey]:
+						substitutions_inflected[key].add(cand)
 		return substitutions_inflected
 
 	def getInflections(self, verbstems):
@@ -337,44 +344,36 @@ class YamamotoGenerator:
 			data = line.strip().split('\t')
 			target = data[1].strip()
 			head = int(data[2].strip())
-			targetp = nltk.pos_tag(data[0].strip().split(' '))[head][1]
 		
 			url = 'http://www.dictionaryapi.com/api/v1/references/collegiate/xml/' + target + '?key=' + self.dictionary_key
 			conn = urllib.urlopen(url)
 			root = ET.fromstring(conn.read())
 		
 			newline = target + '\t'
-			candidates = set([])
+			cands = {}
 		
-			for definition in root.iter('dt'):
-				if definition.text!=None:
-					text = definition.text.strip()
-					text = text[1:len(text)]
-					tokens = nltk.word_tokenize(text)
-					postags = nltk.pos_tag(tokens)
-					for p in postags:
-						postag = p[1].strip()
-						cand = p[0].strip()
-						if postag==targetp:
-							candidates.add(cand)
-			if len(candidates)>0:
-				substitutions_initial[target] = candidates
+			entries = root.iter('entry')
+			for entry in entries:
+				node_pos = root_node.iter('fl')
+				if node_pos != None:
+					node_pos = node_pos.text.strip()[0].lower()
+					if node_pos not in cands.keys():
+						cands[node_pos] = set([])
+				for definition in entry.iter('dt'):
+					if definition.text!=None:
+						text = definition.text.strip()
+						text = text[1:len(text)]
+						tokens = nltk.word_tokenize(text)
+						postags = nltk.pos_tag(tokens)
+						for p in postags:
+							postag = p[1].strip()[0].lower()
+							cand = p[0].strip()
+							if postag==node_pos:
+								cands[node_pos].add(cand)
+			if len(cands.keys())>0:
+				substitutions_initial[target] = cands
 		lex.close()
 		return substitutions_initial
-
-	def getPOSMap(self, path):
-		result = {}
-		lex = open(path)
-		for line in lex:
-			data = line.strip().split('\t')
-			sent = data[0].strip().lower().split(' ')
-			target = data[1].strip().lower()
-			head = int(data[2].strip())
-
-			posd = nltk.pos_tag(sent)
-			result[target] = posd[head][1].lower().strip()
-		lex.close()
-		return result
 
 class MerriamGenerator:
 
@@ -383,23 +382,19 @@ class MerriamGenerator:
 		self.thesaurus_key = thesaurus_key
 
 	def getSubstitutions(self, victor_corpus):
-		#Get candidate->pos map:
-		print('Getting POS map...')
-		target_pos = self.getPOSMap(victor_corpus)
-
 		#Get initial set of substitutions:
 		print('Getting initial set of substitutions...')
 		substitutions_initial = self.getInitialSet(victor_corpus)
 		
 		#Get final substitutions:
 		print('Inflecting substitutions...')
-		substitutions_inflected = self.getInflectedSet(substitutions_initial, target_pos)
+		substitutions_inflected = self.getInflectedSet(substitutions_initial)
 
 		#Return final set:
 		print('Finished!')
 		return substitutions_inflected
 
-	def getInflectedSet(self, substitutions_initial, target_pos):
+	def getInflectedSet(self, substitutions_initial):
 		#Create second set of filtered substitutions:
 		substitutions_stemmed = {}
 
@@ -407,10 +402,11 @@ class MerriamGenerator:
 		nounverbs = []
 		cands = set([])
 		for key in keys:
-			if target_pos[key].startswith('v') or target_pos[key].startswith('n'):
-				nounverbs.append(key)
-				for cand in substitutions_initial[key]:
-					cands.add(cand)
+			for key_pos in substitutions_initial[key].keys():
+				if key_pos.startswith('v') or key_pos.startswith('n'):
+					nounverbs.append(key)
+					for cand in substitutions_initial[key][key_pos]:
+						cands.add(cand)
 		cands = sorted(list(cands))
 
 		stemk = self.getStems(nounverbs)
@@ -428,18 +424,18 @@ class MerriamGenerator:
 		verbs = []
 
 		for key in keys:
-			poskey = target_pos[key]
-			if poskey.startswith('n'):
-				singularsk.append(stemk[key])
-				for cand in substitutions_initial[key]:
-					singulars.append(stemc[cand])
-				pluralsk.append(stemk[key])
-				for cand in substitutions_initial[key]:
-					plurals.append(stemc[cand])
-			elif poskey.startswith('v'):
-				verbsk.append(stemk[key])
-				for candn in substitutions_initial[key]:
-					verbs.append(stemc[candn])
+			for poskey in substitutions_initial[key].keys():
+				if poskey.startswith('n'):
+					singularsk.append(stemk[key])
+					for cand in substitutions_initial[key][poskey]:
+						singulars.append(stemc[cand])
+					pluralsk.append(stemk[key])
+					for cand in substitutions_initial[key][poskey]:
+						plurals.append(stemc[cand])
+				elif poskey.startswith('v'):
+					verbsk.append(stemk[key])
+					for candn in substitutions_initial[key][poskey]:
+						verbs.append(stemc[candn])
 
 		singularskr = self.getPlurals(singularsk)
 		pluralskr = self.getSingulars(pluralsk)
@@ -450,21 +446,31 @@ class MerriamGenerator:
 		verbsr = self.getInflections(verbs)
 
 		for key in keys:
-			poskey = target_pos[key]
-			if poskey.startswith('n'):
-				substitutions_inflected[singularskr[stemk[key]]] = set([])
-				substitutions_inflected[pluralskr[stemk[key]]] = set([])
-				for cand in substitutions_initial[key]:
-					substitutions_inflected[singularskr[stemk[key]]].add(singularsr[stemc[cand]])
-					substitutions_inflected[pluralskr[stemk[key]]].add(pluralsr[stemc[cand]])
-			elif poskey.startswith('v'):
-				substitutions_inflected[verbskr[stemk[key]]['PAST_PERFECT_PARTICIPLE']] = set([])
-				substitutions_inflected[verbskr[stemk[key]]['PAST_PARTICIPLE']] = set([])
-				substitutions_inflected[verbskr[stemk[key]]['PRESENT_PARTICIPLE']] = set([])
-				for candn in substitutions_initial[key]:
-					substitutions_inflected[verbskr[stemk[key]]['PAST_PERFECT_PARTICIPLE']].add(verbsr[stemc[candn]]['PAST_PERFECT_PARTICIPLE'])
-					substitutions_inflected[verbskr[stemk[key]]['PAST_PARTICIPLE']].add(verbsr[stemc[candn]]['PAST_PARTICIPLE'])
-					substitutions_inflected[verbskr[stemk[key]]['PRESENT_PARTICIPLE']].add(verbsr[stemc[candn]]['PRESENT_PARTICIPLE'])
+			for poskey in substitutions_initial[key].keys():
+				if poskey.startswith('n'):
+					if singularskr[stemk[key]] not in substitutions_inflected.keys():
+						substitutions_inflected[singularskr[stemk[key]]] = set([])
+					if pluralskr[stemk[key]] not in substitutions_inflected.keys():
+						substitutions_inflected[pluralskr[stemk[key]]] = set([])
+					for cand in substitutions_initial[key][poskey]:
+						substitutions_inflected[singularskr[stemk[key]]].add(singularsr[stemc[cand]])
+						substitutions_inflected[pluralskr[stemk[key]]].add(pluralsr[stemc[cand]])
+				elif poskey.startswith('v'):
+					if verbskr[stemk[key]]['PAST_PERFECT_PARTICIPLE'] not in substitutions_inflected.keys():
+						substitutions_inflected[verbskr[stemk[key]]['PAST_PERFECT_PARTICIPLE']] = set([])
+					if verbskr[stemk[key]]['PAST_PARTICIPLE'] not in substitutions_inflected.keys():
+						substitutions_inflected[verbskr[stemk[key]]['PAST_PARTICIPLE']] = set([])
+					if verbskr[stemk[key]]['PRESENT_PARTICIPLE'] not in substitutions_inflected.keys():
+						substitutions_inflected[verbskr[stemk[key]]['PRESENT_PARTICIPLE']] = set([])
+					for candn in substitutions_initial[key][poskey]:
+						substitutions_inflected[verbskr[stemk[key]]['PAST_PERFECT_PARTICIPLE']].add(verbsr[stemc[candn]]['PAST_PERFECT_PARTICIPLE'])
+						substitutions_inflected[verbskr[stemk[key]]['PAST_PARTICIPLE']].add(verbsr[stemc[candn]]['PAST_PARTICIPLE'])
+						substitutions_inflected[verbskr[stemk[key]]['PRESENT_PARTICIPLE']].add(verbsr[stemc[candn]]['PRESENT_PARTICIPLE'])
+				else:
+					if key not in substitutions_inflected:
+						substitutions_inflected[key] = set([])
+					for cand in substitutions_initial[key][poskey]:
+						substitutions_inflected[key].add(cand)
 		return substitutions_inflected
 
 	def getInflections(self, verbstems):
@@ -514,40 +520,33 @@ class MerriamGenerator:
 			conn = urllib.urlopen(url)
 			root = ET.fromstring(conn.read())
 			root = root.findall('entry')
+			
+			cands = {}
 			if len(root)>0:
-				root = root[0]
-				for sense in root.iter('sens'):
-					syn = sense.findall('syn')[0]
-				res = ''
-				for snip in syn.itertext():
-					res += snip + ' '
-				finds = re.findall('\([^\)]+\)', res)
-				for find in finds:
-					res = res.replace(find, '')	
-
-				synonyms = [s.strip() for s in res.split(',')]
-				cands = set([])
-				for synonym in synonyms:
-					if len(synonym.split(' '))==1:
-						cands.add(synonym)
-			if len(synonyms)>0:
+				for root_node in root:
+					node_pos = root_node.iter('fl')
+					if node_pos != None:
+						node_pos = node_pos.text.strip()[0].lower()
+						if node_pos not in cands.keys():
+							cands[node_pos] = set([])
+					for sense in root_node.iter('sens'):
+						syn = sense.findall('syn')[0]
+					res = ''
+					for snip in syn.itertext():
+						res += snip + ' '
+					finds = re.findall('\([^\)]+\)', res)
+					for find in finds:
+						res = res.replace(find, '')	
+	
+					synonyms = [s.strip() for s in res.split(',')]
+					
+					for synonym in synonyms:
+						if len(synonym.split(' '))==1:
+							cands[node_pos].add(synonym)
+			if len(cands.keys())>0:
 				substitutions_initial[target] = cands
 		lex.close()		
 		return substitutions_initial
-
-	def getPOSMap(self, path):
-		result = {}
-		lex = open(path)
-		for line in lex:
-			data = line.strip().split('\t')
-			sent = data[0].strip().lower().split(' ')
-			target = data[1].strip().lower()
-			head = int(data[2].strip())
-
-			posd = nltk.pos_tag(sent)
-			result[target] = posd[head][1].lower().strip()
-		lex.close()
-		return result
 
 #Class for the Wordnet Generator
 class WordnetGenerator:
@@ -556,23 +555,19 @@ class WordnetGenerator:
 		self.mat = mat
 
 	def getSubstitutions(self, victor_corpus):
-		#Get candidate->pos map:
-		print('Getting POS map...')
-		target_pos = self.getPOSMap(victor_corpus)
-
 		#Get initial set of substitutions:
 		print('Getting initial set of substitutions...')
 		substitutions_initial = self.getInitialSet(victor_corpus)
 
 		#Get final substitutions:
 		print('Inflecting substitutions...')
-		substitutions_inflected = self.getInflectedSet(substitutions_initial, target_pos)
+		substitutions_inflected = self.getInflectedSet(substitutions_initial)
 
 		#Return final set:
 		print('Finished!')
 		return substitutions_inflected
 
-	def getInflectedSet(self, substitutions_initial, target_pos):
+	def getInflectedSet(self, substitutions_initial):
 		#Create second set of filtered substitutions:
 		substitutions_stemmed = {}
 
@@ -580,10 +575,11 @@ class WordnetGenerator:
 		nounverbs = []
 		cands = set([])
 		for key in keys:
-			if target_pos[key].startswith('v') or target_pos[key].startswith('n'):
-				nounverbs.append(key)
-				for cand in substitutions_initial[key]:
-					cands.add(cand)
+			for key_pos in substitutions_initial[key].keys():
+				if key_pos.startswith('v') or key_pos.startswith('n'):
+					nounverbs.append(key)
+					for cand in substitutions_initial[key][key_pos]:
+						cands.add(cand)
 		cands = sorted(list(cands))
 
 		stemk = self.getStems(nounverbs)
@@ -601,18 +597,18 @@ class WordnetGenerator:
 		verbs = []
 
 		for key in keys:
-			poskey = target_pos[key]
-			if poskey.startswith('n'):
-				singularsk.append(stemk[key])
-				for cand in substitutions_initial[key]:
-					singulars.append(stemc[cand])
-				pluralsk.append(stemk[key])
-				for cand in substitutions_initial[key]:
-					plurals.append(stemc[cand])
-			elif poskey.startswith('v'):
-				verbsk.append(stemk[key])
-				for candn in substitutions_initial[key]:
-					verbs.append(stemc[candn])
+			for poskey in substitutions_initial[key].keys():
+				if poskey.startswith('n'):
+					singularsk.append(stemk[key])
+					for cand in substitutions_initial[key][poskey]:
+						singulars.append(stemc[cand])
+					pluralsk.append(stemk[key])
+					for cand in substitutions_initial[key][poskey]:
+						plurals.append(stemc[cand])
+				elif poskey.startswith('v'):
+					verbsk.append(stemk[key])
+					for candn in substitutions_initial[key][poskey]:
+						verbs.append(stemc[candn])
 
 		singularskr = self.getPlurals(singularsk)
 		pluralskr = self.getSingulars(pluralsk)
@@ -623,21 +619,31 @@ class WordnetGenerator:
 		verbsr = self.getInflections(verbs)
 
 		for key in keys:
-			poskey = target_pos[key]
-			if poskey.startswith('n'):
-				substitutions_inflected[singularskr[stemk[key]]] = set([])
-				substitutions_inflected[pluralskr[stemk[key]]] = set([])
-				for cand in substitutions_initial[key]:
-					substitutions_inflected[singularskr[stemk[key]]].add(singularsr[stemc[cand]])
-					substitutions_inflected[pluralskr[stemk[key]]].add(pluralsr[stemc[cand]])
-			elif poskey.startswith('v'):
-				substitutions_inflected[verbskr[stemk[key]]['PAST_PERFECT_PARTICIPLE']] = set([])
-				substitutions_inflected[verbskr[stemk[key]]['PAST_PARTICIPLE']] = set([])
-				substitutions_inflected[verbskr[stemk[key]]['PRESENT_PARTICIPLE']] = set([])
-				for candn in substitutions_initial[key]:
-					substitutions_inflected[verbskr[stemk[key]]['PAST_PERFECT_PARTICIPLE']].add(verbsr[stemc[candn]]['PAST_PERFECT_PARTICIPLE'])
-					substitutions_inflected[verbskr[stemk[key]]['PAST_PARTICIPLE']].add(verbsr[stemc[candn]]['PAST_PARTICIPLE'])
-					substitutions_inflected[verbskr[stemk[key]]['PRESENT_PARTICIPLE']].add(verbsr[stemc[candn]]['PRESENT_PARTICIPLE'])
+			for poskey in substitutions_initial[key].keys():
+				if poskey.startswith('n'):
+					if singularskr[stemk[key]] not in substitutions_inflected.keys():
+						substitutions_inflected[singularskr[stemk[key]]] = set([])
+					if pluralskr[stemk[key]] not in substitutions_inflected.keys():
+						substitutions_inflected[pluralskr[stemk[key]]] = set([])
+					for cand in substitutions_initial[key][poskey]:
+						substitutions_inflected[singularskr[stemk[key]]].add(singularsr[stemc[cand]])
+						substitutions_inflected[pluralskr[stemk[key]]].add(pluralsr[stemc[cand]])
+				elif poskey.startswith('v'):
+					if verbskr[stemk[key]]['PAST_PERFECT_PARTICIPLE'] not in substitutions_inflected.keys():
+						substitutions_inflected[verbskr[stemk[key]]['PAST_PERFECT_PARTICIPLE']] = set([])
+					if verbskr[stemk[key]]['PAST_PARTICIPLE'] not in substitutions_inflected.keys():
+						substitutions_inflected[verbskr[stemk[key]]['PAST_PARTICIPLE']] = set([])
+					if verbskr[stemk[key]]['PRESENT_PARTICIPLE'] not in substitutions_inflected.keys():
+						substitutions_inflected[verbskr[stemk[key]]['PRESENT_PARTICIPLE']] = set([])
+					for candn in substitutions_initial[key][poskey]:
+						substitutions_inflected[verbskr[stemk[key]]['PAST_PERFECT_PARTICIPLE']].add(verbsr[stemc[candn]]['PAST_PERFECT_PARTICIPLE'])
+						substitutions_inflected[verbskr[stemk[key]]['PAST_PARTICIPLE']].add(verbsr[stemc[candn]]['PAST_PARTICIPLE'])
+						substitutions_inflected[verbskr[stemk[key]]['PRESENT_PARTICIPLE']].add(verbsr[stemc[candn]]['PRESENT_PARTICIPLE'])
+				else:
+					if key not in substitutions_inflected:
+						substitutions_inflected[key] = set([])
+					for cand in substitutions_initial[key][poskey]:
+						substitutions_inflected[key].add(cand)
 		return substitutions_inflected
 
 	def getInflections(self, verbstems):
@@ -682,16 +688,22 @@ class WordnetGenerator:
 		for line in lex:
 			data = line.strip().split('\t')
 			target = data[1].strip()
-			syns = wn.synsets(target)
-			newline = target + '\t'
-			cands = set([])
-			for syn in syns:
-				for lem in syn.lemmas():
-					candidate = self.cleanLemma(lem.name())
-					if len(candidate.split(' '))==1:
-						cands.add(candidate)
-			if len(cands)>0:
-				substitutions_initial[target] = cands
+			if target in self.complex_vocab:
+				syns = wn.synsets(target)
+				newline = target + '\t'
+				cands = {}
+				for syn in syns:
+					synpos = syn.pos()
+					if synpos not in cands.keys():
+						cands[synpos] = set([])
+					for lem in syn.lemmas():
+						candidate = self.cleanLemma(lem.name())
+						if len(candidate.split(' '))==1 and candidate in self.simple_vocab:
+							cands[synpos].add(candidate)
+				for pos in cands.keys():
+					cands[pos].remove(target)
+				if len(cands)>0:
+					substitutions_initial[target] = cands
 		lex.close()
 		return substitutions_initial
 
@@ -701,20 +713,6 @@ class WordnetGenerator:
 		for word in aux:
 			result += word + ' '
 		return result.strip()
-
-	def getPOSMap(self, path):
-		result = {}
-		lex = open(path)
-		for line in lex:
-			data = line.strip().split('\t')
-			sent = data[0].strip().lower().split(' ')
-			target = data[1].strip().lower()
-			head = int(data[2].strip())
-
-			posd = nltk.pos_tag(sent)
-			result[target] = posd[head][1].lower().strip()
-		lex.close()
-		return result
 
 #Class for the Biran Generator:
 class BiranGenerator:
@@ -727,10 +725,6 @@ class BiranGenerator:
 		self.mat = mat
 		
 	def getSubstitutions(self, victor_corpus):
-		#Get candidate->pos map:
-		print('Getting POS map...')
-		target_pos = self.getPOSMap(victor_corpus)
-
 		#Get initial set of substitutions:
 		print('Getting initial set of substitutions...')
 		substitutions_initial = self.getInitialSet(victor_corpus)
@@ -908,6 +902,8 @@ class BiranGenerator:
 							candidate = self.cleanLemma(lem.name())
 							if len(candidate.split(' '))==1 and candidate in self.simple_vocab:
 								cands[synpos].add(candidate)
+				for pos in cands.keys():
+					cands[pos].remove(target)
 				if len(cands)>0:
 					substitutions_initial[target] = cands
 		lex.close()
@@ -922,18 +918,3 @@ class BiranGenerator:
 		for word in aux:
 			result += word + ' '
 		return result.strip()
-
-	def getPOSMap(self, path):
-		result = {}
-		lex = open(path)
-		for line in lex:
-			data = line.strip().split('\t')
-			sent = data[0].strip().lower().split(' ')
-			target = data[1].strip().lower()
-			head = int(data[2].strip())
-
-			posd = nltk.pos_tag(sent)
-			result[target] = posd[head][1].lower().strip()
-		lex.close()
-		return result
-
