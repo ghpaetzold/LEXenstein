@@ -354,7 +354,7 @@ class YamamotoGenerator:
 		
 			entries = root.iter('entry')
 			for entry in entries:
-				node_pos = root_node.iter('fl')
+				node_pos = entry.find('fl')
 				if node_pos != None:
 					node_pos = node_pos.text.strip()[0].lower()
 					if node_pos not in cands.keys():
@@ -370,6 +370,9 @@ class YamamotoGenerator:
 							cand = p[0].strip()
 							if postag==node_pos:
 								cands[node_pos].add(cand)
+			for pos in cands.keys():
+				if target in cands[pos]:
+					cands[pos].remove(target)
 			if len(cands.keys())>0:
 				substitutions_initial[target] = cands
 		lex.close()
@@ -524,7 +527,7 @@ class MerriamGenerator:
 			cands = {}
 			if len(root)>0:
 				for root_node in root:
-					node_pos = root_node.iter('fl')
+					node_pos = root_node.find('fl')
 					if node_pos != None:
 						node_pos = node_pos.text.strip()[0].lower()
 						if node_pos not in cands.keys():
@@ -543,6 +546,9 @@ class MerriamGenerator:
 					for synonym in synonyms:
 						if len(synonym.split(' '))==1:
 							cands[node_pos].add(synonym)
+			for pos in cands.keys():
+				if target in cands[pos]:
+					cands[pos].remove(target)
 			if len(cands.keys())>0:
 				substitutions_initial[target] = cands
 		lex.close()		
@@ -688,22 +694,22 @@ class WordnetGenerator:
 		for line in lex:
 			data = line.strip().split('\t')
 			target = data[1].strip()
-			if target in self.complex_vocab:
-				syns = wn.synsets(target)
-				newline = target + '\t'
-				cands = {}
-				for syn in syns:
-					synpos = syn.pos()
-					if synpos not in cands.keys():
-						cands[synpos] = set([])
-					for lem in syn.lemmas():
-						candidate = self.cleanLemma(lem.name())
-						if len(candidate.split(' '))==1 and candidate in self.simple_vocab:
-							cands[synpos].add(candidate)
-				for pos in cands.keys():
+			syns = wn.synsets(target)
+			newline = target + '\t'
+			cands = {}
+			for syn in syns:
+				synpos = syn.pos()
+				if synpos not in cands.keys():
+					cands[synpos] = set([])
+				for lem in syn.lemmas():
+					candidate = self.cleanLemma(lem.name())
+					if len(candidate.split(' '))==1:
+						cands[synpos].add(candidate)
+			for pos in cands.keys():
+				if target in cands[pos]:
 					cands[pos].remove(target)
-				if len(cands)>0:
-					substitutions_initial[target] = cands
+			if len(cands.keys())>0:
+				substitutions_initial[target] = cands
 		lex.close()
 		return substitutions_initial
 
@@ -903,8 +909,9 @@ class BiranGenerator:
 							if len(candidate.split(' '))==1 and candidate in self.simple_vocab:
 								cands[synpos].add(candidate)
 				for pos in cands.keys():
-					cands[pos].remove(target)
-				if len(cands)>0:
+					if target in cands[pos]:
+						cands[pos].remove(target)
+				if len(cands.keys())>0:
 					substitutions_initial[target] = cands
 		lex.close()
 		return substitutions_initial
