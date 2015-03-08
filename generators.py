@@ -89,7 +89,7 @@ class KauchakGenerator:
 						substitutions_inflected[singularskr[stemk[key]]] = set([])
 					if pluralskr[stemk[key]] not in substitutions_inflected.keys():
 						substitutions_inflected[pluralskr[stemk[key]]] = set([])
-					for cand in substitutions_initial[key]:
+					for cand in substitutions_initial[key][poskey]:
 						substitutions_inflected[singularskr[stemk[key]]].add(singularsr[stemc[cand]])
 						substitutions_inflected[pluralskr[stemk[key]]].add(pluralsr[stemc[cand]])
 				elif poskey.startswith('v'):
@@ -99,14 +99,14 @@ class KauchakGenerator:
 						substitutions_inflected[verbskr[stemk[key]]['PAST_PARTICIPLE']] = set([])
 					if verbskr[stemk[key]]['PRESENT_PARTICIPLE'] not in substitutions_inflected.keys():
 						substitutions_inflected[verbskr[stemk[key]]['PRESENT_PARTICIPLE']] = set([])
-					for candn in substitutions_initial[key]:
+					for candn in substitutions_initial[key][poskey]:
 						substitutions_inflected[verbskr[stemk[key]]['PAST_PERFECT_PARTICIPLE']].add(verbsr[stemc[candn]]['PAST_PERFECT_PARTICIPLE'])
 						substitutions_inflected[verbskr[stemk[key]]['PAST_PARTICIPLE']].add(verbsr[stemc[candn]]['PAST_PARTICIPLE'])
 						substitutions_inflected[verbskr[stemk[key]]['PRESENT_PARTICIPLE']].add(verbsr[stemc[candn]]['PRESENT_PARTICIPLE'])
 				else:
 					if key not in substitutions_inflected:
 						substitutions_inflected[key] = set([])
-					for cand in substitutions_inflected[key][poskey]:
+					for cand in substitutions_initial[key][poskey]:
 						substitutions_inflected[key].add(cand)
 		return substitutions_inflected
 	
@@ -136,7 +136,7 @@ class KauchakGenerator:
 				rightp = rightraw.split('|||')[1].strip().lower()
 				rightw = rightraw.split('|||')[0].strip()
 				
-				if leftw in targets and leftp in pos_map[leftw] and len(leftw)>0 and len(rightw)>0 and leftp!='nnp' and rightp!='nnp' and rightp==leftp and leftw not in stop_words and rightw not in stop_words and leftw!=rightw:
+				if leftw in targets and leftp in pos_map[leftw] and len(leftw)>0 and len(rightw)>0 and leftp!='nnp' and rightp!='nnp' and rightp==leftp and leftw not in self.stop_words and rightw not in self.stop_words and leftw!=rightw:
 						if leftw in substitutions_initial.keys():
 							if leftp in substitutions_initial[leftw].keys():
 								substitutions_initial[leftw][leftp].add(rightw)
@@ -202,26 +202,6 @@ class KauchakGenerator:
 				result[sing] = sing
 		return result
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 class YamamotoGenerator:
 
 	def __init__(self, mat, dictionary_key):
@@ -281,9 +261,6 @@ class YamamotoGenerator:
 					singulars.append(stemc[cand])
 				pluralsk.append(stemk[key])
 				for cand in substitutions_initial[key]:
-					singulars.append(stemc[cand])
-				pluralsk.append(stemk[key])
-				for cand in substitutions_initial[key]:
 					plurals.append(stemc[cand])
 			elif poskey.startswith('v'):
 				verbsk.append(stemk[key])
@@ -309,7 +286,6 @@ class YamamotoGenerator:
 			elif poskey.startswith('v'):
 				substitutions_inflected[verbskr[stemk[key]]['PAST_PERFECT_PARTICIPLE']] = set([])
 				substitutions_inflected[verbskr[stemk[key]]['PAST_PARTICIPLE']] = set([])
-
 				substitutions_inflected[verbskr[stemk[key]]['PRESENT_PARTICIPLE']] = set([])
 				for candn in substitutions_initial[key]:
 					substitutions_inflected[verbskr[stemk[key]]['PAST_PERFECT_PARTICIPLE']].add(verbsr[stemc[candn]]['PAST_PERFECT_PARTICIPLE'])
@@ -484,7 +460,6 @@ class MerriamGenerator:
 			elif poskey.startswith('v'):
 				substitutions_inflected[verbskr[stemk[key]]['PAST_PERFECT_PARTICIPLE']] = set([])
 				substitutions_inflected[verbskr[stemk[key]]['PAST_PARTICIPLE']] = set([])
-
 				substitutions_inflected[verbskr[stemk[key]]['PRESENT_PARTICIPLE']] = set([])
 				for candn in substitutions_initial[key]:
 					substitutions_inflected[verbskr[stemk[key]]['PAST_PERFECT_PARTICIPLE']].add(verbsr[stemc[candn]]['PAST_PERFECT_PARTICIPLE'])
