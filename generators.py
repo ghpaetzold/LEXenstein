@@ -46,15 +46,13 @@ class KauchakGenerator:
 					verbs.add(key)
 					for cand in substitutions_initial[key][key_pos]:
 						verbsc.add(cand)
-				elif:
+				elif key_pos.startswith('n'):
 					nouns.add(key)
 					for cand in substitutions_initial[key][key_pos]:
 						nounsc.add(cand)
 				
-		cands = sorted(list(cands))
-
-		stemk = self.getStems(nouns, verbs)
-		stemc = self.getStems(nounsc, verbsc)
+		stemk = self.getStems(list(nouns), list(verbs))
+		stemc = self.getStems(list(nounsc), list(verbsc))
 
 		#Create third set of filtered substitutions:
 		substitutions_inflected = {}
@@ -199,7 +197,7 @@ class KauchakGenerator:
 
 	def getStems(self, nouns, verbs):
 		datan = self.mat.lemmatizeWords(nouns)
-		datav = self.mat.stemWords(verbs)
+		datav = self.mat.lemmatizeWords(verbs)
 		result = {}
 		for i in range(0, len(datan)):
 			stem = datan[i]
@@ -251,15 +249,13 @@ class YamamotoGenerator:
 					verbs.add(key)
 					for cand in substitutions_initial[key][key_pos]:
 						verbsc.add(cand)
-				elif:
+				elif key_pos.startswith('n'):
 					nouns.add(key)
 					for cand in substitutions_initial[key][key_pos]:
 						nounsc.add(cand)
 				
-		cands = sorted(list(cands))
-
-		stemk = self.getStems(nouns, verbs)
-		stemc = self.getStems(nounsc, verbsc)
+		stemk = self.getStems(list(nouns), list(verbs))
+		stemc = self.getStems(list(nounsc), list(verbsc))
 
 		#Create third set of filtered substitutions:
 		substitutions_inflected = {}
@@ -348,7 +344,7 @@ class YamamotoGenerator:
 
 	def getStems(self, nouns, verbs):
 		datan = self.mat.lemmatizeWords(nouns)
-		datav = self.mat.stemWords(verbs)
+		datav = self.mat.lemmatizeWords(verbs)
 		result = {}
 		for i in range(0, len(datan)):
 			stem = datan[i]
@@ -442,15 +438,13 @@ class MerriamGenerator:
 					verbs.add(key)
 					for cand in substitutions_initial[key][key_pos]:
 						verbsc.add(cand)
-				elif:
+				elif key_pos.startswith('n'):
 					nouns.add(key)
 					for cand in substitutions_initial[key][key_pos]:
 						nounsc.add(cand)
 				
-		cands = sorted(list(cands))
-
-		stemk = self.getStems(nouns, verbs)
-		stemc = self.getStems(nounsc, verbsc)
+		stemk = self.getStems(list(nouns), list(verbs))
+		stemc = self.getStems(list(nounsc), list(verbsc))
 
 		#Create third set of filtered substitutions:
 		substitutions_inflected = {}
@@ -539,7 +533,7 @@ class MerriamGenerator:
 
 	def getStems(self, nouns, verbs):
 		datan = self.mat.lemmatizeWords(nouns)
-		datav = self.mat.stemWords(verbs)
+		datav = self.mat.lemmatizeWords(verbs)
 		result = {}
 		for i in range(0, len(datan)):
 			stem = datan[i]
@@ -633,15 +627,13 @@ class WordnetGenerator:
 					verbs.add(key)
 					for cand in substitutions_initial[key][key_pos]:
 						verbsc.add(cand)
-				elif:
+				elif key_pos.startswith('n'):
 					nouns.add(key)
 					for cand in substitutions_initial[key][key_pos]:
 						nounsc.add(cand)
 				
-		cands = sorted(list(cands))
-
-		stemk = self.getStems(nouns, verbs)
-		stemc = self.getStems(nounsc, verbsc)
+		stemk = self.getStems(list(nouns), list(verbs))
+		stemc = self.getStems(list(nounsc), list(verbsc))
 
 		#Create third set of filtered substitutions:
 		substitutions_inflected = {}
@@ -730,7 +722,7 @@ class WordnetGenerator:
 
 	def getStems(self, nouns, verbs):
 		datan = self.mat.lemmatizeWords(nouns)
-		datav = self.mat.stemWords(verbs)
+		datav = self.mat.lemmatizeWords(verbs)
 		result = {}
 		for i in range(0, len(datan)):
 			stem = datan[i]
@@ -837,15 +829,13 @@ class BiranGenerator:
 					verbs.add(key)
 					for cand in substitutions_initial[key][key_pos]:
 						verbsc.add(cand)
-				elif:
+				elif key_pos.startswith('n'):
 					nouns.add(key)
 					for cand in substitutions_initial[key][key_pos]:
 						nounsc.add(cand)
 				
-		cands = sorted(list(cands))
-
-		stemk = self.getStems(nouns, verbs)
-		stemc = self.getStems(nounsc, verbsc)
+		stemk = self.getStems(list(nouns), list(verbs))
+		stemc = self.getStems(list(nounsc), list(verbsc))
 
 		#Create third set of filtered substitutions:
 		substitutions_inflected = {}
@@ -939,7 +929,7 @@ class BiranGenerator:
 
 	def getStems(self, nouns, verbs):
 		datan = self.mat.lemmatizeWords(nouns)
-		datav = self.mat.stemWords(verbs)
+		datav = self.mat.lemmatizeWords(verbs)
 		result = {}
 		for i in range(0, len(datan)):
 			stem = datan[i]

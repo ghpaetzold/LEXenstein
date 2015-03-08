@@ -1,0 +1,2 @@
+select most probable from stem and lemma
+avoid lemmatizing single nouns (look for 's' at the end, or POS if available)
