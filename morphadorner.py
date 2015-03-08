@@ -7,6 +7,7 @@ class MorphAdornerToolkit:
 		if not self.root.endswith('/'):
 			self.root += '/'
 		self.lemmatizer = self.root + 'WordLemmatizer/WordLemmatizer.jar'
+		self.stemmer = self.root + 'WordStemmer/WordStemmer.jar'
 		self.conjugator = self.root + 'VerbConjugator/VerbConjugator.jar'
 		self.inflector = self.root + 'NounInflector/NounInflector.jar'
 		self.tenser = self.root + 'VerbTenser/VerbTenser.jar'
@@ -19,6 +20,19 @@ class MorphAdornerToolkit:
 		input += '\n'
 
 		args = ['java', '-jar', self.lemmatizer]
+		proc = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=False)
+		(out, err) = proc.communicate(input)
+
+		result = out.strip().split('\n')
+		return result
+		
+	def stemWords(self, words):
+		input = ''
+		for word in words:
+			input += word + '\n'
+		input += '\n'
+
+		args = ['java', '-jar', self.stemmer]
 		proc = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=False)
 		(out, err) = proc.communicate(input)
 

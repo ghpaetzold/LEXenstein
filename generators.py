@@ -36,18 +36,25 @@ class KauchakGenerator:
 		substitutions_stemmed = {}
 
 		keys = sorted(list(substitutions_initial.keys()))
-		nounverbs = []
-		cands = set([])
+		nouns = set([])
+		verbs = set([])
+		nounsc = set([])
+		verbsc = set([])
 		for key in keys:
 			for key_pos in substitutions_initial[key].keys():
-				if key_pos.startswith('v') or key_pos.startswith('n'):
-					nounverbs.append(key)
+				if key_pos.startswith('v'):
+					verbs.add(key)
 					for cand in substitutions_initial[key][key_pos]:
-						cands.add(cand)
+						verbsc.add(cand)
+				elif:
+					nouns.add(key)
+					for cand in substitutions_initial[key][key_pos]:
+						nounsc.add(cand)
+				
 		cands = sorted(list(cands))
 
-		stemk = self.getStems(nounverbs)
-		stemc = self.getStems(cands)
+		stemk = self.getStems(nouns, verbs)
+		stemc = self.getStems(nounsc, verbsc)
 
 		#Create third set of filtered substitutions:
 		substitutions_inflected = {}
@@ -164,7 +171,7 @@ class KauchakGenerator:
 			else:
 				result[target] = set([postarget])
 		lex.close()
-		return result	
+		return result
 		
 	def getInflections(self, verbstems):
 		data1 = self.mat.conjugateVerbs(verbstems, 'PAST_PERFECT_PARTICIPLE')
@@ -190,16 +197,24 @@ class KauchakGenerator:
 			result[singstems[i]] = data[i]
 		return result
 
-	def getStems(self, sings):
-		data = self.mat.lemmatizeWords(sings)
+	def getStems(self, nouns, verbs):
+		datan = self.mat.lemmatizeWords(nouns)
+		datav = self.mat.stemWords(verbs)
 		result = {}
-		for i in range(0, len(data)):
-			stem = data[i]
-			sing = sings[i]
+		for i in range(0, len(datan)):
+			stem = datan[i]
+			word = nouns[i]
 			if len(stem.strip())>0:
-				result[sing] = stem.strip()
+				result[word] = stem.strip()
 			else:
-				result[sing] = sing
+				result[word] = word
+		for i in range(0, len(datav)):
+			stem = datav[i]
+			word = verbs[i]
+			if len(stem.strip())>0:
+				result[word] = stem.strip()
+			else:
+				result[word] = word
 		return result
 		
 class YamamotoGenerator:
@@ -226,18 +241,25 @@ class YamamotoGenerator:
 		substitutions_stemmed = {}
 
 		keys = sorted(list(substitutions_initial.keys()))
-		nounverbs = []
-		cands = set([])
+		nouns = set([])
+		verbs = set([])
+		nounsc = set([])
+		verbsc = set([])
 		for key in keys:
 			for key_pos in substitutions_initial[key].keys():
-				if key_pos.startswith('v') or key_pos.startswith('n'):
-					nounverbs.append(key)
+				if key_pos.startswith('v'):
+					verbs.add(key)
 					for cand in substitutions_initial[key][key_pos]:
-						cands.add(cand)
+						verbsc.add(cand)
+				elif:
+					nouns.add(key)
+					for cand in substitutions_initial[key][key_pos]:
+						nounsc.add(cand)
+				
 		cands = sorted(list(cands))
 
-		stemk = self.getStems(nounverbs)
-		stemc = self.getStems(cands)
+		stemk = self.getStems(nouns, verbs)
+		stemc = self.getStems(nounsc, verbsc)
 
 		#Create third set of filtered substitutions:
 		substitutions_inflected = {}
@@ -324,16 +346,24 @@ class YamamotoGenerator:
 			result[singstems[i]] = data[i]
 		return result
 
-	def getStems(self, sings):
-		data = self.mat.lemmatizeWords(sings)
+	def getStems(self, nouns, verbs):
+		datan = self.mat.lemmatizeWords(nouns)
+		datav = self.mat.stemWords(verbs)
 		result = {}
-		for i in range(0, len(data)):
-			stem = data[i]
-			sing = sings[i]
+		for i in range(0, len(datan)):
+			stem = datan[i]
+			word = nouns[i]
 			if len(stem.strip())>0:
-				result[sing] = stem.strip()
+				result[word] = stem.strip()
 			else:
-				result[sing] = sing
+				result[word] = word
+		for i in range(0, len(datav)):
+			stem = datav[i]
+			word = verbs[i]
+			if len(stem.strip())>0:
+				result[word] = stem.strip()
+			else:
+				result[word] = word
 		return result
 
 	def getInitialSet(self, victor_corpus):
@@ -402,18 +432,25 @@ class MerriamGenerator:
 		substitutions_stemmed = {}
 
 		keys = sorted(list(substitutions_initial.keys()))
-		nounverbs = []
-		cands = set([])
+		nouns = set([])
+		verbs = set([])
+		nounsc = set([])
+		verbsc = set([])
 		for key in keys:
 			for key_pos in substitutions_initial[key].keys():
-				if key_pos.startswith('v') or key_pos.startswith('n'):
-					nounverbs.append(key)
+				if key_pos.startswith('v'):
+					verbs.add(key)
 					for cand in substitutions_initial[key][key_pos]:
-						cands.add(cand)
+						verbsc.add(cand)
+				elif:
+					nouns.add(key)
+					for cand in substitutions_initial[key][key_pos]:
+						nounsc.add(cand)
+				
 		cands = sorted(list(cands))
 
-		stemk = self.getStems(nounverbs)
-		stemc = self.getStems(cands)
+		stemk = self.getStems(nouns, verbs)
+		stemc = self.getStems(nounsc, verbsc)
 
 		#Create third set of filtered substitutions:
 		substitutions_inflected = {}
@@ -500,16 +537,24 @@ class MerriamGenerator:
 			result[singstems[i]] = data[i]
 		return result
 
-	def getStems(self, sings):
-		data = self.mat.lemmatizeWords(sings)
+	def getStems(self, nouns, verbs):
+		datan = self.mat.lemmatizeWords(nouns)
+		datav = self.mat.stemWords(verbs)
 		result = {}
-		for i in range(0, len(data)):
-			stem = data[i]
-			sing = sings[i]
+		for i in range(0, len(datan)):
+			stem = datan[i]
+			word = nouns[i]
 			if len(stem.strip())>0:
-				result[sing] = stem.strip()
+				result[word] = stem.strip()
 			else:
-				result[sing] = sing
+				result[word] = word
+		for i in range(0, len(datav)):
+			stem = datav[i]
+			word = verbs[i]
+			if len(stem.strip())>0:
+				result[word] = stem.strip()
+			else:
+				result[word] = word
 		return result
 
 	def getInitialSet(self, victor_corpus):
@@ -578,18 +623,25 @@ class WordnetGenerator:
 		substitutions_stemmed = {}
 
 		keys = sorted(list(substitutions_initial.keys()))
-		nounverbs = []
-		cands = set([])
+		nouns = set([])
+		verbs = set([])
+		nounsc = set([])
+		verbsc = set([])
 		for key in keys:
 			for key_pos in substitutions_initial[key].keys():
-				if key_pos.startswith('v') or key_pos.startswith('n'):
-					nounverbs.append(key)
+				if key_pos.startswith('v'):
+					verbs.add(key)
 					for cand in substitutions_initial[key][key_pos]:
-						cands.add(cand)
+						verbsc.add(cand)
+				elif:
+					nouns.add(key)
+					for cand in substitutions_initial[key][key_pos]:
+						nounsc.add(cand)
+				
 		cands = sorted(list(cands))
 
-		stemk = self.getStems(nounverbs)
-		stemc = self.getStems(cands)
+		stemk = self.getStems(nouns, verbs)
+		stemc = self.getStems(nounsc, verbsc)
 
 		#Create third set of filtered substitutions:
 		substitutions_inflected = {}
@@ -676,16 +728,24 @@ class WordnetGenerator:
 			result[singstems[i]] = data[i]
 		return result
 
-	def getStems(self, sings):
-		data = self.mat.lemmatizeWords(sings)
+	def getStems(self, nouns, verbs):
+		datan = self.mat.lemmatizeWords(nouns)
+		datav = self.mat.stemWords(verbs)
 		result = {}
-		for i in range(0, len(data)):
-			stem = data[i]
-			sing = sings[i]
+		for i in range(0, len(datan)):
+			stem = datan[i]
+			word = nouns[i]
 			if len(stem.strip())>0:
-				result[sing] = stem.strip()
+				result[word] = stem.strip()
 			else:
-				result[sing] = sing
+				result[word] = word
+		for i in range(0, len(datav)):
+			stem = datav[i]
+			word = verbs[i]
+			if len(stem.strip())>0:
+				result[word] = stem.strip()
+			else:
+				result[word] = word
 		return result
 
 	def getInitialSet(self, victor_corpus):
@@ -767,18 +827,25 @@ class BiranGenerator:
 		substitutions_stemmed = {}
 
 		keys = sorted(list(substitutions_initial.keys()))
-		nounverbs = []
-		cands = set([])
+		nouns = set([])
+		verbs = set([])
+		nounsc = set([])
+		verbsc = set([])
 		for key in keys:
 			for key_pos in substitutions_initial[key].keys():
-				if key_pos.startswith('v') or key_pos.startswith('n'):
-					nounverbs.append(key)
+				if key_pos.startswith('v'):
+					verbs.add(key)
 					for cand in substitutions_initial[key][key_pos]:
-						cands.add(cand)
+						verbsc.add(cand)
+				elif:
+					nouns.add(key)
+					for cand in substitutions_initial[key][key_pos]:
+						nounsc.add(cand)
+				
 		cands = sorted(list(cands))
 
-		stemk = self.getStems(nounverbs)
-		stemc = self.getStems(cands)
+		stemk = self.getStems(nouns, verbs)
+		stemc = self.getStems(nounsc, verbsc)
 
 		#Create third set of filtered substitutions:
 		substitutions_inflected = {}
@@ -870,17 +937,25 @@ class BiranGenerator:
 			result[singstems[i]] = data[i]
 		return result
 
-	def getStems(self, sings):
-		data = self.mat.lemmatizeWords(sings)
+	def getStems(self, nouns, verbs):
+		datan = self.mat.lemmatizeWords(nouns)
+		datav = self.mat.stemWords(verbs)
 		result = {}
-		for i in range(0, len(data)):
-			stem = data[i]
-			sing = sings[i]
+		for i in range(0, len(datan)):
+			stem = datan[i]
+			word = nouns[i]
 			if len(stem.strip())>0:
-				result[sing] = stem.strip()
+				result[word] = stem.strip()
 			else:
-				result[sing] = sing
-		return result	
+				result[word] = word
+		for i in range(0, len(datav)):
+			stem = datav[i]
+			word = verbs[i]
+			if len(stem.strip())>0:
+				result[word] = stem.strip()
+			else:
+				result[word] = word
+		return result
 
 	def getInitialSet(self, victor_corpus):
 		substitutions_initial = {}
