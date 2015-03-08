@@ -893,7 +893,7 @@ class BiranGenerator:
 				newline = target + '\t'
 				cands = {}
 				for syn in syns:
-					synpos = syn.getPOS()
+					synpos = syn.pos()
 					if synpos not in cands.keys():
 						cands[synpos] = set([])
 					for lem in syn.lemmas():
@@ -901,7 +901,7 @@ class BiranGenerator:
 						if len(candidate.split(' '))==1 and candidate in self.simple_vocab:
 							cands[synpos].add(candidate)
 					for hyp in syn.hypernyms():
-						hyppos = hyp.getPOS()
+						hyppos = hyp.pos()
 						if hyppos not in cands.keys():
 							cands[hyppos] = set([])
 						for lem in hyp.lemmas():
