@@ -9,7 +9,7 @@ class BiranSelector:
 	def __init__(self, cooc_model):
 		self.model = self.getModel(cooc_model)
 		
-	def getCooccurrModel(path):
+	def getModel(self, path):
 		result = {}
 		f = open(path)
 		for line in f:
@@ -56,8 +56,9 @@ class BiranSelector:
 				except ValueError:
 					common_dist = 0.0
 				if common_dist>=common_distance and candidate_dist<=candidate_distance:
-						final_candidates.add(candidate)
-			lexf.close()
+					final_candidates.add(candidate)
+			selected_substitutions.append(final_candidates)
+		lexf.close()
 		return selected_substitutions
 		
 	def getCosine(self, vec1, vec2):

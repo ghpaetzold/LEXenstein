@@ -20,6 +20,10 @@ for k in subs.keys():
 #        for sub in subs[k]:
 #                print('\t\t' + sub)
 
+biranselector = BiranSelector('./corpora/vectors.clean.txt')
+selected = biranselector.selectCandidates(subs, './corpora/lexmturk_test.txt', 0.01, 0.75)
+print(str(selected))
+
 wordvecselector = WordVectorSelector('./corpora/word_vectors_all.bin')
 selected = wordvecselector.selectCandidates(subs, './corpora/lexmturk_test.txt', proportion=0.75, stop_words_file='./corpora/stop_words.txt', onlyInformative=True, keepTarget=True, onePerWord=True)
 print(str(selected))
