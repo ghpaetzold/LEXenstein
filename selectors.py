@@ -4,6 +4,25 @@ from scipy.spatial.distance import cosine
 import nltk
 import numpy as np
 
+class VoidSelector:
+
+	def selectCandidates(self, substitutions, victor_corpus):
+		selected_substitutions = []				
+
+		lexf = open(victor_corpus)
+		for line in lexf:
+			data = line.strip().split('\t')
+			sent = data[0].strip()
+			target = data[1].strip()
+		
+			candidates = []
+			if target in substitutions.keys():
+				candidates = substitutions[target]
+		
+			selected_substitutions.append(candidates)
+		lexf.close()
+		return selected_substitutions
+
 class BiranSelector:
 
 	def __init__(self, cooc_model):
