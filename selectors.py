@@ -3,8 +3,23 @@ import pywsd
 class WSDSelector:
 
 	def __init__(self, method):
-		self.WSDfunction = self.getLeskSense
-
+		if method == 'lesk':
+			self.WSDfunction = self.getLeskSense
+		elif method == 'leacho':
+			self.WSDfunction = self.getLeaChoSense
+		elif method == 'path':
+			self.WSDfunction = self.getPathSense
+		elif method == 'wupalmer':
+			self.WSDfunction = self.getWuPalmerSense
+		elif method == 'random':
+			self.WSDfunction = self.getRandomSense
+		elif method == 'first':
+			self.WSDfunction = self.getFirstSense
+		elif method == 'maxlemma':
+			self.WSDfunction = self.getMaxLemmaSense
+		else:
+			self.WSDfunction = self.getLeskSense
+		
 	def selectCandidates(self, substitutions, victor_corpus):
 		selected_substitutions = []				
 
@@ -38,8 +53,53 @@ class WSDSelector:
 		return selected_substitutions
 
 	def getLeskSense(self, sentence, target):
-		result = pywsd.lesk.original_lesk(sentence, target)
-		return result
+		try:
+			result = pywsd.lesk.original_lesk(sentence, target)
+			return result
+		except IndexError:
+			return None
+
+	def getPathSense(self, sentence, target):
+		try:
+			result = pywsd.similarity.max_similarity(sentence, target, option="path", best=False)
+			return result
+		except IndexError:
+			return None
+	
+	def getLeaChoSense(self, sentence, target):
+		try:
+			result = pywsd.similarity.max_similarity(sentence, target, option="lch", best=False)
+			return result
+		except IndexError:
+			return None
+			
+	def getWuPalmerSense(self, sentence, target):
+		try:
+			result = pywsd.similarity.max_similarity(sentence, target, option="wup", best=False)
+			return result
+		except IndexError:
+			return None
+			
+	def getRandomSense(self, sentence, target):
+		try:
+			result = pywsd.baseline.random_sense(target)
+			return result
+		except IndexError:
+			return None
+			
+	def getFirstSense(self, sentence, target):
+		try:
+			result = pywsd.baseline.first_sense(target)
+			return result
+		except IndexError:
+			return None
+			
+	def getMaxLemmaSense(self, sentence, target):
+		try:
+			result = pywsd.baseline.max_lemma_count(target)
+			return result
+		except IndexError:
+			return None
 
 	def getCandidateSentence(self, sentence, candidate, head):
 		tokens = sentence.strip().split(' ')
