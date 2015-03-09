@@ -1,6 +1,8 @@
 import pywsd
 import gensim
 from scipy.spatial.distance import cosine
+import nltk
+import numpy as np
 
 class WordVectorSelector:
 	
@@ -27,6 +29,7 @@ class WordVectorSelector:
 			if target in substitutions.keys():
 				candidates = substitutions[target]
 	
+
 			candidate_dists = {}
 			for candidate in candidates:
 				candidate_vec = self.getWordVec(candidate)
@@ -36,12 +39,12 @@ class WordVectorSelector:
 					candidate_dists = candidate_dists
 
 			final_candidates = self.getFinalCandidates(candidate_dists, proportion)
-			
+
 			selected_substitutions.append(final_candidates)
 		lexf.close()
 		return selected_substitutions
 		
-	def getSentVec(self, head, stop_words, window, onlyInformative, keepTarget, onePerWord):
+	def getSentVec(self, sentence, head, stop_words, window, onlyInformative, keepTarget, onePerWord):
 		informative_tags = set([])
 		if onlyInformative:
 			informative_tags = set(['nn', 'nns', 'jj', 'jjs', 'jjr', 'vb', 'vbd', 'vbg', 'vbn', 'vbp', 'vbz', 'rb', 'rbr', 'rbs'])
@@ -93,17 +96,18 @@ class WordVectorSelector:
 						result = result
 		return result
 		
-	def getWordVec(candidate):
+	def getWordVec(self, candidate):
 		result = []
 		try:
-			result = model[token]
+			result = self.model[candidate]
 		except KeyError:
 			try:
-				result = model[token.lower()]
+				result = self.model[candidate.lower()]
 			except KeyError:
 				result = result
+		return result
 				
-	def getFinalCandidates(candidate_dists, proportion):
+	def getFinalCandidates(self, candidate_dists, proportion):
 		result = sorted(list(candidate_dists.keys()), key=candidate_dists.__getitem__)
 		return result[0:max(1, int(proportion*float(len(result))))]
 
