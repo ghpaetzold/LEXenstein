@@ -1,4 +1,111 @@
 import pywsd
+import gensim
+from scipy.spatial.distance import cosine
+
+class WordVectorSelector:
+	
+	def __init__(self, vector_model):
+		self.model = gensim.models.word2vec.Word2Vec.load_word2vec_format(vector_model, binary=True)
+	
+	def selectCandidates(self, substitutions, victor_corpus, proportion=1.0, stop_words_file=None, window=99999, onlyInformative=False, keepTarget=False, onePerWord=False):
+		stop_words = set([])
+		if stop_words_file != None:
+			stop_words = set([word.strip() for word in open(stop_words_file)])
+	
+		selected_substitutions = []				
+
+		lexf = open(victor_corpus)
+		for line in lexf:
+			data = line.strip().split('\t')
+			sent = data[0].strip()
+			target = data[1].strip()
+			head = int(data[2].strip())
+		
+			target_vec = self.getSentVec(sent, head, stop_words, window, onlyInformative, keepTarget, onePerWord)
+		
+			candidates = []
+			if target in substitutions.keys():
+				candidates = substitutions[target]
+	
+			candidate_dists = {}
+			for candidate in candidates:
+				candidate_vec = self.getWordVec(candidate)
+				try:
+					candidate_dists[candidate] = cosine(candidate_vec, target_vec)
+				except ValueError:
+					candidate_dists = candidate_dists
+
+			final_candidates = self.getFinalCandidates(candidate_dists, proportion)
+			
+			selected_substitutions.append(final_candidates)
+		lexf.close()
+		return selected_substitutions
+		
+	def getSentVec(self, head, stop_words, window, onlyInformative, keepTarget, onePerWord):
+		informative_tags = set([])
+		if onlyInformative:
+			informative_tags = set(['nn', 'nns', 'jj', 'jjs', 'jjr', 'vb', 'vbd', 'vbg', 'vbn', 'vbp', 'vbz', 'rb', 'rbr', 'rbs'])
+		
+		tokens = sentence.split(' ')
+		pos_tokens = []
+		try:
+			pos_tokens = nltk.pos_tag(tokens)
+		except UnicodeDecodeError:
+			informative_tags = set([])
+			pos_tokens = []
+		
+		valid_tokens = []
+		if keepTarget:
+			valid_tokens.append(tokens[head].strip())
+		
+		if head>0:
+			for i in range(max(0, head-window), head):
+				if len(informative_tags)==0 or pos_tokens[i][1].lower().strip() in informative_tags:
+					if tokens[i] not in stop_words:
+						valid_tokens.append(tokens[i])
+		
+		if head<len(tokens)-1:
+			for i in range(head+1, min(len(tokens), head+1+window)):
+				if len(informative_tags)==0 or pos_tokens[i][1].lower().strip() in informative_tags:
+					if tokens[i] not in stop_words:
+						valid_tokens.append(tokens[i])
+						
+		if onePerWord:
+			valid_tokens = list(set(valid_tokens))
+		
+		result = []
+		for	token in valid_tokens:
+			if len(result)==0:
+				try:
+					result = self.model[token]
+				except KeyError:
+					try:
+						result = self.model[token.lower()]
+					except KeyError:
+						result = []
+			else:
+				try:
+					result = np.add(result, self.model[token])
+				except KeyError:
+					try:
+						result = np.add(result, self.model[token.lower()])
+					except KeyError:
+						result = result
+		return result
+		
+	def getWordVec(candidate):
+		result = []
+		try:
+			result = model[token]
+		except KeyError:
+			try:
+				result = model[token.lower()]
+			except KeyError:
+				result = result
+				
+	def getFinalCandidates(candidate_dists, proportion):
+		result = sorted(list(candidate_dists.keys()), key=candidate_dists.__getitem__)
+		return result[0:max(1, int(proportion*float(len(result))))]
 
 class WSDSelector:
 
