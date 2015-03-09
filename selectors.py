@@ -15,8 +15,6 @@ class WSDSelector:
 			self.WSDfunction = self.getRandomSense
 		elif method == 'first':
 			self.WSDfunction = self.getFirstSense
-		elif method == 'maxlemma':
-			self.WSDfunction = self.getMaxLemmaSense
 		else:
 			self.WSDfunction = self.getLeskSense
 		
