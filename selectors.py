@@ -4,6 +4,134 @@ from scipy.spatial.distance import cosine
 import nltk
 import numpy as np
 
+class BiranSelector:
+
+	def __init__(self, cooc_model):
+		self.model = self.getModel(cooc_model)
+		
+	def getCooccurrModel(path):
+		result = {}
+		f = open(path)
+		for line in f:
+			data = line.strip().split('\t')
+			target = data[0].strip()
+			coocs = data[1:len(data)]
+			result[target] = {}
+			for cooc in coocs:
+				coocd = cooc.strip().split(':')
+				word = coocd[0].strip()
+				count = int(coocd[1].strip())
+				result[target][word] = count
+		return result
+		
+	def selectCandidates(self, substitutions, victor_corpus, common_distance, candidate_distance):
+		selected_substitutions = []				
+
+		lexf = open(victor_corpus)
+		for line in lexf:
+			data = line.strip().split('\t')
+			sent = data[0].strip()
+			target = data[1].strip()
+			head = int(data[2].strip())
+		
+			target_vec = self.getSentVec(sent, head)
+
+			candidates = []
+			if target in substitutions.keys():
+				candidates = substitutions[target]
+		
+			final_candidates = set([])
+			for candidate in candidates:
+				candidate_vec = self.getVec(candidate)
+				candidate_dist = 1.0
+				try:
+					candidate_dist = self.getCosine(candidate_vec, target_vec)
+				except ValueError:
+					candidate_dist = 1.0
+		
+				common_vec = self.getCommonVec(target, candidate)
+				common_dist = 0.0
+				try:
+					common_dist = self.getCosine(common_vec, target_vec)
+				except ValueError:
+					common_dist = 0.0
+				if common_dist>=common_distance and candidate_dist<=candidate_distance:
+						final_candidates.add(candidate)
+			lexf.close()
+		return selected_substitutions
+		
+	def getCosine(self, vec1, vec2):
+		all_keys = sorted(list(set(vec1.keys()).union(set(vec2.keys()))))
+		v1 = []
+		v2 = []
+		for k in all_keys:
+			if k in vec1:
+				v1.append(vec1[k])
+			else:
+				v1.append(0.0)
+			if k in vec2:
+				v2.append(vec2[k])
+			else:
+				v2.append(0.0)
+		return cosine(v1, v2)
+	
+	def getCommonVec(self, target, candidate):
+		if target not in self.model.keys() or candidate not in self.model.keys():
+			return {}
+		else:
+			result = {}
+			common_keys = set(self.model[target].keys()).intersection(set(self.model[candidate].keys()))
+			for k in common_keys:
+				if self.model[target][k]>self.model[candidate][k]:
+					result[k] = self.model[candidate][k]
+				else:
+					result[k] = self.model[target][k]
+			return result
+					
+	def isNumeral(self, text):
+		try:
+			num = float(text.strip())
+			return True
+		except ValueError:
+			return False
+	
+	def getSentVec(self, sent, head):
+		coocs = {}
+		tokens = sent.strip().split(' ')
+		left = max(0, head-5)
+		right = min(len(tokens), head+6)
+		for j in range(left, right):
+			if j!=head:
+				cooc = tokens[j]
+				if self.isNumeral(cooc):
+					cooc = '#NUMERAL#'
+				if cooc not in coocs.keys():
+					coocs[cooc] = 1
+				else:
+					coocs[cooc] += 1
+		return coocs
+	
+	def getVec(self, word):
+		result = {}
+		try:
+			result = self.model[word]
+		except KeyError:
+			try:
+				result = self.model[word.lower()]
+			except KeyError:
+				result = {}
+		return result
+		
+	def getCandidateSentence(self, sentence, candidate, head):
+		tokens = sentence.strip().split(' ')
+		result = ''
+		for i in range(0, head):
+			result += tokens[i] + ' '
+		result += candidate + ' '
+		for i in range(head+1, len(tokens)):
+			result += tokens[i] + ' '
+		return result.strip()
+	
 class WordVectorSelector:
 	
 	def __init__(self, vector_model):
@@ -158,7 +286,6 @@ class WSDSelector:
 						selected_candidates.add(candidate)
 			selected_substitutions.append(selected_candidates)
 		lexf.close()
-
 		return selected_substitutions
 
 	def getLeskSense(self, sentence, target):
