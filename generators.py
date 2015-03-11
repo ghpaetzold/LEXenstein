@@ -5,6 +5,7 @@ from nltk.corpus import wordnet as wn
 import subprocess
 import nltk
 import kenlm
+import codecs
 
 class KauchakGenerator:
 
@@ -782,7 +783,11 @@ class MerriamGenerator:
 
 					for synonym in synonyms:
 						if len(synonym.split(' '))==1:
-							cands[node_pos].add(synonym)
+							try:
+								test = codecs.ascii_encode(synonym)
+								cands[node_pos].add(synonym)
+							except UnicodeEncodeError:
+								cands = cands
 			for pos in cands.keys():
 				if target in cands[pos]:
 					cands[pos].remove(target)
