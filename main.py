@@ -20,6 +20,10 @@ for k in subs.keys():
 #        for sub in subs[k]:
 #                print('\t\t' + sub)
 
+voidselector = VoidSelector()
+selected = voidselector.selectCandidates(subs, './corpora/lexmturk_test.txt')
+print(str(selected))
+
 biranselector = BiranSelector('./corpora/vectors.clean.txt')
 selected = biranselector.selectCandidates(subs, './corpora/lexmturk_test.txt', 0.01, 0.75)
 print(str(selected))
