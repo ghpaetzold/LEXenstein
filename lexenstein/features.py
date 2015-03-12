@@ -6,6 +6,7 @@ class FeatureEstimator:
 
 	def __init__(self):
 		self.features = []
+		self.identifiers = []
 		
 	def calculateFeatures(self, victor_corpus):
 		data = [line.strip().split('\t') for line in open(victor_corpus)]
@@ -219,37 +220,83 @@ class FeatureEstimator:
 				resultma.append(maxdepth)
 		return resultma
 		
-	def addLexiconFeature(self, path):
-		self.features.append((self.lexiconFeature, [path]))
+	def addLexiconFeature(self, path, orientation):
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:
+			self.features.append((self.lexiconFeature, [path]))
+			self.identifiers.append(('Lexicon Occurrence', orientation))
 	
-	def addLengthFeature(self):
-		self.features.append((self.lengthFeature, []))
+	def addLengthFeature(self, orientation):
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:
+			self.features.append((self.lengthFeature, []))
+			self.identifiers.append(('Word Length', orientation))
 	
-	def addSyllableFeature(self, mat):
-		self.features.append((self.syllableFeature, [mat]))
+	def addSyllableFeature(self, mat, orientation):
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:
+			self.features.append((self.syllableFeature, [mat]))
+			self.identifiers.append(('Syllable Count', orientation))
 		
-	def addCollocationalFeature(self, lm, leftw, rightw):
-		self.features.append((self.collocationalFeature, [lm, leftw, rightw]))
+	def addCollocationalFeature(self, lm, leftw, rightw, orientation):
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:
+			self.features.append((self.collocationalFeature, [lm, leftw, rightw]))
+			for i in range(0, leftw+1):
+				for j in range(0, rightw+1):
+					self.identifiers.append(('Collocational Feature (' + str(i) + ', ' + str(j) + ')', orientation))
 		
-	def addSentenceProbabilityFeature(self, lm):
-		self.features.append((self.sentenceProbabilityFeature, [lm]))
+	def addSentenceProbabilityFeature(self, lm, orientation):
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:
+			self.features.append((self.sentenceProbabilityFeature, [lm]))
+			self.identifiers.append(('Sentence Probability', orientation))
 		
-	def addSenseCountFeature(self):
-		self.features.append((self.senseCount ,[]))
+	def addSenseCountFeature(self, orientation):
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:
+			self.features.append((self.senseCount ,[]))
+			self.identifiers.append(('Sense Count', orientation))
 		
-	def addSynonymCountFeature(self):
-		self.features.append((self.synonymCount ,[]))
+	def addSynonymCountFeature(self, orientation):
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:
+			self.features.append((self.synonymCount ,[]))
+			self.identifiers.append(('Synonym Count', orientation))
 		
-	def addHypernymCountFeature(self):
-		self.features.append((self.hypernymCount ,[]))
+	def addHypernymCountFeature(self, orientation):
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:
+			self.features.append((self.hypernymCount ,[]))
+			self.identifiers.append(('Hypernym Count', orientation))
 		
-	def addHyponymCountFeature(self):
-		self.features.append((self.hyponymCount ,[]))
+	def addHyponymCountFeature(self, orientation):
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:
+			self.features.append((self.hyponymCount ,[]))
+			self.identifiers.append(('Hyponym Count', orientation))
 		
-	def addMinDepthFeature(self):
-		self.features.append((self.minDepth ,[]))
+	def addMinDepthFeature(self, orientation):
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:
+			self.features.append((self.minDepth ,[]))
+			self.identifiers.append(('Minimal Sense Depth', orientation))
 		
-	def addMaxDepthFeature(self):
-		self.features.append((self.maxDepth ,[]))
+	def addMaxDepthFeature(self, orientation):
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:
+			self.features.append((self.maxDepth ,[]))
+			self.identifiers.append(('Maximal Sense Depth', orientation))
 		
 	
