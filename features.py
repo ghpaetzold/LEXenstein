@@ -1,4 +1,6 @@
-
+from nltk.stem.porter import *
+from nltk.corpus import wordnet as wn
+import kenlm
 
 class FeatureEstimator:
 
@@ -21,7 +23,7 @@ class FeatureEstimator:
 				index += 1
 		return result
 		
-	def generateVector(feature_vector, index):
+	def generateVector(self, feature_vector, index):
 		result = []
 		for feature in feature_vector:
 			if not isinstance(feature[index], list):
@@ -131,7 +133,7 @@ class FeatureEstimator:
 			head = int(line[2])
 			for subst in line[3:len(line)]:
 				word = subst.split(':')[1].strip()
-			ngra	m, bosv, eosv = self.getNgram(word, sent, head, 9999, 9999)
+				ngram, bosv, eosv = self.getNgram(word, sent, head, 9999, 9999)
 				aux = -1.0*model.score(ngram, bos=bosv, eos=eosv)
 				result.append(aux)
 		return result
@@ -170,7 +172,7 @@ class FeatureEstimator:
 				for word in words.split(' '):
 					senses = wn.synsets(word)
 					for sense in senses:
--						hypernyms.update(sense.hypernyms())
+						hypernyms.update(sense.hypernyms())
 				resulthe.append(len(hypernyms))
 		return resulthe
 	
@@ -220,7 +222,7 @@ class FeatureEstimator:
 	def addLexiconFeature(self, path):
 		self.features.append((self.lexiconFeature, [path]))
 	
-	def addLenghtFeature(self):
+	def addLengthFeature(self):
 		self.features.append((self.lengthFeature, []))
 	
 	def addSyllableFeature(self, mat):

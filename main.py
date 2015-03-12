@@ -1,8 +1,24 @@
 from morphadorner import MorphAdornerToolkit
 from generators import *
 from selectors import *
+from features import *
 
 m = MorphAdornerToolkit('./morph/')
+
+fe = FeatureEstimator()
+fe.addLexiconFeature('./corpora/basic_words.txt')
+fe.addLengthFeature()
+fe.addSyllableFeature(m)
+fe.addCollocationalFeature('./corpora/wiki.5.bin.txt', 2, 2)
+fe.addSentenceProbabilityFeature('./corpora/wiki.5.bin.txt')
+fe.addSenseCountFeature()
+fe.addSynonymCountFeature()
+fe.addHypernymCountFeature()
+fe.addHyponymCountFeature()
+fe.addMinDepthFeature()
+fe.addMaxDepthFeature()
+feats = fe.calculateFeatures('./corpora/lexmturk_test.txt')
+print(str(feats))
 
 kg = KauchakGenerator(m, './corpora/all.fastalign.pos.txt', './corpora/all.fastalign.forward.txt', './corpora/stop_words.txt')
 subs = kg.getSubstitutions('./corpora/lexmturk_test.txt')
