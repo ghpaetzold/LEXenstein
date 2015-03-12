@@ -1,7 +1,7 @@
-from morphadorner import MorphAdornerToolkit
-from generators import *
-from selectors import *
-from features import *
+from lexenstein.morphadorner import MorphAdornerToolkit
+from lexenstein.generators import *
+from lexenstein.selectors import *
+from lexenstein.features import *
 
 m = MorphAdornerToolkit('./morph/')
 
