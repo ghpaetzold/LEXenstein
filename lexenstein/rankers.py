@@ -2,14 +2,14 @@
 
 class MetricRanker:
 
-	def __init__(self, fm):
-		self.fm = fm
+	def __init__(self, fe):
+		self.fe = fe
 		self.feature_values = None
 		
 	def getRankings(self, victor_corpus, featureIndex):
 		#If feature values are not available, then estimate them:
 		if self.feature_values == None:
-			self.feature_values = self.fm.calculateFeatures(victor_corpus)
+			self.feature_values = self.fe.calculateFeatures(victor_corpus)
 		
 		#Create object for results:
 		result = []
@@ -31,7 +31,7 @@ class MetricRanker:
 			
 			#Check if feature is simplicity or complexity measure:
 			rev = False
-			if self.fm.identifiers[featureIndex][1]=='Simplicity':
+			if self.fe.identifiers[featureIndex][1]=='Simplicity':
 				rev = True
 			
 			#Sort substitutions:
@@ -45,4 +45,4 @@ class MetricRanker:
 		return result
 		
 	def size(self):
-		return len(self.fm.identifiers)
+		return len(self.fe.identifiers)
