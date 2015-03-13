@@ -31,6 +31,12 @@ svmr.getScoresFile('./corpora/lexmturk_test_svmfeatures.txt', './corpora/lexmtur
 rankings = svmr.getRankings('./corpora/lexmturk_test_svmfeatures.txt', './corpora/lexmturk_test_svmscores.txt')
 print(str(rankings))
 
+br = BoundaryRanker(fe)
+br.trainRanker('./corpora/lexmturk_test.txt', 1, 'modified_huber', 'l1', 0.1, 0.1, 0.001)
+rankings = br.getRankings('./corpora/lexmturk_test.txt')
+print('Boundary')
+print(str(rankings))
+
 kg = KauchakGenerator(m, './corpora/all.fastalign.pos.txt', './corpora/all.fastalign.forward.txt', './corpora/stop_words.txt')
 subs = kg.getSubstitutions('./corpora/lexmturk_test.txt')
 print('Kauchak:')

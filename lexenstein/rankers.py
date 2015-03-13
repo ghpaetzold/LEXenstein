@@ -23,7 +23,7 @@ class BoundaryRanker:
 	
 		#Train classifier:
 		self.classifier = linear_model.SGDClassifier(loss=loss, penalty=penalty, alpha=alpha, l1_ratio=l1_ratio, epsilon=epsilon)
-		self.classifier.fit(Xtr, Ytr)
+		self.classifier.fit(X, Y)
 		
 	def getRankings(self, victor_corpus):
 		#Read victor corpus:
@@ -37,7 +37,7 @@ class BoundaryRanker:
 		X = self.fe.calculateFeatures(victor_corpus)
 		
 		#Get boundary distances:
-		distances = clf.decision_function(X)
+		distances = self.classifier.decision_function(X)
 		
 		#Get rankings:
 		result = []
@@ -49,7 +49,7 @@ class BoundaryRanker:
 				word = subst.strip().split(':')[1].strip()
 				scores[word] = distances[index]
 				index += 1
-			ranking_data = sorted(scores.keys(), key=scores__getitem__, reverse=True)
+			ranking_data = sorted(scores.keys(), key=scores.__getitem__, reverse=True)
 			result.append(ranking_data)
 		
 		#Return rankings:
