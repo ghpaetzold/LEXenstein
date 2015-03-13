@@ -1,6 +1,72 @@
 import os
 from sklearn.preprocessing import normalize
+from sklearn.feature_selection import f_classif
+from sklearn import linear_model
 
+class BoundaryRanker:
+
+	def __init__(self, fe):
+		self.fe = fe
+		self.classifier = None
+		
+	def trainRanker(self, victor_corpus, positive_range, loss, penalty, alpha, l1_ratio, epsilon):
+		#Read victor corpus:
+		data = []
+		f = open(victor_corpus)
+		for line in f:
+			data.append(line.strip().split('\t'))
+		f.close()
+		
+		#Create matrixes:
+		X = self.fe.calculateFeatures(victor_corpus)
+		Y = self.generateLabels(data, positive_range)
+	
+		#Train classifier:
+		self.classifier = linear_model.SGDClassifier(loss=loss, penalty=penalty, alpha=alpha, l1_ratio=l1_ratio, epsilon=epsilon)
+		self.classifier.fit(Xtr, Ytr)
+		
+	def getRankings(self, victor_corpus):
+		#Read victor corpus:
+		data = []
+		f = open(victor_corpus)
+		for line in f:
+			data.append(line.strip().split('\t'))
+		f.close()
+		
+		#Create matrixes:
+		X = self.fe.calculateFeatures(victor_corpus)
+		
+		#Get boundary distances:
+		distances = clf.decision_function(X)
+		
+		#Get rankings:
+		result = []
+		index = 0
+		for i in range(0, len(data)):
+			line = data[i]
+			scores = {}
+			for subst in line[3:len(line)]:
+				word = subst.strip().split(':')[1].strip()
+				scores[word] = distances[index]
+				index += 1
+			ranking_data = sorted(scores.keys(), key=scores__getitem__, reverse=True)
+			result.append(ranking_data)
+		
+		#Return rankings:
+		return result
+
+	def generateLabels(self, data, positive_range):
+		Y = []
+		for line in data:
+			max_range = min(int(line[len(line)-1].split(':')[0].strip()), positive_range)
+			for i in range(3, len(line)):
+				rank_index = int(line[i].split(':')[0].strip())
+				if rank_index<3+max_range:
+					Y.append(1)
+				else:
+					Y.append(0)
+		return Y
+		
 class SVMRanker:
 
 	def __init__(self, fe, svmrank_path):
