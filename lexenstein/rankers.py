@@ -17,7 +17,7 @@ class SVMRanker:
 			data.append(line.strip().split('\t'))
 		
 		#Get feature values:
-		feature_train = self.fe.calculateFeatures(victor_corpus)
+		features_train = self.fe.calculateFeatures(victor_corpus)
 		features_train = normalize(features_train, axis=0)
 		
 		#Save training file:

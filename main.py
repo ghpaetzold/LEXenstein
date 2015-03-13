@@ -21,7 +21,14 @@ fe.addMaxDepthFeature('Complexity')
 #feats = fe.calculateFeatures('./corpora/lexmturk_test.txt')
 
 mr = MetricRanker(fe)
-rankings = mr.getRankings('./corpora/lexmturk_test.txt', 1)
+rankings = mr.getRankings('./corpora/lexmturk_test.txt', mr.size()-1)
+print(str(rankings))
+
+svmr = SVMRanker(fe, '/export/tools/svm-rank/')
+svmr.getFeaturesFile('./corpora/lexmturk_test.txt', './corpora/lexmturk_test_svmfeatures.txt')
+svmr.getTrainingModel('./corpora/lexmturk_test_svmfeatures.txt', 0.0001, 0.01, 0, './corpora/lexmturk_test_svmmodel.txt')
+svmr.getScoresFile('./corpora/lexmturk_test_svmfeatures.txt', './corpora/lexmturk_test_svmmodel.txt', './corpora/lexmturk_test_svmscores.txt')
+rankings = svmr.getRankings('./corpora/lexmturk_test_svmfeatures.txt', './corpora/lexmturk_test_svmscores.txt')
 print(str(rankings))
 
 kg = KauchakGenerator(m, './corpora/all.fastalign.pos.txt', './corpora/all.fastalign.forward.txt', './corpora/stop_words.txt')
