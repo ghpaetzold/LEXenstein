@@ -2,23 +2,27 @@ from lexenstein.morphadorner import MorphAdornerToolkit
 from lexenstein.generators import *
 from lexenstein.selectors import *
 from lexenstein.features import *
+from lexenstein.rankers import *
 
 m = MorphAdornerToolkit('./morph/')
 
 fe = FeatureEstimator()
-fe.addLexiconFeature('./corpora/basic_words.txt')
-fe.addLengthFeature()
-fe.addSyllableFeature(m)
-fe.addCollocationalFeature('./corpora/wiki.5.bin.txt', 2, 2)
-fe.addSentenceProbabilityFeature('./corpora/wiki.5.bin.txt')
-fe.addSenseCountFeature()
-fe.addSynonymCountFeature()
-fe.addHypernymCountFeature()
-fe.addHyponymCountFeature()
-fe.addMinDepthFeature()
-fe.addMaxDepthFeature()
-feats = fe.calculateFeatures('./corpora/lexmturk_test.txt')
-print(str(feats))
+fe.addLexiconFeature('./corpora/basic_words.txt', 'Simplicity')
+fe.addLengthFeature('Complexity')
+fe.addSyllableFeature(m, 'Complexity')
+fe.addCollocationalFeature('./corpora/wiki.5.bin.txt', 2, 2, 'Simplicity')
+fe.addSentenceProbabilityFeature('./corpora/wiki.5.bin.txt', 'Simplicity')
+fe.addSenseCountFeature('Simplicity')
+fe.addSynonymCountFeature('Simplicity')
+fe.addHypernymCountFeature('Simplicity')
+fe.addHyponymCountFeature('Simplicity')
+fe.addMinDepthFeature('Complexity')
+fe.addMaxDepthFeature('Complexity')
+#feats = fe.calculateFeatures('./corpora/lexmturk_test.txt')
+
+mr = MetricRanker(fe)
+rankings = mr.getRankings('./corpora/lexmturk_test.txt', 1)
+print(str(rankings))
 
 kg = KauchakGenerator(m, './corpora/all.fastalign.pos.txt', './corpora/all.fastalign.forward.txt', './corpora/stop_words.txt')
 subs = kg.getSubstitutions('./corpora/lexmturk_test.txt')
