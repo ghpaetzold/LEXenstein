@@ -11,17 +11,19 @@ class GeneratorEvaluator:
 		
 		#Calculate measures:
 		f = open(victor_corpus)
-		for line in victor_corpus:
+		for line in f:
 			data = line.strip().split('\t')
 			target = data[1].strip()
 			items = data[3:len(data)]
 			candidates = [item.strip().split(':')[1].strip() for item in items]
 			if target in substitutions.keys():
-				precisionc += 1
 				overlap = set(candidates).intersection(set(substitutions[target]))
-				recalc += len(overlap)
+				recallc += len(overlap)
+				if len(overlap)>0:
+					precisionc += 1
 			precisiont += 1
 			recallt += len(candidates)
+		f.close()
 		
 		#Return measures:
 		return float(precisionc)/float(precisiont), float(recallc)/float(recallt)
@@ -38,7 +40,7 @@ class SelectorEvaluator:
 		#Calculate measures:
 		f = open(victor_corpus)
 		index = -1
-		for line in victor_corpus:
+		for line in f:
 			index += 1
 		
 			data = line.strip().split('\t')
@@ -48,12 +50,14 @@ class SelectorEvaluator:
 			
 			selected = substitutions[index]
 			if len(selected)>0:
-				precisionc += 1
 				overlap = set(candidates).intersection(set(selected))
-				recalc += len(overlap)
+				recallc += len(overlap)
+				if len(overlap)>0:
+					precisionc += 1
 			precisiont += 1
 			recallt += len(candidates)
-		
+		f.close()
+
 		#Return measures:
 		return float(precisionc)/float(precisiont), float(recallc)/float(recallt)
 
@@ -84,7 +88,7 @@ class RankerEvaluator:
 			for subst in line[3:len(line)]:
 				subst_data = subst.strip().split(':')
 				word = subst_data[1].strip()
-				ranking = subst_data[0].strip()
+				ranking = int(subst_data[0].strip())
 				gold_rankings[word] = ranking
 			ranked_candidates = rankings[index]
 

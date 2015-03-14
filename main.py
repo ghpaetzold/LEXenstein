@@ -50,6 +50,10 @@ for k in subs.keys():
 	for sub in subs[k]:
 		print('\t\t' + sub)
 
+ge = GeneratorEvaluator()
+precision, recall = ge.evaluateGenerator('./corpora/lexmturk_test.txt', subs)
+print('Precision: ' + str(precision) + ', Recall: ' + str(recall))
+
 #yg = YamamotoGenerator(m, '65f439df-0149-4294-bd7f-2d317b3bd00e')
 #subs = yg.getSubstitutions('./corpora/lexmturk_test.txt')
 #print('Yamamoto:')
@@ -61,6 +65,10 @@ for k in subs.keys():
 voidselector = VoidSelector()
 selected = voidselector.selectCandidates(subs, './corpora/lexmturk_test.txt')
 print(str(selected))
+
+se = SelectorEvaluator()
+precision, recall = se.evaluateSelector('./corpora/lexmturk_test.txt', selected)
+print('Precision: ' + str(precision) + ', Recall: ' + str(recall))
 
 biranselector = BiranSelector('./corpora/vectors.clean.txt')
 selected = biranselector.selectCandidates(subs, './corpora/lexmturk_test.txt', 0.01, 0.75)

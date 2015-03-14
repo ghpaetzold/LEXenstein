@@ -135,7 +135,13 @@ class SVMRanker:
 		index = 0
 		for line in data:
 			id = int(line[1].strip().split(':')[1].strip())
-			word = line[len(line)-1]
+			starti = 0
+			while line[starti]!='#':
+				starti += 1
+			word = ''
+			for i in range(starti+1, len(line)):
+				word += line[i] + ' '
+			word = word.strip()
 			score = scores[index]
 			index += 1
 			if id in ranking_data.keys():
