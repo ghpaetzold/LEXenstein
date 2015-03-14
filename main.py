@@ -1,5 +1,6 @@
 from lexenstein.morphadorner import MorphAdornerToolkit
 from lexenstein.generators import *
+from lexenstein.evaluators import *
 from lexenstein.selectors import *
 from lexenstein.features import *
 from lexenstein.rankers import *
@@ -36,6 +37,10 @@ br.trainRanker('./corpora/lexmturk_test.txt', 1, 'modified_huber', 'l1', 0.1, 0.
 rankings = br.getRankings('./corpora/lexmturk_test.txt')
 print('Boundary')
 print(str(rankings))
+
+re = RankerEvaluator()
+t1, t2, t3, r1, r2, r3 = re.rankerIntrinsicEvaluation('./corpora/lexmturk_test.txt', rankings)
+print(str(t1) + ' ' + str(t2) + ' ' + str(t3) + ' ' + str(r1) + ' ' + str(r2) + ' ' + str(r3))
 
 kg = KauchakGenerator(m, './corpora/all.fastalign.pos.txt', './corpora/all.fastalign.forward.txt', './corpora/stop_words.txt')
 subs = kg.getSubstitutions('./corpora/lexmturk_test.txt')

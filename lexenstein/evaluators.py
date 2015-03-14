@@ -76,7 +76,7 @@ class RankerEvaluator:
 	
 		#Read data:
 		index = -1
-		f = open(victor_corpus):
+		f = open(victor_corpus)
 		for data in f:
 			index += 1
 			line = data.strip().split('\t')
@@ -86,7 +86,15 @@ class RankerEvaluator:
 				word = subst_data[1].strip()
 				ranking = subst_data[0].strip()
 				gold_rankings[word] = ranking
-			ranked_candidates = rankings[i]
+			ranked_candidates = rankings[index]
+
+			first = gold_rankings[ranked_candidates[0]]
+			
+			print('')
+			print('Gold:')
+			for key in gold_rankings.keys():
+				print(key + ': ' + str(gold_rankings[key]))
+			print('Cands: ' + str(ranked_candidates))
 	
 			#Get recall sets:
 			set1, set2, set3 = self.getRecallSets(line[3:len(line)])
@@ -103,7 +111,7 @@ class RankerEvaluator:
 			total1 += 1
 	
 			#Calculate TRank 2:
-			if len(tuples)>2:
+			if len(gold_rankings.keys())>2:
 				rankedset2 = rankedset1.union(set([ranked_candidates[1]]))
 				recall2 += len(rankedset2.intersection(set2))
 				trecall2 += len(set2)
@@ -112,7 +120,7 @@ class RankerEvaluator:
 				total2 += 1
 	
 			#Calculate TRank 3:
-			if len(tuples)>3:
+			if len(gold_rankings.keys())>3:
 				rankedset3 = rankedset2.union(set([ranked_candidates[2]]))
 				recall3 += len(rankedset3.intersection(set3))
 				trecall3 += len(set3)
@@ -123,7 +131,7 @@ class RankerEvaluator:
 		#Return measures:
 		return float(corrects1)/float(total1), float(corrects2)/float(total2), float(corrects3)/float(total3), float(recall1)/float(trecall1), float(recall2)/float(trecall2), float(recall3)/float(trecall3)
 		
-	def getRecallSets(substs):
+	def getRecallSets(self, substs):
 		result1 = set([])
 		result2 = set([])
 		result3 = set([])
