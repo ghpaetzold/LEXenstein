@@ -153,3 +153,33 @@ class RankerEvaluator:
 			elif index=="3":
 				result3.add(word)
 		return result1, result2, result3
+
+class PipelineEvaluator:
+
+	def evaluatePipeline(self, victor_corpus, rankings):
+		#Initialize counting variables:
+		total = 0
+		totalc = 0
+		precise = 0
+		
+		#Read victor corpus:
+		f = open(victor_corpus)
+		for i in range(rankings):
+			#Get gold candidates:
+			data = f.readline().strip().split('\t')
+			target = data[1].strip()
+			data = data[3:len(data)]
+			gold_subs = set([item.strip().split(':')[1].strip() for item in data])
+			
+			#Get highest ranked candidate:
+			first = rankings[i][0]
+			
+			#Check if it is in gold candidates:
+			total += 1
+			if first!=target:
+				totalc += 1
+				if first in gold_subs:
+					precise += 1
+		
+		#Return metrics:
+		return float(precise)/float(totalc), float(precise)/float(total), float(totalc)/float(total)
