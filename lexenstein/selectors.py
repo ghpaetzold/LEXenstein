@@ -34,7 +34,7 @@ class VoidSelector:
 			
 			newline = sentence + '\t' + target + '\t' + head + '\t'
 			for sub in subs:
-				newline += '0:'+subs + '\t'
+				newline += '0:'+sub + '\t'
 			o.write(newline.strip() + '\n')
 		f.close()
 		o.close()

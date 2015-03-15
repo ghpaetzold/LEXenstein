@@ -164,7 +164,7 @@ class PipelineEvaluator:
 		
 		#Read victor corpus:
 		f = open(victor_corpus)
-		for i in range(rankings):
+		for i in range(0, len(rankings)):
 			#Get gold candidates:
 			data = f.readline().strip().split('\t')
 			target = data[1].strip()
