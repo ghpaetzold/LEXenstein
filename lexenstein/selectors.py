@@ -22,6 +22,22 @@ class VoidSelector:
 			selected_substitutions.append(candidates)
 		lexf.close()
 		return selected_substitutions
+		
+	def toVictorFormat(self, victor_corpus, substitutions, output_path, addTargetAsCandidate=False):
+		o = open(output_path, 'w')
+		f = open(victor_corpus)
+		for subs in substitutions:
+			data = f.readline().strip().split('\t')
+			sentence = data[0].strip()
+			target = data[1].strip()
+			head = data[2].strip()
+			
+			newline = sentence + '\t' + target + '\t' + head + '\t'
+			for sub in subs:
+				newline += '0:'+subs + '\t'
+			o.write(newline.strip() + '\n')
+		f.close()
+		o.close()
 
 class BiranSelector:
 
