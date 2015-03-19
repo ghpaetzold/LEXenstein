@@ -1,0 +1,11 @@
+- parallel_pos_file (parsed file of parallel sentences):
+	1. You can use the one available at "resources/generator/kauchak_generator/alignment_pos_file.txt"
+	2. You can use your own parallel corpora, parse it and change its format to the one used for "resources/kauchak_generator/alignment_pos_file.txt".
+	
+- alignments_file (alignments file in Pharaoh format):
+	1. You can use the one available at "resources/generator/kauchak_generator/alignments.txt"
+	2. You can use any aligner of your choice to produce the alignments over the chosen parallel corpora.
+
+- stop_words (list of stop words):
+	1. You can use the one available at "resources/stop_words/stop_words.txt"
+	2. You can create your own or download other lists from other resources.

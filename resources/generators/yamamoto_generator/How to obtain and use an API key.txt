@@ -1,0 +1,8 @@
+1. Visit the page http://www.dictionaryapi.com/register/index.htm
+2. Fill in your personal information.
+3. In "Request API Key #1:" and "Request API Key #2:", select "Collegiate Dictionary" and "Collegiate Thesaurus".
+4. Login in http://www.dictionaryapi.com
+5. Visit your "My Keys" page.
+6. Use the "Dictionary" to create a YamamotoGenerator object.
+
+Important: Please access http://www.dictionaryapi.com/info/frequently-asked-questions.htm and read carefully about API usage limits.
