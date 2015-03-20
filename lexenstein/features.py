@@ -220,11 +220,11 @@ class FeatureEstimator:
 				resultma.append(maxdepth)
 		return resultma
 		
-	def addLexiconFeature(self, path, orientation):
+	def addLexiconFeature(self, lexicon, orientation):
 		if orientation not in ['Complexity', 'Simplicity']:
 			print('Orientation must be Complexity or Simplicity')
 		else:
-			self.features.append((self.lexiconFeature, [path]))
+			self.features.append((self.lexiconFeature, [lexicon]))
 			self.identifiers.append(('Lexicon Occurrence', orientation))
 	
 	def addLengthFeature(self, orientation):
@@ -241,20 +241,20 @@ class FeatureEstimator:
 			self.features.append((self.syllableFeature, [mat]))
 			self.identifiers.append(('Syllable Count', orientation))
 		
-	def addCollocationalFeature(self, lm, leftw, rightw, orientation):
+	def addCollocationalFeature(self, language_model, leftw, rightw, orientation):
 		if orientation not in ['Complexity', 'Simplicity']:
 			print('Orientation must be Complexity or Simplicity')
 		else:
-			self.features.append((self.collocationalFeature, [lm, leftw, rightw]))
+			self.features.append((self.collocationalFeature, [language_model, leftw, rightw]))
 			for i in range(0, leftw+1):
 				for j in range(0, rightw+1):
 					self.identifiers.append(('Collocational Feature (' + str(i) + ', ' + str(j) + ')', orientation))
 		
-	def addSentenceProbabilityFeature(self, lm, orientation):
+	def addSentenceProbabilityFeature(self, language_model, orientation):
 		if orientation not in ['Complexity', 'Simplicity']:
 			print('Orientation must be Complexity or Simplicity')
 		else:
-			self.features.append((self.sentenceProbabilityFeature, [lm]))
+			self.features.append((self.sentenceProbabilityFeature, [language_model]))
 			self.identifiers.append(('Sentence Probability', orientation))
 		
 	def addSenseCountFeature(self, orientation):

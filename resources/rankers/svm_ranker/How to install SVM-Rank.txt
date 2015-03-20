@@ -1,0 +1,2 @@
+1. Download and install SVM-Rank from http://www.cs.cornell.edu/people/tj/svm_light/svm_rank.html in a folder of your choice
+2. Use the path to the folder in which you installed SVM-Rank to create an instance of SVMRanker.

@@ -1,0 +1,6 @@
+1. Download and install Word2Vec in your machine from https://code.google.com/p/word2vec/
+2. Gather large amounts of corpora (>10 billion words). You can find some sources of data in https://code.google.com/p/word2vec/
+3. With Word2Vec installed, run it with the following command line:
+	./word2vec -train <corpus> -output <output_path> -cbow 1 -size 300 -window 5 -negative 3 -hs 0 -sample 1e-5 -threads 12 -binary 1 -min-count 10
+
+Important: The command line above creates word vectors with 300 dimensions and considers only a window of 5 tokens around each word. You can customize those parameters if you wish.
