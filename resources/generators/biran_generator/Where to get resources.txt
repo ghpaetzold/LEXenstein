@@ -9,13 +9,13 @@ simple_vocab (vocabulary of simple words):
 		ngram-count -text [corpus_of_simple_text] -write-vocab [vocabulary_name]
 		
 complex_lm (language model of complex text):
-	1. You can download the one produced over Wikipedia articles from xxx
-	2. You can use KenLM to build your own using the following command line:
-		lmplz -o [order] <[corpus_of_complex_text] >[language_model_name]
+	1. Download Wikipedia data from David Kauchak's page: http://www.cs.pomona.edu/~dkauchak/simplification/
+        2. Use KenLM to build the language model using the following command line:
+                lmplz -o [order] <[corpus_of_simple_text] >[language_model_name]
 		
 simple_lm (language model of simple text):
-	1. You can download the one produced over Simple Wikipedia articles from xxx
-	2. You can use KenLM to build your own using the following command line:
+	1. Download Simple Wikipedia data from David Kauchak's page: http://www.cs.pomona.edu/~dkauchak/simplification/
+	2. Use KenLM to build the language model using the following command line:
 		lmplz -o [order] <[corpus_of_simple_text] >[language_model_name]
 		
 Important: We strongly recommend that you create a binary version of the language model using KenLM with the following command line:
