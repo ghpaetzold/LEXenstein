@@ -2,6 +2,17 @@
 class GeneratorEvaluator:
 
 	def evaluateGenerator(self, victor_corpus, substitutions):
+		"""
+		Performs an intrinsic evaluation of a Substitution Generation approach.
+	
+		@param victor_corpus: Path to a training corpus in VICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@param substitutions: A dictionary that assigns target complex words to sets of candidate substitutions.
+		Example: substitutions['perched'] = {'sat', 'roosted'}
+		@return precision,recall: Values for Precision and Recall for the substitutions provided as input with respect to the gold-standard in the VICTOR corpus.
+		For more information on how the metrics are calculated, please refer to the LEXenstein Manual.
+		"""
+		
 		#Initialize variables:
 		precisionc = 0
 		precisiont = 0
@@ -30,6 +41,16 @@ class GeneratorEvaluator:
 class SelectorEvaluator:
 
 	def evaluateSelector(self, victor_corpus, substitutions):
+		"""
+		Performs an intrinsic evaluation of a Substitution Selection approach.
+	
+		@param victor_corpus: Path to a training corpus in VICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@param substitutions: A vector of size N, containing a set of selected substitutions for each instance in the VICTOR corpus.
+		@return precision,recall: Values for Precision and Recall for the substitutions provided as input with respect to the gold-standard in the VICTOR corpus.
+		For more information on how the metrics are calculated, please refer to the LEXenstein Manual.
+		"""
+	
 		#Initialize variables:
 		precisionc = 0
 		precisiont = 0
@@ -62,7 +83,17 @@ class SelectorEvaluator:
 
 class RankerEvaluator:
 
-	def rankerIntrinsicEvaluation(self, victor_corpus, rankings):
+	def evaluateRanker(self, victor_corpus, rankings):
+		"""
+		Performs an intrinsic evaluation of a Substitution Ranking approach.
+	
+		@param victor_corpus: Path to a training corpus in VICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@param substitutions: A vector of size N, containing a set of selected substitutions for each instance in the VICTOR corpus.
+		@return TRank-at-1~3,recall-at-1~3: Values for TRank and Recall for the substitutions provided as input with respect to the gold-standard in the VICTOR corpus.
+		For more information on how the metrics are calculated, please refer to the LEXenstein Manual.
+		"""
+		
 		#Initialize variables:
 		total1 = 0
 		total2 = 0
@@ -156,6 +187,17 @@ class RankerEvaluator:
 class PipelineEvaluator:
 
 	def evaluatePipeline(self, victor_corpus, rankings):
+		"""
+		Performs a round-trip evaluation of a Substitution Generation, Selection and Ranking approach combined.
+	
+		@param victor_corpus: Path to a training corpus in VICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@param rankings: A list of ranked candidates for each instance in the VICTOR corpus, from simplest to most complex.
+		One should produce candidates with a Substitution Generation approach, select them for a given VICTOR corpus with a Substitution Selection approach, then rank them with a Substitution Ranking approach.
+		@return precision,accuracy,changed: Values for Precision, Accuracy and Changed Proportion for the substitutions provided as input with respect to the gold-standard in the VICTOR corpus.
+		For more information on how the metrics are calculated, please refer to the LEXenstein Manual.
+		"""
+	
 		#Initialize counting variables:
 		total = 0
 		totalc = 0

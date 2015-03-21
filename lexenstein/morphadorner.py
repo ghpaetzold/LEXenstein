@@ -3,6 +3,12 @@ import subprocess
 class MorphAdornerToolkit:
 
 	def __init__(self, path):
+		"""
+		Creates an instance of the MorphAdornerToolkit class.
+	
+		@param path: Path to the root installation folder of Morph Adorner Toolkit.
+		"""
+		
 		self.root = path
 		if not self.root.endswith('/'):
 			self.root += '/'
@@ -14,6 +20,13 @@ class MorphAdornerToolkit:
 		self.syllabler = self.root + 'SyllableSplitter/SyllableSplitter.jar'
 	
 	def lemmatizeWords(self, words):
+		"""
+		Lemmatizes a set of words.
+	
+		@param words: List of words to be lemmatized.
+		@return lemmas: List of the lemmas of the words passed as input.
+		"""
+		
 		input = ''
 		for word in words:
 			input += word + '\n'
@@ -27,6 +40,13 @@ class MorphAdornerToolkit:
 		return result
 		
 	def stemWords(self, words):
+		"""
+		Porter stems a set of words.
+	
+		@param words: List of words to be Porter stemmed.
+		@return stems: List of the Porter stems of the words passed as input.
+		"""
+	
 		input = ''
 		for word in words:
 			input += word + '\n'
@@ -40,6 +60,15 @@ class MorphAdornerToolkit:
 		return result
 
 	def conjugateVerbs(self, lemmas, tense):
+		"""
+		Conjugate a set of verbs in a given tense.
+	
+		@param lemmas: Lemmas of verbs to be conjugated.
+		@param tense: Tense in which to conjugate the verbs.
+		Tenses available: PAST, PAST_PARTICIPLE, PAST_PERFECT, PAST_PERFECT_PARTICIPLE, PERFECT, PRESENT, PRESENT_PARTICIPLE.
+		@return verbs: List of the conjugated versions of the verb lemmas passed as input.
+		"""
+		
 		input = ''
 		for lemma in lemmas:
 			input += lemma + ' ' + tense +  '\n'
@@ -54,6 +83,15 @@ class MorphAdornerToolkit:
 
 
 	def inflectNouns(self, lemmas, number):
+		"""
+		Inflect a list of nouns to its singular or plural form.
+	
+		@param lemmas: Lemmas of nouns to be inflected.
+		@param number: Form in which to inflect the lemmas.
+		Forms available: singular, plural.
+		@return nouns: List of the inflected versions of the noun lemmas passed as input.
+		"""
+		
 		input = ''
 		for lemma in lemmas:
 			input += lemma + ' ' + number +  '\n'
@@ -67,6 +105,15 @@ class MorphAdornerToolkit:
 		return result
 
 	def tenseVerbs(self, lemmas, verbs):
+		"""
+		Retrieve the tense of a given set of verbs.
+	
+		@param lemmas: Lemmas of verbs to be tensed.
+		@param verbs: Verbs in their original forms.
+		@return tenses: List of the tenses of the verb passed as input.
+		Tenses available: PAST, PAST_PARTICIPLE, PAST_PERFECT, PAST_PERFECT_PARTICIPLE, PERFECT, PRESENT, PRESENT_PARTICIPLE.
+		"""
+		
 		input = ''
 		for i in range(0, len(lemmas)):
 			input += lemmas[i] + ' ' + verbs[i] +  '\n'
@@ -81,6 +128,13 @@ class MorphAdornerToolkit:
 
 
 	def splitSyllables(self, words):
+		"""
+		Splits a set of words in syllables.
+	
+		@param words: List of words to be lemmatized.
+		@return syllables: List of words with their syllables separated by hyphen markers.
+		"""
+		
 		input = ''
 		for word in words:
 			input += word + '\n'

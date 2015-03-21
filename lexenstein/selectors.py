@@ -7,6 +7,15 @@ import numpy as np
 class VoidSelector:
 
 	def selectCandidates(self, substitutions, victor_corpus):
+		"""
+		Selects which candidates can replace the target complex words in each instance of a VICTOR corpus.
+	
+		@param substitutions: A dictionary linking complex words to a set of candidate substitutions
+		Example: substitutions['perched'] = {'sat', 'roosted'}
+		@param victor_corpus: Path to a corpus in the VICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@return selected_substitutions: Returns a vector of size N, containing a set of selected substitutions for each instance in the VICTOR corpus.
+		"""
 		selected_substitutions = []				
 
 		lexf = open(victor_corpus)
@@ -24,6 +33,14 @@ class VoidSelector:
 		return selected_substitutions
 		
 	def toVictorFormat(self, victor_corpus, substitutions, output_path, addTargetAsCandidate=False):
+		"""
+		Saves a set of selected substitutions in a file in VICTOR format.
+	
+		@param victor_corpus: Path to the corpus in the VICTOR format to which the substitutions were selected.
+		@param substitutions: The vector of substitutions selected for the VICTOR corpus.
+		@param output_path: The path in which to save the resulting VICTOR corpus.
+		@param addTargetAsCandidate: If True, adds the target complex word of each instance as a candidate substitution.
+		"""
 		o = open(output_path, 'w')
 		f = open(victor_corpus)
 		for subs in substitutions:
@@ -42,24 +59,28 @@ class VoidSelector:
 class BiranSelector:
 
 	def __init__(self, cooc_model):
+		"""
+		Creates an instance of the BiranSelector class.
+	
+		@param cooc_model: Path to a word co-occurrence model.
+		For instructions on how to create the model, please refer to the LEXenstein Manual.
+		"""
 		self.model = self.getModel(cooc_model)
 		
-	def getModel(self, path):
-		result = {}
-		f = open(path)
-		for line in f:
-			data = line.strip().split('\t')
-			target = data[0].strip()
-			coocs = data[1:len(data)]
-			result[target] = {}
-			for cooc in coocs:
-				coocd = cooc.strip().split(':')
-				word = coocd[0].strip()
-				count = int(coocd[1].strip())
-				result[target][word] = count
-		return result
-		
 	def selectCandidates(self, substitutions, victor_corpus, common_distance, candidate_distance):
+		"""
+		Selects which candidates can replace the target complex words in each instance of a VICTOR corpus.
+	
+		@param substitutions: A dictionary linking complex words to a set of candidate substitutions
+		Example: substitutions['perched'] = {'sat', 'roosted'}
+		@param victor_corpus: Path to a corpus in the VICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@param common_distance: The cutoff minimum distance from the sentence's co-occurrence vector and the common vector between the target complex word and the candidate.
+		We recommend using very small values, such as 0.01, or even 0.0.
+		@param candidate_distance: The cutoff maximum distance from the sentence's co-occurrence vector and the candidate vector.
+		We recommend using values close to 1.0, such as 0.8, or 0.9.
+		@return selected_substitutions: Returns a vector of size N, containing a set of selected substitutions for each instance in the VICTOR corpus.
+		"""
 		selected_substitutions = []				
 
 		lexf = open(victor_corpus)
@@ -96,6 +117,21 @@ class BiranSelector:
 		lexf.close()
 		return selected_substitutions
 		
+	def getModel(self, path):
+		result = {}
+		f = open(path)
+		for line in f:
+			data = line.strip().split('\t')
+			target = data[0].strip()
+			coocs = data[1:len(data)]
+			result[target] = {}
+			for cooc in coocs:
+				coocd = cooc.strip().split(':')
+				word = coocd[0].strip()
+				count = int(coocd[1].strip())
+				result[target][word] = count
+		return result
+	
 	def getCosine(self, vec1, vec2):
 		all_keys = sorted(list(set(vec1.keys()).union(set(vec2.keys()))))
 		v1 = []
@@ -167,13 +203,60 @@ class BiranSelector:
 		for i in range(head+1, len(tokens)):
 			result += tokens[i] + ' '
 		return result.strip()
+		
+	def toVictorFormat(self, victor_corpus, substitutions, output_path, addTargetAsCandidate=False):
+		"""
+		Saves a set of selected substitutions in a file in VICTOR format.
+	
+		@param victor_corpus: Path to the corpus in the VICTOR format to which the substitutions were selected.
+		@param substitutions: The vector of substitutions selected for the VICTOR corpus.
+		@param output_path: The path in which to save the resulting VICTOR corpus.
+		@param addTargetAsCandidate: If True, adds the target complex word of each instance as a candidate substitution.
+		"""
+		o = open(output_path, 'w')
+		f = open(victor_corpus)
+		for subs in substitutions:
+			data = f.readline().strip().split('\t')
+			sentence = data[0].strip()
+			target = data[1].strip()
+			head = data[2].strip()
+			
+			newline = sentence + '\t' + target + '\t' + head + '\t'
+			for sub in subs:
+				newline += '0:'+sub + '\t'
+			o.write(newline.strip() + '\n')
+		f.close()
+		o.close()
 	
 class WordVectorSelector:
 	
 	def __init__(self, vector_model):
+		"""
+		Creates an instance of the WordVectorSelector class.
+	
+		@param vector_model: Path to a word vector model.
+		For instructions on how to create the model, please refer to the LEXenstein Manual.
+		"""
 		self.model = gensim.models.word2vec.Word2Vec.load_word2vec_format(vector_model, binary=True)
 	
 	def selectCandidates(self, substitutions, victor_corpus, proportion=1.0, stop_words_file=None, window=99999, onlyInformative=False, keepTarget=False, onePerWord=False):
+		"""
+		Selects which candidates can replace the target complex words in each instance of a VICTOR corpus.
+	
+		@param substitutions: A dictionary linking complex words to a set of candidate substitutions
+		Example: substitutions['perched'] = {'sat', 'roosted'}
+		@param victor_corpus: Path to a corpus in the VICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@param proportion: Percentage of substitutions to keep.
+		@param stop_words_file: Path to the file containing stop words of the desired language.
+		The file must contain one stop word per line.
+		@param window: Number of tokens around the target complex sentence to consider as its context.
+		@param onlyInformative: If True, only content words are considered as part of the complex word's context, such as nouns, verbs, adjectives and adverbs.
+		@param keepTarget: If True, the complex target word is also included as part of its context.
+		@param onePerWord: If True, a word in the complex word's context can only contribute once to its resulting word vector.
+		@return selected_substitutions: Returns a vector of size N, containing a set of selected substitutions for each instance in the VICTOR corpus.
+		"""
+		
 		stop_words = set([])
 		if stop_words_file != None:
 			stop_words = set([word.strip() for word in open(stop_words_file)])
@@ -274,18 +357,49 @@ class WordVectorSelector:
 	def getFinalCandidates(self, candidate_dists, proportion):
 		result = sorted(list(candidate_dists.keys()), key=candidate_dists.__getitem__)
 		return result[0:max(1, int(proportion*float(len(result))))]
+		
+	def toVictorFormat(self, victor_corpus, substitutions, output_path, addTargetAsCandidate=False):
+		"""
+		Saves a set of selected substitutions in a file in VICTOR format.
+	
+		@param victor_corpus: Path to the corpus in the VICTOR format to which the substitutions were selected.
+		@param substitutions: The vector of substitutions selected for the VICTOR corpus.
+		@param output_path: The path in which to save the resulting VICTOR corpus.
+		@param addTargetAsCandidate: If True, adds the target complex word of each instance as a candidate substitution.
+		"""
+		o = open(output_path, 'w')
+		f = open(victor_corpus)
+		for subs in substitutions:
+			data = f.readline().strip().split('\t')
+			sentence = data[0].strip()
+			target = data[1].strip()
+			head = data[2].strip()
+			
+			newline = sentence + '\t' + target + '\t' + head + '\t'
+			for sub in subs:
+				newline += '0:'+sub + '\t'
+			o.write(newline.strip() + '\n')
+		f.close()
+		o.close()
 
 class WSDSelector:
 
 	def __init__(self, method):
+		"""
+		Creates an instance of the WSDSelector class.
+	
+		@param vector_model: Type of Word Sense Disambiguation algorithm to use.
+		Options available:
+		lesk: Original lesk algorithm.
+		path: Path similarity algorithm.
+		random: Random sense from WordNet.
+		first: First sense from WordNet.
+		"""
+		
 		if method == 'lesk':
 			self.WSDfunction = self.getLeskSense
-		elif method == 'leacho':
-			self.WSDfunction = self.getLeaChoSense
 		elif method == 'path':
 			self.WSDfunction = self.getPathSense
-		elif method == 'wupalmer':
-			self.WSDfunction = self.getWuPalmerSense
 		elif method == 'random':
 			self.WSDfunction = self.getRandomSense
 		elif method == 'first':
@@ -294,6 +408,16 @@ class WSDSelector:
 			self.WSDfunction = self.getLeskSense
 		
 	def selectCandidates(self, substitutions, victor_corpus):
+		"""
+		Selects which candidates can replace the target complex words in each instance of a VICTOR corpus.
+	
+		@param substitutions: A dictionary linking complex words to a set of candidate substitutions
+		Example: substitutions['perched'] = {'sat', 'roosted'}
+		@param victor_corpus: Path to a corpus in the VICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@return selected_substitutions: Returns a vector of size N, containing a set of selected substitutions for each instance in the VICTOR corpus.
+		"""
+		
 		selected_substitutions = []				
 
 		lexf = open(victor_corpus)
@@ -337,20 +461,6 @@ class WSDSelector:
 			return result
 		except IndexError:
 			return None
-	
-	def getLeaChoSense(self, sentence, target):
-		try:
-			result = pywsd.similarity.max_similarity(sentence, target, option="lch", best=False)
-			return result
-		except IndexError:
-			return None
-			
-	def getWuPalmerSense(self, sentence, target):
-		try:
-			result = pywsd.similarity.max_similarity(sentence, target, option="wup", best=False)
-			return result
-		except IndexError:
-			return None
 			
 	def getRandomSense(self, sentence, target):
 		try:
@@ -382,3 +492,27 @@ class WSDSelector:
 		for i in range(head+1, len(tokens)):
 			result += tokens[i] + ' '
 		return result.strip()
+
+	def toVictorFormat(self, victor_corpus, substitutions, output_path, addTargetAsCandidate=False):
+		"""
+		Saves a set of selected substitutions in a file in VICTOR format.
+	
+		@param victor_corpus: Path to the corpus in the VICTOR format to which the substitutions were selected.
+		@param substitutions: The vector of substitutions selected for the VICTOR corpus.
+		@param output_path: The path in which to save the resulting VICTOR corpus.
+		@param addTargetAsCandidate: If True, adds the target complex word of each instance as a candidate substitution.
+		"""
+		o = open(output_path, 'w')
+		f = open(victor_corpus)
+		for subs in substitutions:
+			data = f.readline().strip().split('\t')
+			sentence = data[0].strip()
+			target = data[1].strip()
+			head = data[2].strip()
+			
+			newline = sentence + '\t' + target + '\t' + head + '\t'
+			for sub in subs:
+				newline += '0:'+sub + '\t'
+			o.write(newline.strip() + '\n')
+		f.close()
+		o.close()

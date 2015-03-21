@@ -10,12 +10,31 @@ import codecs
 class KauchakGenerator:
 
 	def __init__(self, mat, parallel_pos_file, alignments_file, stop_words):
+		"""
+		Creates a KauchakGenerator instance.
+	
+		@param mat: MorphAdornerToolkit object.
+		@param parallel_pos_file: Path to the parsed parallel corpus from which to extract substitutions.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@param alignments_file: Path to the alignments for the parsed parallel corpus from which to extract substitutions.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@param stop_words: Path to the file containing stop words of the desired language.
+		The file must contain one stop word per line.
+		"""
 		self.mat = mat
 		self.parallel_pos_file = parallel_pos_file
 		self.alignments_file = alignments_file
 		self.stop_words = set([word.strip() for word in open(stop_words)])
 
 	def getSubstitutions(self, victor_corpus):
+		"""
+		Generates substitutions for the target words of a corpus in VICTOR format.
+	
+		@param victor_corpus: Path to a corpus in the VICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@return substitutions: A dictionary that assigns target complex words to sets of candidate substitutions.
+		Example: substitutions['perched'] = {'sat', 'roosted'}
+		"""
 		#Get candidate->pos map:
 		print('Getting POS map...')
 		target_pos = self.getPOSMap(victor_corpus)
@@ -285,10 +304,25 @@ class KauchakGenerator:
 class YamamotoGenerator:
 
 	def __init__(self, mat, dictionary_key):
+		"""
+		Creates a YamamotoGenerator instance.
+	
+		@param mat: MorphAdornerToolkit object.
+		@param dictionary_key: Key for the Merriam Dictionary.
+		For more information on how to get the key for free, please refer to the LEXenstein Manual
+		"""
 		self.mat = mat
 		self.dictionary_key = dictionary_key
 
 	def getSubstitutions(self, victor_corpus):
+		"""
+		Generates substitutions for the target words of a corpus in VICTOR format.
+	
+		@param victor_corpus: Path to a corpus in the VICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@return substitutions: A dictionary that assigns target complex words to sets of candidate substitutions.
+		Example: substitutions['perched'] = {'sat', 'roosted'}
+		"""
 		#Get initial set of substitutions:
 		print('Getting initial set of substitutions...')
 		substitutions_initial = self.getInitialSet(victor_corpus)
@@ -540,10 +574,25 @@ class YamamotoGenerator:
 class MerriamGenerator:
 
 	def __init__(self, mat, thesaurus_key):
+		"""
+		Creates a MerriamGenerator instance.
+	
+		@param mat: MorphAdornerToolkit object.
+		@param dictionary_key: Key for the Merriam Thesaurus.
+		For more information on how to get the key for free, please refer to the LEXenstein Manual
+		"""
 		self.mat = mat
 		self.thesaurus_key = thesaurus_key
 
 	def getSubstitutions(self, victor_corpus):
+		"""
+		Generates substitutions for the target words of a corpus in VICTOR format.
+	
+		@param victor_corpus: Path to a corpus in the VICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@return substitutions: A dictionary that assigns target complex words to sets of candidate substitutions.
+		Example: substitutions['perched'] = {'sat', 'roosted'}
+		"""
 		#Get initial set of substitutions:
 		print('Getting initial set of substitutions...')
 		substitutions_initial = self.getInitialSet(victor_corpus)
@@ -800,9 +849,23 @@ class MerriamGenerator:
 class WordnetGenerator:
 
 	def __init__(self, mat):
+		"""
+		Creates a WordnetGenerator instance.
+	
+		@param mat: MorphAdornerToolkit object.
+		"""
 		self.mat = mat
 
 	def getSubstitutions(self, victor_corpus):
+		"""
+		Generates substitutions for the target words of a corpus in VICTOR format.
+	
+		@param victor_corpus: Path to a corpus in the VICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@return substitutions: A dictionary that assigns target complex words to sets of candidate substitutions.
+		Example: substitutions['perched'] = {'sat', 'roosted'}
+		"""
+		
 		#Get initial set of substitutions:
 		print('Getting initial set of substitutions...')
 		substitutions_initial = self.getInitialSet(victor_corpus)
@@ -1045,6 +1108,20 @@ class WordnetGenerator:
 class BiranGenerator:
 
 	def __init__(self, mat, complex_vocab, simple_vocab, complex_lm, simple_lm):
+		"""
+		Creates a BiranGenerator instance.
+	
+		@param mat: MorphAdornerToolkit object.
+		@param complex_vocab: Path to a vocabulary of complex words.
+		For more information on how to create the file, refer to the LEXenstein Manual.
+		@param simple_vocab: Path to a vocabulary of simple words.
+		For more information on how to create the file, refer to the LEXenstein Manual.
+		@param complex_lm: Path to a language model built over complex text.
+		For more information on how to create the file, refer to the LEXenstein Manual.
+		@param simple_lm: Path to a language model built over simple text.
+		For more information on how to create the file, refer to the LEXenstein Manual.
+		"""
+
 		self.complex_vocab = self.getVocab(complex_vocab)
 		self.simple_vocab = self.getVocab(simple_vocab)
 		self.complex_lm = kenlm.LanguageModel(complex_lm)
@@ -1052,6 +1129,15 @@ class BiranGenerator:
 		self.mat = mat
 
 	def getSubstitutions(self, victor_corpus):
+		"""
+		Generates substitutions for the target words of a corpus in VICTOR format.
+	
+		@param victor_corpus: Path to a corpus in the VICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@return substitutions: A dictionary that assigns target complex words to sets of candidate substitutions.
+		Example: substitutions['perched'] = {'sat', 'roosted'}
+		"""
+		
 		#Get initial set of substitutions:
 		print('Getting initial set of substitutions...')
 		substitutions_initial = self.getInitialSet(victor_corpus)

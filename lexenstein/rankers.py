@@ -6,10 +6,35 @@ from sklearn import linear_model
 class BoundaryRanker:
 
 	def __init__(self, fe):
+		"""
+		Creates an instance of the BoundaryRanker class.
+	
+		@param fe: A configured FeatureEstimator object.
+		"""
+		
 		self.fe = fe
 		self.classifier = None
 		
 	def trainRanker(self, victor_corpus, positive_range, loss, penalty, alpha, l1_ratio, epsilon):
+		"""
+		Trains a Boundary Ranker according to the parameters provided.
+	
+		@param victor_corpus: Path to a training corpus in VICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@param positive_range: Maximum rank to which label 1 is assigned in the binary classification setup.
+		Recommended value: 1.
+		@param loss: Loss function to be used.
+		Values available: hinge, log, modified_huber, squared_hinge, perceptron.
+		@param penalty: Regularization term to be used.
+		Values available: l2, l1, elasticnet.
+		@param alpha: Constant that multiplies the regularization term.
+		Recommended values: 0.0001, 0.001, 0.01, 0.1
+		@param l1_ratio: Elastic net mixing parameter.
+		Recommended values: 0.05, 0.10, 0.15
+		@param epsilon: Acceptable error margin.
+		Recommended values: 0.0001, 0.001
+		"""
+	
 		#Read victor corpus:
 		data = []
 		f = open(victor_corpus)
@@ -26,6 +51,15 @@ class BoundaryRanker:
 		self.classifier.fit(X, Y)
 		
 	def getRankings(self, victor_corpus):
+		"""
+		Ranks candidates with respect to their simplicity.
+		Requires for the trainRanker function to be previously called so that a model can be trained.
+	
+		@param victor_corpus: Path to a testing corpus in VICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@return rankings: A list of ranked candidates for each instance in the VICTOR corpus, from simplest to most complex.
+		"""
+		
 		#Read victor corpus:
 		data = []
 		f = open(victor_corpus)
@@ -70,12 +104,28 @@ class BoundaryRanker:
 class SVMRanker:
 
 	def __init__(self, fe, svmrank_path):
+		"""
+		Creates an instance of the SVMRanker class.
+	
+		@param fe: A configured FeatureEstimator object.
+		@param svmrank_path: Path to SVM-Rank's root installation folder.
+		"""
+		
 		self.fe = fe
 		self.svmrank = svmrank_path
 		if not self.svmrank.endswith('/'):
 			self.svmrank += '/'
 	
 	def getFeaturesFile(self, victor_corpus, output_file):
+		"""
+		Creates a file containing feature values in SVM-Rank format.
+		Produces the "features_file" parameter for functions getTrainingModel, getScoresFile and getRankings.
+	
+		@param victor_corpus: Path to a corpus in the VICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@param output_file: Path in which to save the resulting feature values.
+		"""
+		
 		#Read victor corpus:
 		data = []
 		f = open(victor_corpus)
@@ -104,18 +154,59 @@ class SVMRanker:
 		out.close()
 	
 	def getTrainingModel(self, features_file, c, epsilon, kernel, output_file):
+		"""
+		Trains an SVM-Rank ranking model.
+		The model produced can be used as the "model_file" parameter of the getScoresFile function.
+	
+		@param features_file: Path to features file produced over a training VICTOR corpus.
+		Should be produced by the getFeaturesFile function.
+		@param c: Trade-off between training error and margin.
+		Recommended values: 0.001, 0.01
+		@param epsilon: Acceptable error margin.
+		Recommended values: 0.00001, 0.0001
+		@param kernel: ID for the kernel to be used.
+		Kernels available:
+		0: Linear
+        1: Polynomial (s a*b+c)^d
+        2: Radial basis function exp(-gamma ||a-b||^2)
+        3: Sigmoid tanh(s a*b + c)
+		@param output_file: Path in which to save the resulting SVM-Rank model.
+		"""
+		
 		print('Training...')
 		comm = self.svmrank+'svm_rank_learn -c '+str(c)+' -e '+str(epsilon)+' -t '+str(kernel)+' '+features_file+' '+output_file
 		os.system(comm)
 		print('Trained!')
 	
 	def getScoresFile(self, features_file, model_file, output_file):
+		"""
+		Produces ranking scores in SVM-Rank format.
+		The scores file produced can be used as the "scores_file" parameter of the getRankings function.
+	
+		@param features_file: Path to features file produced over a testing VICTOR corpus.
+		Should be produced by the getFeaturesFile function.
+		@param model_file: Path to a trained model file in SVM-Rank format.
+		Should be produced by the getTrainingModel function.
+		@param output_file: Path in which to save the resulting ranking scores in SVM-Rank format.
+		"""
+		
 		print('Scoring...')
 		comm = self.svmrank+'svm_rank_classify '+features_file+' '+model_file+' '+output_file
 		os.system(comm)
 		print('Scored!')
 	
 	def getRankings(self, features_file, scores_file):
+		"""
+		Produces ranking scores in SVM-Rank format.
+		The scores file produced can be used as the "scores_file" parameter of the getRankings function.
+	
+		@param features_file: Path to features file produced over a testing VICTOR corpus.
+		Should be produced by the getFeaturesFile function.
+		@param scores_file: Path to a scores file in SVM-Rank format.
+		Should be produced by the getScoresFile function.
+		@return rankings: A list of ranked candidates, from simplest to most complex.
+		"""
+		
 		#Read features file:
 		f = open(features_file)
 		data = []
@@ -162,10 +253,26 @@ class SVMRanker:
 class MetricRanker:
 
 	def __init__(self, fe):
+		"""
+		Creates an instance of the MetricRanker class.
+	
+		@param fe: A configured FeatureEstimator object.
+		"""
+		
 		self.fe = fe
 		self.feature_values = None
 		
 	def getRankings(self, victor_corpus, featureIndex):
+		"""
+		Ranks candidates with respect to their simplicity.
+		Requires for the trainRanker function to be previously called so that a model can be trained.
+	
+		@param victor_corpus: Path to a testing corpus in VICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@param featureIndex: Index of the feature in the FeatureEstimator to be used as a ranking metric.
+		@return rankings: A list of ranked candidates for each instance in the VICTOR corpus, from simplest to most complex.
+		"""
+		
 		#If feature values are not available, then estimate them:
 		if self.feature_values == None:
 			self.feature_values = self.fe.calculateFeatures(victor_corpus)
