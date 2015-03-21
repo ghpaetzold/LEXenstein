@@ -7,6 +7,7 @@ from lexenstein.rankers import *
 
 m = MorphAdornerToolkit('./morph/')
 
+
 fe = FeatureEstimator()
 fe.addLexiconFeature('./corpora/basic_words.txt', 'Simplicity')
 fe.addLengthFeature('Complexity')
