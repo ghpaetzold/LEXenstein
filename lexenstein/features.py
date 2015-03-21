@@ -9,6 +9,14 @@ class FeatureEstimator:
 		self.identifiers = []
 		
 	def calculateFeatures(self, victor_corpus):
+		"""
+		Calculate the selected features over the candidates of a VICTOR corpus.
+	
+		@param victor_corpus: Path to a corpus in the VICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@return feature_matrix: Returns a MxN matrix, where M is the number of substitutions of all instances in the VICTOR corpus, and N the number of selected features.
+		"""
+	
 		data = [line.strip().split('\t') for line in open(victor_corpus)]
 		
 		values = []
@@ -221,6 +229,16 @@ class FeatureEstimator:
 		return resultma
 		
 	def addLexiconFeature(self, lexicon, orientation):
+		"""
+		Adds a lexicon feature to the estimator.
+		The value will be 1 if a given candidate is in the provided lexicon, and 0 otherwise.
+	
+		@param lexicon: Path to a file containing the words of the lexicon.
+		The file must have one word per line.
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Possible values: Complexity, Simplicity.
+		"""
+		
 		if orientation not in ['Complexity', 'Simplicity']:
 			print('Orientation must be Complexity or Simplicity')
 		else:
@@ -228,6 +246,14 @@ class FeatureEstimator:
 			self.identifiers.append(('Lexicon Occurrence', orientation))
 	
 	def addLengthFeature(self, orientation):
+		"""
+		Adds a word length feature to the estimator.
+		The value will be the number of characters in each candidate.
+	
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Possible values: Complexity, Simplicity.
+		"""
+		
 		if orientation not in ['Complexity', 'Simplicity']:
 			print('Orientation must be Complexity or Simplicity')
 		else:
@@ -235,6 +261,15 @@ class FeatureEstimator:
 			self.identifiers.append(('Word Length', orientation))
 	
 	def addSyllableFeature(self, mat, orientation):
+		"""
+		Adds a syllable count feature to the estimator.
+		The value will be the number of syllables of each candidate.
+	
+		@param mat: A configured MorphAdornerToolkit object.
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Possible values: Complexity, Simplicity.
+		"""
+		
 		if orientation not in ['Complexity', 'Simplicity']:
 			print('Orientation must be Complexity or Simplicity')
 		else:
@@ -242,6 +277,19 @@ class FeatureEstimator:
 			self.identifiers.append(('Syllable Count', orientation))
 		
 	def addCollocationalFeature(self, language_model, leftw, rightw, orientation):
+		"""
+		Adds a set of collocational features to the estimator.
+		The values will be the language model probabilities of all collocational features selected.
+		Each feature is the probability of an n-gram with 0<=l<=leftw tokens to the left and 0<=r<=rightw tokens to the right.
+		This method creates leftw*rightw+1 features.
+	
+		@param language_model: Path to the language model from which to extract probabilities.
+		@param leftw: Maximum number of tokens to the left.
+		@param rightw: Maximum number of tokens to the right.
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Possible values: Complexity, Simplicity.
+		"""
+		
 		if orientation not in ['Complexity', 'Simplicity']:
 			print('Orientation must be Complexity or Simplicity')
 		else:
@@ -251,6 +299,14 @@ class FeatureEstimator:
 					self.identifiers.append(('Collocational Feature (' + str(i) + ', ' + str(j) + ')', orientation))
 		
 	def addSentenceProbabilityFeature(self, language_model, orientation):
+		"""
+		Adds a sentence probability feature to the estimator.
+		The value will be the language model probability of each sentence in the VICTOR corpus with its target complex word replaced by a candidate.
+	
+		@param language_model: Path to the language model from which to extract probabilities.
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Possible values: Complexity, Simplicity.
+		"""
 		if orientation not in ['Complexity', 'Simplicity']:
 			print('Orientation must be Complexity or Simplicity')
 		else:
@@ -258,6 +314,14 @@ class FeatureEstimator:
 			self.identifiers.append(('Sentence Probability', orientation))
 		
 	def addSenseCountFeature(self, orientation):
+		"""
+		Adds a sense count feature to the estimator.
+		Calculates the number of senses registered in WordNet of a candidate.
+		
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Possible values: Complexity, Simplicity.
+		"""
+		
 		if orientation not in ['Complexity', 'Simplicity']:
 			print('Orientation must be Complexity or Simplicity')
 		else:
@@ -265,6 +329,14 @@ class FeatureEstimator:
 			self.identifiers.append(('Sense Count', orientation))
 		
 	def addSynonymCountFeature(self, orientation):
+		"""
+		Adds a synonym count feature to the estimator.
+		Calculates the number of synonyms registered in WordNet of a candidate.
+		
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Possible values: Complexity, Simplicity.
+		"""
+		
 		if orientation not in ['Complexity', 'Simplicity']:
 			print('Orientation must be Complexity or Simplicity')
 		else:
@@ -272,6 +344,14 @@ class FeatureEstimator:
 			self.identifiers.append(('Synonym Count', orientation))
 		
 	def addHypernymCountFeature(self, orientation):
+		"""
+		Adds a hypernym count feature to the estimator.
+		Calculates the number of hypernyms registered in WordNet of a candidate.
+		
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Possible values: Complexity, Simplicity.
+		"""
+		
 		if orientation not in ['Complexity', 'Simplicity']:
 			print('Orientation must be Complexity or Simplicity')
 		else:
@@ -279,6 +359,14 @@ class FeatureEstimator:
 			self.identifiers.append(('Hypernym Count', orientation))
 		
 	def addHyponymCountFeature(self, orientation):
+		"""
+		Adds a hyponym count feature to the estimator.
+		Calculates the number of hyponyms registered in WordNet of a candidate.
+		
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Possible values: Complexity, Simplicity.
+		"""
+		
 		if orientation not in ['Complexity', 'Simplicity']:
 			print('Orientation must be Complexity or Simplicity')
 		else:
@@ -286,6 +374,14 @@ class FeatureEstimator:
 			self.identifiers.append(('Hyponym Count', orientation))
 		
 	def addMinDepthFeature(self, orientation):
+		"""
+		Adds a minimum sense depth feature to the estimator.
+		Calculates the minimum distance between two senses of a given candidate.
+		
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Possible values: Complexity, Simplicity.
+		"""
+		
 		if orientation not in ['Complexity', 'Simplicity']:
 			print('Orientation must be Complexity or Simplicity')
 		else:
@@ -293,6 +389,14 @@ class FeatureEstimator:
 			self.identifiers.append(('Minimal Sense Depth', orientation))
 		
 	def addMaxDepthFeature(self, orientation):
+		"""
+		Adds a maximum sense depth feature to the estimator.
+		Calculates the maximum distance between two senses of a given candidate.
+		
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Possible values: Complexity, Simplicity.
+		"""
+		
 		if orientation not in ['Complexity', 'Simplicity']:
 			print('Orientation must be Complexity or Simplicity')
 		else:
