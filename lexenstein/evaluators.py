@@ -1,5 +1,4 @@
 
-
 class GeneratorEvaluator:
 
 	def evaluateGenerator(self, victor_corpus, substitutions):

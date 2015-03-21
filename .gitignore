@@ -2,4 +2,5 @@
 /morph/
 /corpora/
 /.idea/
+/manual/
 test_pipe.py
