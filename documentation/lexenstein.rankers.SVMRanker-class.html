@@ -85,9 +85,10 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="__init__"></a><span class="summary-sig-name">__init__</span>(<span class="summary-sig-arg">self</span>,
+          <td><span class="summary-sig"><a href="lexenstein.rankers.SVMRanker-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">fe</span>,
-        <span class="summary-sig-arg">svmrank_path</span>)</span></td>
+        <span class="summary-sig-arg">svmrank_path</span>)</span><br />
+      Creates an instance of the SVMRanker class.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="lexenstein.rankers-pysrc.html#SVMRanker.__init__">source&nbsp;code</a></span>
             
@@ -103,9 +104,10 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="getFeaturesFile"></a><span class="summary-sig-name">getFeaturesFile</span>(<span class="summary-sig-arg">self</span>,
+          <td><span class="summary-sig"><a href="lexenstein.rankers.SVMRanker-class.html#getFeaturesFile" class="summary-sig-name">getFeaturesFile</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">victor_corpus</span>,
-        <span class="summary-sig-arg">output_file</span>)</span></td>
+        <span class="summary-sig-arg">output_file</span>)</span><br />
+      Creates a file containing feature values in SVM-Rank format.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="lexenstein.rankers-pysrc.html#SVMRanker.getFeaturesFile">source&nbsp;code</a></span>
             
@@ -121,14 +123,12 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="getTrainingModel"></a><span class="summary-sig-name">getTrainingModel</span>(<span class="summary-sig-arg">self</span>,
+          <td><span class="summary-sig"><a href="lexenstein.rankers.SVMRanker-class.html#getRankings" class="summary-sig-name">getRankings</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">features_file</span>,
-        <span class="summary-sig-arg">c</span>,
-        <span class="summary-sig-arg">epsilon</span>,
-        <span class="summary-sig-arg">kernel</span>,
-        <span class="summary-sig-arg">output_file</span>)</span></td>
+        <span class="summary-sig-arg">scores_file</span>)</span><br />
+      Produces ranking scores in SVM-Rank format.</td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="lexenstein.rankers-pysrc.html#SVMRanker.getTrainingModel">source&nbsp;code</a></span>
+            <span class="codelink"><a href="lexenstein.rankers-pysrc.html#SVMRanker.getRankings">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -142,10 +142,11 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="getScoresFile"></a><span class="summary-sig-name">getScoresFile</span>(<span class="summary-sig-arg">self</span>,
+          <td><span class="summary-sig"><a href="lexenstein.rankers.SVMRanker-class.html#getScoresFile" class="summary-sig-name">getScoresFile</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">features_file</span>,
         <span class="summary-sig-arg">model_file</span>,
-        <span class="summary-sig-arg">output_file</span>)</span></td>
+        <span class="summary-sig-arg">output_file</span>)</span><br />
+      Produces ranking scores in SVM-Rank format.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="lexenstein.rankers-pysrc.html#SVMRanker.getScoresFile">source&nbsp;code</a></span>
             
@@ -161,11 +162,15 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="getRankings"></a><span class="summary-sig-name">getRankings</span>(<span class="summary-sig-arg">self</span>,
+          <td><span class="summary-sig"><a href="lexenstein.rankers.SVMRanker-class.html#getTrainingModel" class="summary-sig-name">getTrainingModel</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">features_file</span>,
-        <span class="summary-sig-arg">scores_file</span>)</span></td>
+        <span class="summary-sig-arg">c</span>,
+        <span class="summary-sig-arg">epsilon</span>,
+        <span class="summary-sig-arg">kernel</span>,
+        <span class="summary-sig-arg">output_file</span>)</span><br />
+      Trains an SVM-Rank ranking model.</td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="lexenstein.rankers-pysrc.html#SVMRanker.getRankings">source&nbsp;code</a></span>
+            <span class="codelink"><a href="lexenstein.rankers-pysrc.html#SVMRanker.getTrainingModel">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -174,6 +179,188 @@
     </td>
   </tr>
 </table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">fe</span>,
+        <span class="sig-arg">svmrank_path</span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="lexenstein.rankers-pysrc.html#SVMRanker.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Creates an instance of the SVMRanker class.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>fe</code></strong> - A configured FeatureEstimator object.</li>
+        <li><strong class="pname"><code>svmrank_path</code></strong> - Path to SVM-Rank's root installation folder.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="getFeaturesFile"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">getFeaturesFile</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">victor_corpus</span>,
+        <span class="sig-arg">output_file</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="lexenstein.rankers-pysrc.html#SVMRanker.getFeaturesFile">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Creates a file containing feature values in SVM-Rank format. Produces 
+  the &quot;features_file&quot; parameter for functions getTrainingModel, 
+  getScoresFile and getRankings.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>victor_corpus</code></strong> - Path to a corpus in the VICTOR format. For more information about
+          the file's format, refer to the LEXenstein Manual.</li>
+        <li><strong class="pname"><code>output_file</code></strong> - Path in which to save the resulting feature values.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="getRankings"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">getRankings</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">features_file</span>,
+        <span class="sig-arg">scores_file</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="lexenstein.rankers-pysrc.html#SVMRanker.getRankings">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Produces ranking scores in SVM-Rank format. The scores file produced 
+  can be used as the &quot;scores_file&quot; parameter of the getRankings 
+  function.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>features_file</code></strong> - Path to features file produced over a testing VICTOR corpus. 
+          Should be produced by the getFeaturesFile function.</li>
+        <li><strong class="pname"><code>scores_file</code></strong> - Path to a scores file in SVM-Rank format. Should be produced by 
+          the getScoresFile function.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="getScoresFile"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">getScoresFile</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">features_file</span>,
+        <span class="sig-arg">model_file</span>,
+        <span class="sig-arg">output_file</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="lexenstein.rankers-pysrc.html#SVMRanker.getScoresFile">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Produces ranking scores in SVM-Rank format. The scores file produced 
+  can be used as the &quot;scores_file&quot; parameter of the getRankings 
+  function.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>features_file</code></strong> - Path to features file produced over a testing VICTOR corpus. 
+          Should be produced by the getFeaturesFile function.</li>
+        <li><strong class="pname"><code>model_file</code></strong> - Path to a trained model file in SVM-Rank format. Should be 
+          produced by the getTrainingModel function.</li>
+        <li><strong class="pname"><code>output_file</code></strong> - Path in which to save the resulting ranking scores in SVM-Rank 
+          format.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="getTrainingModel"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">getTrainingModel</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">features_file</span>,
+        <span class="sig-arg">c</span>,
+        <span class="sig-arg">epsilon</span>,
+        <span class="sig-arg">kernel</span>,
+        <span class="sig-arg">output_file</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="lexenstein.rankers-pysrc.html#SVMRanker.getTrainingModel">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <pre class="literalblock">
+
+        Trains an SVM-Rank ranking model.
+        The model produced can be used as the &quot;model_file&quot; parameter of the getScoresFile function.
+
+        @param features_file: Path to features file produced over a training VICTOR corpus.
+        Should be produced by the getFeaturesFile function.
+        @param c: Trade-off between training error and margin.
+        Recommended values: 0.001, 0.01
+        @param epsilon: Acceptable error margin.
+        Recommended values: 0.00001, 0.0001
+        @param kernel: ID for the kernel to be used.
+        Kernels available:
+        0: Linear
+1: Polynomial (s a*b+c)^d
+2: Radial basis function exp(-gamma ||a-b||^2)
+3: Sigmoid tanh(s a*b + c)
+        @param output_file: Path in which to save the resulting SVM-Rank model.
+        
+
+</pre>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<br />
 <!-- ==================== NAVIGATION BAR ==================== -->
 <table class="navbar" border="0" width="100%" cellpadding="0"
        bgcolor="#a0c0ff" cellspacing="0">
@@ -205,7 +392,7 @@
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Sat Mar 21 13:13:30 2015
+    Generated by Epydoc 3.0.1 on Sat Mar 21 23:42:29 2015
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

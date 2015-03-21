@@ -14,6 +14,9 @@
 <table class="navbar" border="0" width="100%" cellpadding="0"
        bgcolor="#a0c0ff" cellspacing="0">
   <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="lexenstein-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
 
   <!-- Tree link -->
       <th>&nbsp;&nbsp;&nbsp;<a
@@ -39,7 +42,7 @@
   <tr valign="top">
     <td width="100%">
       <span class="breadcrumbs">
-        Package&nbsp;lexenstein ::
+        <a href="lexenstein-module.html">Package&nbsp;lexenstein</a> ::
         <a href="lexenstein.generators-module.html">Module&nbsp;generators</a> ::
         Class&nbsp;MerriamGenerator
       </span>
@@ -82,9 +85,10 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="__init__"></a><span class="summary-sig-name">__init__</span>(<span class="summary-sig-arg">self</span>,
+          <td><span class="summary-sig"><a href="lexenstein.generators.MerriamGenerator-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">mat</span>,
-        <span class="summary-sig-arg">thesaurus_key</span>)</span></td>
+        <span class="summary-sig-arg">thesaurus_key</span>)</span><br />
+      Creates a MerriamGenerator instance.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="lexenstein.generators-pysrc.html#MerriamGenerator.__init__">source&nbsp;code</a></span>
             
@@ -204,8 +208,10 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="getSubstitutions"></a><span class="summary-sig-name">getSubstitutions</span>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">victor_corpus</span>)</span></td>
+          <td><span class="summary-sig"><a href="lexenstein.generators.MerriamGenerator-class.html#getSubstitutions" class="summary-sig-name">getSubstitutions</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">victor_corpus</span>)</span><br />
+      Generates substitutions for the target words of a corpus in VICTOR 
+      format.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="lexenstein.generators-pysrc.html#MerriamGenerator.getSubstitutions">source&nbsp;code</a></span>
             
@@ -216,10 +222,86 @@
     </td>
   </tr>
 </table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">mat</span>,
+        <span class="sig-arg">thesaurus_key</span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="lexenstein.generators-pysrc.html#MerriamGenerator.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Creates a MerriamGenerator instance.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>mat</code></strong> - MorphAdornerToolkit object.</li>
+        <li><strong class="pname"><code>dictionary_key</code></strong> - Key for the Merriam Thesaurus. For more information on how to get
+          the key for free, please refer to the LEXenstein Manual</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="getSubstitutions"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">getSubstitutions</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">victor_corpus</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="lexenstein.generators-pysrc.html#MerriamGenerator.getSubstitutions">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Generates substitutions for the target words of a corpus in VICTOR 
+  format.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>victor_corpus</code></strong> - Path to a corpus in the VICTOR format. For more information about
+          the file's format, refer to the LEXenstein Manual.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
 <!-- ==================== NAVIGATION BAR ==================== -->
 <table class="navbar" border="0" width="100%" cellpadding="0"
        bgcolor="#a0c0ff" cellspacing="0">
   <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="lexenstein-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
 
   <!-- Tree link -->
       <th>&nbsp;&nbsp;&nbsp;<a
@@ -244,7 +326,7 @@
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Sat Mar 21 23:39:39 2015
+    Generated by Epydoc 3.0.1 on Sat Mar 21 23:42:29 2015
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"
