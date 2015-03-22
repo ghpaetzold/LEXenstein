@@ -32,7 +32,7 @@ class KauchakGenerator:
 	
 		@param victor_corpus: Path to a corpus in the VICTOR format.
 		For more information about the file's format, refer to the LEXenstein Manual.
-		@return substitutions: A dictionary that assigns target complex words to sets of candidate substitutions.
+		@return: A dictionary that assigns target complex words to sets of candidate substitutions.
 		Example: substitutions['perched'] = {'sat', 'roosted'}
 		"""
 		#Get candidate->pos map:
@@ -320,7 +320,7 @@ class YamamotoGenerator:
 	
 		@param victor_corpus: Path to a corpus in the VICTOR format.
 		For more information about the file's format, refer to the LEXenstein Manual.
-		@return substitutions: A dictionary that assigns target complex words to sets of candidate substitutions.
+		@return: A dictionary that assigns target complex words to sets of candidate substitutions.
 		Example: substitutions['perched'] = {'sat', 'roosted'}
 		"""
 		#Get initial set of substitutions:
@@ -590,7 +590,7 @@ class MerriamGenerator:
 	
 		@param victor_corpus: Path to a corpus in the VICTOR format.
 		For more information about the file's format, refer to the LEXenstein Manual.
-		@return substitutions: A dictionary that assigns target complex words to sets of candidate substitutions.
+		@return: A dictionary that assigns target complex words to sets of candidate substitutions.
 		Example: substitutions['perched'] = {'sat', 'roosted'}
 		"""
 		#Get initial set of substitutions:
@@ -862,7 +862,7 @@ class WordnetGenerator:
 	
 		@param victor_corpus: Path to a corpus in the VICTOR format.
 		For more information about the file's format, refer to the LEXenstein Manual.
-		@return substitutions: A dictionary that assigns target complex words to sets of candidate substitutions.
+		@return: A dictionary that assigns target complex words to sets of candidate substitutions.
 		Example: substitutions['perched'] = {'sat', 'roosted'}
 		"""
 		
@@ -1134,7 +1134,7 @@ class BiranGenerator:
 	
 		@param victor_corpus: Path to a corpus in the VICTOR format.
 		For more information about the file's format, refer to the LEXenstein Manual.
-		@return substitutions: A dictionary that assigns target complex words to sets of candidate substitutions.
+		@return: A dictionary that assigns target complex words to sets of candidate substitutions.
 		Example: substitutions['perched'] = {'sat', 'roosted'}
 		"""
 		

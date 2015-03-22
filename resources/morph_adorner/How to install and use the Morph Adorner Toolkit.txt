@@ -1,2 +1,0 @@
-1. Download Morph Adorner Toolkit from http://ghpaetzold.github.io/MorphAdornerToolkit/ and unzip it into a folder of your choice.
-2. Use the path in which you installed Morph Adorner Toolkit when creating instances of the MorphAdornerToolkit class.

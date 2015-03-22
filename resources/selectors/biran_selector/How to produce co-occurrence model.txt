@@ -1,5 +1,0 @@
-1. Gather a corpus of text composed of one tokenized and truecased sentence per line.
-2. Run the script "scripts/Produce_Co-occurrence_Model.py" with the following command line:
-	python Produce_Co-occurrence_Model.py <corpus> <window_size> <output_model_path>
-
-Important: To produce models faster, you can split your corpus in various small portions, run parallel processes to produce various small models, and then join them.

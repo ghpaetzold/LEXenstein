@@ -24,7 +24,7 @@ class MorphAdornerToolkit:
 		Lemmatizes a set of words.
 	
 		@param words: List of words to be lemmatized.
-		@return lemmas: List of the lemmas of the words passed as input.
+		@return: List of the lemmas of the words passed as input.
 		"""
 		
 		input = ''
@@ -44,7 +44,7 @@ class MorphAdornerToolkit:
 		Porter stems a set of words.
 	
 		@param words: List of words to be Porter stemmed.
-		@return stems: List of the Porter stems of the words passed as input.
+		@return: List of the Porter stems of the words passed as input.
 		"""
 	
 		input = ''
@@ -66,7 +66,7 @@ class MorphAdornerToolkit:
 		@param lemmas: Lemmas of verbs to be conjugated.
 		@param tense: Tense in which to conjugate the verbs.
 		Tenses available: PAST, PAST_PARTICIPLE, PAST_PERFECT, PAST_PERFECT_PARTICIPLE, PERFECT, PRESENT, PRESENT_PARTICIPLE.
-		@return verbs: List of the conjugated versions of the verb lemmas passed as input.
+		@return: List of the conjugated versions of the verb lemmas passed as input.
 		"""
 		
 		input = ''
@@ -89,7 +89,7 @@ class MorphAdornerToolkit:
 		@param lemmas: Lemmas of nouns to be inflected.
 		@param number: Form in which to inflect the lemmas.
 		Forms available: singular, plural.
-		@return nouns: List of the inflected versions of the noun lemmas passed as input.
+		@return: List of the inflected versions of the noun lemmas passed as input.
 		"""
 		
 		input = ''
@@ -110,7 +110,7 @@ class MorphAdornerToolkit:
 	
 		@param lemmas: Lemmas of verbs to be tensed.
 		@param verbs: Verbs in their original forms.
-		@return tenses: List of the tenses of the verb passed as input.
+		@return: List of the tenses of the verb passed as input.
 		Tenses available: PAST, PAST_PARTICIPLE, PAST_PERFECT, PAST_PERFECT_PARTICIPLE, PERFECT, PRESENT, PRESENT_PARTICIPLE.
 		"""
 		
@@ -132,7 +132,7 @@ class MorphAdornerToolkit:
 		Splits a set of words in syllables.
 	
 		@param words: List of words to be lemmatized.
-		@return syllables: List of words with their syllables separated by hyphen markers.
+		@return: List of words with their syllables separated by hyphen markers.
 		"""
 		
 		input = ''

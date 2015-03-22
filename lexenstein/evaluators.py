@@ -9,7 +9,7 @@ class GeneratorEvaluator:
 		For more information about the file's format, refer to the LEXenstein Manual.
 		@param substitutions: A dictionary that assigns target complex words to sets of candidate substitutions.
 		Example: substitutions['perched'] = {'sat', 'roosted'}
-		@return precision,recall: Values for Precision and Recall for the substitutions provided as input with respect to the gold-standard in the VICTOR corpus.
+		@return: Values for Potential, Precision and F-measure for the substitutions provided as input with respect to the gold-standard in the VICTOR corpus.
 		For more information on how the metrics are calculated, please refer to the LEXenstein Manual.
 		"""
 		
@@ -35,8 +35,16 @@ class GeneratorEvaluator:
 			recallt += len(candidates)
 		f.close()
 		
+		potential = float(precisionc)/float(precisiont)
+		precision = float(recallc)/float(recallt)
+		fmean = 0.0
+		if potential==0.0 and noise==0.0:
+			fmean = 0.0
+		else:
+			fmean = 2*(potential*noise)/(potential+noise)
+			
 		#Return measures:
-		return float(precisionc)/float(precisiont), float(recallc)/float(recallt)
+		return potential, precision, fmean
 
 class SelectorEvaluator:
 
@@ -47,7 +55,7 @@ class SelectorEvaluator:
 		@param victor_corpus: Path to a training corpus in VICTOR format.
 		For more information about the file's format, refer to the LEXenstein Manual.
 		@param substitutions: A vector of size N, containing a set of selected substitutions for each instance in the VICTOR corpus.
-		@return precision,recall: Values for Precision and Recall for the substitutions provided as input with respect to the gold-standard in the VICTOR corpus.
+		@return: Values for Potential, Precision and F-measure for the substitutions provided as input with respect to the gold-standard in the VICTOR corpus.
 		For more information on how the metrics are calculated, please refer to the LEXenstein Manual.
 		"""
 	
@@ -79,7 +87,16 @@ class SelectorEvaluator:
 		f.close()
 
 		#Return measures:
-		return float(precisionc)/float(precisiont), float(recallc)/float(recallt)
+		potential = float(precisionc)/float(precisiont)
+		precision = float(recallc)/float(recallt)
+		fmean = 0.0
+		if potential==0.0 and noise==0.0:
+			fmean = 0.0
+		else:
+			fmean = 2*(potential*noise)/(potential+noise)
+			
+		#Return measures:
+		return potential, precision, fmean
 
 class RankerEvaluator:
 
@@ -90,7 +107,7 @@ class RankerEvaluator:
 		@param victor_corpus: Path to a training corpus in VICTOR format.
 		For more information about the file's format, refer to the LEXenstein Manual.
 		@param substitutions: A vector of size N, containing a set of selected substitutions for each instance in the VICTOR corpus.
-		@return TRank-at-1~3,recall-at-1~3: Values for TRank and Recall for the substitutions provided as input with respect to the gold-standard in the VICTOR corpus.
+		@return: Values for TRank and Recall for the substitutions provided as input with respect to the gold-standard in the VICTOR corpus.
 		For more information on how the metrics are calculated, please refer to the LEXenstein Manual.
 		"""
 		
@@ -194,7 +211,7 @@ class PipelineEvaluator:
 		For more information about the file's format, refer to the LEXenstein Manual.
 		@param rankings: A list of ranked candidates for each instance in the VICTOR corpus, from simplest to most complex.
 		One should produce candidates with a Substitution Generation approach, select them for a given VICTOR corpus with a Substitution Selection approach, then rank them with a Substitution Ranking approach.
-		@return precision,accuracy,changed: Values for Precision, Accuracy and Changed Proportion for the substitutions provided as input with respect to the gold-standard in the VICTOR corpus.
+		@return: Values for Precision, Accuracy and Changed Proportion for the substitutions provided as input with respect to the gold-standard in the VICTOR corpus.
 		For more information on how the metrics are calculated, please refer to the LEXenstein Manual.
 		"""
 	

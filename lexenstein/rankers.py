@@ -57,7 +57,7 @@ class BoundaryRanker:
 	
 		@param victor_corpus: Path to a testing corpus in VICTOR format.
 		For more information about the file's format, refer to the LEXenstein Manual.
-		@return rankings: A list of ranked candidates for each instance in the VICTOR corpus, from simplest to most complex.
+		@return: A list of ranked candidates for each instance in the VICTOR corpus, from simplest to most complex.
 		"""
 		
 		#Read victor corpus:
@@ -204,7 +204,7 @@ class SVMRanker:
 		Should be produced by the getFeaturesFile function.
 		@param scores_file: Path to a scores file in SVM-Rank format.
 		Should be produced by the getScoresFile function.
-		@return rankings: A list of ranked candidates, from simplest to most complex.
+		@return: A list of ranked candidates, from simplest to most complex.
 		"""
 		
 		#Read features file:
@@ -270,7 +270,7 @@ class MetricRanker:
 		@param victor_corpus: Path to a testing corpus in VICTOR format.
 		For more information about the file's format, refer to the LEXenstein Manual.
 		@param featureIndex: Index of the feature in the FeatureEstimator to be used as a ranking metric.
-		@return rankings: A list of ranked candidates for each instance in the VICTOR corpus, from simplest to most complex.
+		@return: A list of ranked candidates for each instance in the VICTOR corpus, from simplest to most complex.
 		"""
 		
 		#If feature values are not available, then estimate them:
@@ -311,4 +311,9 @@ class MetricRanker:
 		return result
 		
 	def size(self):
+		"""
+		Returns the number of features available for a given MetricRanker.
+		
+		@return: The number of features in the MetricRanker's FeatureEstimator object.
+		"""
 		return len(self.fe.identifiers)

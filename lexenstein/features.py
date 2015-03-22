@@ -14,7 +14,7 @@ class FeatureEstimator:
 	
 		@param victor_corpus: Path to a corpus in the VICTOR format.
 		For more information about the file's format, refer to the LEXenstein Manual.
-		@return feature_matrix: Returns a MxN matrix, where M is the number of substitutions of all instances in the VICTOR corpus, and N the number of selected features.
+		@return: Returns a MxN matrix, where M is the number of substitutions of all instances in the VICTOR corpus, and N the number of selected features.
 		"""
 	
 		data = [line.strip().split('\t') for line in open(victor_corpus)]

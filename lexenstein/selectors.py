@@ -14,7 +14,7 @@ class VoidSelector:
 		Example: substitutions['perched'] = {'sat', 'roosted'}
 		@param victor_corpus: Path to a corpus in the VICTOR format.
 		For more information about the file's format, refer to the LEXenstein Manual.
-		@return selected_substitutions: Returns a vector of size N, containing a set of selected substitutions for each instance in the VICTOR corpus.
+		@return: Returns a vector of size N, containing a set of selected substitutions for each instance in the VICTOR corpus.
 		"""
 		selected_substitutions = []				
 
@@ -79,7 +79,7 @@ class BiranSelector:
 		We recommend using very small values, such as 0.01, or even 0.0.
 		@param candidate_distance: The cutoff maximum distance from the sentence's co-occurrence vector and the candidate vector.
 		We recommend using values close to 1.0, such as 0.8, or 0.9.
-		@return selected_substitutions: Returns a vector of size N, containing a set of selected substitutions for each instance in the VICTOR corpus.
+		@return: Returns a vector of size N, containing a set of selected substitutions for each instance in the VICTOR corpus.
 		"""
 		selected_substitutions = []				
 
@@ -254,7 +254,7 @@ class WordVectorSelector:
 		@param onlyInformative: If True, only content words are considered as part of the complex word's context, such as nouns, verbs, adjectives and adverbs.
 		@param keepTarget: If True, the complex target word is also included as part of its context.
 		@param onePerWord: If True, a word in the complex word's context can only contribute once to its resulting word vector.
-		@return selected_substitutions: Returns a vector of size N, containing a set of selected substitutions for each instance in the VICTOR corpus.
+		@return: Returns a vector of size N, containing a set of selected substitutions for each instance in the VICTOR corpus.
 		"""
 		
 		stop_words = set([])
@@ -415,7 +415,7 @@ class WSDSelector:
 		Example: substitutions['perched'] = {'sat', 'roosted'}
 		@param victor_corpus: Path to a corpus in the VICTOR format.
 		For more information about the file's format, refer to the LEXenstein Manual.
-		@return selected_substitutions: Returns a vector of size N, containing a set of selected substitutions for each instance in the VICTOR corpus.
+		@return: Returns a vector of size N, containing a set of selected substitutions for each instance in the VICTOR corpus.
 		"""
 		
 		selected_substitutions = []				
