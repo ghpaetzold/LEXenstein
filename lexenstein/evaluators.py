@@ -140,12 +140,6 @@ class RankerEvaluator:
 			ranked_candidates = rankings[index]
 
 			first = gold_rankings[ranked_candidates[0]]
-			
-			print('')
-			print('Gold:')
-			for key in gold_rankings.keys():
-				print(key + ': ' + str(gold_rankings[key]))
-			print('Cands: ' + str(ranked_candidates))
 	
 			#Get recall sets:
 			set1, set2, set3 = self.getRecallSets(line[3:len(line)])
