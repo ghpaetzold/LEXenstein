@@ -388,12 +388,12 @@ class WSDSelector:
 		"""
 		Creates an instance of the WSDSelector class.
 	
-		@param vector_model: Type of Word Sense Disambiguation algorithm to use.
+		@param method: Type of Word Sense Disambiguation algorithm to use.
 		Options available:
-		lesk: Original lesk algorithm.
-		path: Path similarity algorithm.
-		random: Random sense from WordNet.
-		first: First sense from WordNet.
+		lesk - Original lesk algorithm.
+		path - Path similarity algorithm.
+		random - Random sense from WordNet.
+		first - First sense from WordNet.
 		"""
 		
 		if method == 'lesk':

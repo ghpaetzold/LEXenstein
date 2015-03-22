@@ -106,7 +106,7 @@ class RankerEvaluator:
 	
 		@param victor_corpus: Path to a training corpus in VICTOR format.
 		For more information about the file's format, refer to the LEXenstein Manual.
-		@param substitutions: A vector of size N, containing a set of selected substitutions for each instance in the VICTOR corpus.
+		@param rankings: A vector of size N, containing a set of ranked substitutions for each instance in the VICTOR corpus.
 		@return: Values for TRank and Recall for the substitutions provided as input with respect to the gold-standard in the VICTOR corpus.
 		For more information on how the metrics are calculated, please refer to the LEXenstein Manual.
 		"""

@@ -578,7 +578,7 @@ class MerriamGenerator:
 		Creates a MerriamGenerator instance.
 	
 		@param mat: MorphAdornerToolkit object.
-		@param dictionary_key: Key for the Merriam Thesaurus.
+		@param thesaurus_key: Key for the Merriam Thesaurus.
 		For more information on how to get the key for free, please refer to the LEXenstein Manual
 		"""
 		self.mat = mat
