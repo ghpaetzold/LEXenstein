@@ -20,7 +20,9 @@ fe.addHypernymCountFeature('Simplicity')
 fe.addHyponymCountFeature('Simplicity')
 fe.addMinDepthFeature('Complexity')
 fe.addMaxDepthFeature('Complexity')
-#feats = fe.calculateFeatures('./corpora/lexmturk_test.txt')
+feats = fe.calculateFeatures('./corpora/lexmturk_test.txt')
+
+print(str(feats))
 
 fe = FeatureEstimator()
 fe.addCollocationalFeature('./corpora/simplewiki.5.bin.txt', 0, 0, 'Complexity')

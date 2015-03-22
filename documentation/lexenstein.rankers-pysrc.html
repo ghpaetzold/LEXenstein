@@ -120,7 +120,7 @@
 <a name="L57"></a><tt class="py-lineno"> 57</tt>  <tt class="py-line"><tt class="py-docstring">        </tt> </tt>
 <a name="L58"></a><tt class="py-lineno"> 58</tt>  <tt class="py-line"><tt class="py-docstring">                @param victor_corpus: Path to a testing corpus in VICTOR format.</tt> </tt>
 <a name="L59"></a><tt class="py-lineno"> 59</tt>  <tt class="py-line"><tt class="py-docstring">                For more information about the file's format, refer to the LEXenstein Manual.</tt> </tt>
-<a name="L60"></a><tt class="py-lineno"> 60</tt>  <tt class="py-line"><tt class="py-docstring">                @return rankings: A list of ranked candidates for each instance in the VICTOR corpus, from simplest to most complex.</tt> </tt>
+<a name="L60"></a><tt class="py-lineno"> 60</tt>  <tt class="py-line"><tt class="py-docstring">                @return: A list of ranked candidates for each instance in the VICTOR corpus, from simplest to most complex.</tt> </tt>
 <a name="L61"></a><tt class="py-lineno"> 61</tt>  <tt class="py-line"><tt class="py-docstring">                """</tt> </tt>
 <a name="L62"></a><tt class="py-lineno"> 62</tt>  <tt class="py-line">                 </tt>
 <a name="L63"></a><tt class="py-lineno"> 63</tt>  <tt class="py-line">                <tt class="py-comment">#Read victor corpus:</tt> </tt>
@@ -267,7 +267,7 @@
 <a name="L204"></a><tt class="py-lineno">204</tt>  <tt class="py-line"><tt class="py-docstring">                Should be produced by the getFeaturesFile function.</tt> </tt>
 <a name="L205"></a><tt class="py-lineno">205</tt>  <tt class="py-line"><tt class="py-docstring">                @param scores_file: Path to a scores file in SVM-Rank format.</tt> </tt>
 <a name="L206"></a><tt class="py-lineno">206</tt>  <tt class="py-line"><tt class="py-docstring">                Should be produced by the getScoresFile function.</tt> </tt>
-<a name="L207"></a><tt class="py-lineno">207</tt>  <tt class="py-line"><tt class="py-docstring">                @return rankings: A list of ranked candidates, from simplest to most complex.</tt> </tt>
+<a name="L207"></a><tt class="py-lineno">207</tt>  <tt class="py-line"><tt class="py-docstring">                @return: A list of ranked candidates, from simplest to most complex.</tt> </tt>
 <a name="L208"></a><tt class="py-lineno">208</tt>  <tt class="py-line"><tt class="py-docstring">                """</tt> </tt>
 <a name="L209"></a><tt class="py-lineno">209</tt>  <tt class="py-line">                 </tt>
 <a name="L210"></a><tt class="py-lineno">210</tt>  <tt class="py-line">                <tt class="py-comment">#Read features file:</tt> </tt>
@@ -333,7 +333,7 @@
 <a name="L270"></a><tt class="py-lineno">270</tt>  <tt class="py-line"><tt class="py-docstring">                @param victor_corpus: Path to a testing corpus in VICTOR format.</tt> </tt>
 <a name="L271"></a><tt class="py-lineno">271</tt>  <tt class="py-line"><tt class="py-docstring">                For more information about the file's format, refer to the LEXenstein Manual.</tt> </tt>
 <a name="L272"></a><tt class="py-lineno">272</tt>  <tt class="py-line"><tt class="py-docstring">                @param featureIndex: Index of the feature in the FeatureEstimator to be used as a ranking metric.</tt> </tt>
-<a name="L273"></a><tt class="py-lineno">273</tt>  <tt class="py-line"><tt class="py-docstring">                @return rankings: A list of ranked candidates for each instance in the VICTOR corpus, from simplest to most complex.</tt> </tt>
+<a name="L273"></a><tt class="py-lineno">273</tt>  <tt class="py-line"><tt class="py-docstring">                @return: A list of ranked candidates for each instance in the VICTOR corpus, from simplest to most complex.</tt> </tt>
 <a name="L274"></a><tt class="py-lineno">274</tt>  <tt class="py-line"><tt class="py-docstring">                """</tt> </tt>
 <a name="L275"></a><tt class="py-lineno">275</tt>  <tt class="py-line">                 </tt>
 <a name="L276"></a><tt class="py-lineno">276</tt>  <tt class="py-line">                <tt class="py-comment">#If feature values are not available, then estimate them:</tt> </tt>
@@ -374,8 +374,13 @@
 <a name="L311"></a><tt class="py-lineno">311</tt>  <tt class="py-line">                <tt class="py-keyword">return</tt> <tt class="py-name">result</tt> </tt>
 </div><a name="L312"></a><tt class="py-lineno">312</tt>  <tt class="py-line">                 </tt>
 <a name="MetricRanker.size"></a><div id="MetricRanker.size-def"><a name="L313"></a><tt class="py-lineno">313</tt> <a class="py-toggle" href="#" id="MetricRanker.size-toggle" onclick="return toggle('MetricRanker.size');">-</a><tt class="py-line">        <tt class="py-keyword">def</tt> <a class="py-def-name" href="lexenstein.rankers.MetricRanker-class.html#size">size</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
-</div><div id="MetricRanker.size-collapsed" style="display:none;" pad="+++" indent="++++++++++++"></div><div id="MetricRanker.size-expanded"><a name="L314"></a><tt class="py-lineno">314</tt>  <tt class="py-line">                <tt class="py-keyword">return</tt> <tt class="py-name">len</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">fe</tt><tt class="py-op">.</tt><tt class="py-name">identifiers</tt><tt class="py-op">)</tt> </tt>
-</div></div><a name="L315"></a><tt class="py-lineno">315</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+</div><div id="MetricRanker.size-collapsed" style="display:none;" pad="+++" indent="++++++++++++"></div><div id="MetricRanker.size-expanded"><a name="L314"></a><tt class="py-lineno">314</tt>  <tt class="py-line">                <tt class="py-docstring">"""</tt> </tt>
+<a name="L315"></a><tt class="py-lineno">315</tt>  <tt class="py-line"><tt class="py-docstring">                Returns the number of features available for a given MetricRanker.</tt> </tt>
+<a name="L316"></a><tt class="py-lineno">316</tt>  <tt class="py-line"><tt class="py-docstring">                </tt> </tt>
+<a name="L317"></a><tt class="py-lineno">317</tt>  <tt class="py-line"><tt class="py-docstring">                @return: The number of features in the MetricRanker's FeatureEstimator object.</tt> </tt>
+<a name="L318"></a><tt class="py-lineno">318</tt>  <tt class="py-line"><tt class="py-docstring">                """</tt> </tt>
+<a name="L319"></a><tt class="py-lineno">319</tt>  <tt class="py-line">                <tt class="py-keyword">return</tt> <tt class="py-name">len</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">fe</tt><tt class="py-op">.</tt><tt class="py-name">identifiers</tt><tt class="py-op">)</tt> </tt>
+</div></div><a name="L320"></a><tt class="py-lineno">320</tt>  <tt class="py-line"> </tt><script type="text/javascript">
 <!--
 expandto(location.href);
 // -->
@@ -413,7 +418,7 @@ expandto(location.href);
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Sat Mar 21 23:42:29 2015
+    Generated by Epydoc 3.0.1 on Sun Mar 22 20:21:29 2015
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"
