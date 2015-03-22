@@ -157,7 +157,7 @@ class SVMRanker:
 		"""
 		Trains an SVM-Rank ranking model.
 		The model produced can be used as the "model_file" parameter of the getScoresFile function.
-	
+
 		@param features_file: Path to features file produced over a training VICTOR corpus.
 		Should be produced by the getFeaturesFile function.
 		@param c: Trade-off between training error and margin.
@@ -167,9 +167,9 @@ class SVMRanker:
 		@param kernel: ID for the kernel to be used.
 		Kernels available:
 		0 - Linear
-        1 - Polynomial
-        2 - Radial Basis Function
-        3 - Sigmoid
+		1 - Polynomial
+		2 - Radial Basis Function
+		3 - Sigmoid
 		@param output_file: Path in which to save the resulting SVM-Rank model.
 		"""
 		
