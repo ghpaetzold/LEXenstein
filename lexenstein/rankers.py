@@ -167,9 +167,9 @@ class SVMRanker:
 		@param kernel: ID for the kernel to be used.
 		Kernels available:
 		0 - Linear
-        1 - Polynomial (s a*b+c)^d
-        2 - Radial basis function exp(-gamma ||a-b||^2)
-        3 - Sigmoid tanh(s a*b + c)
+        1 - Polynomial
+        2 - Radial Basis Function
+        3 - Sigmoid
 		@param output_file: Path in which to save the resulting SVM-Rank model.
 		"""
 		
