@@ -1,0 +1,1 @@
+To find out how to install and use LEXenstein, please read the LEXenstein Manual.
