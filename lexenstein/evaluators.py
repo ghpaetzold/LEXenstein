@@ -100,6 +100,89 @@ class SelectorEvaluator:
 
 class RankerEvaluator:
 
+	def evaluateRankerVictor(self, gold_victor_corpus, train_victor_corpus):
+		"""
+		Performs an intrinsic evaluation of a Substitution Ranking approach.
+	
+		@param gold_victor_corpus: Path to a gold-standard in VICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@param train_victor_corpus: Path to a corpus of ranked candidates in VICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@return: Values for TRank and Recall for the substitutions provided as input with respect to the gold-standard in the VICTOR corpus.
+		For more information on how the metrics are calculated, please refer to the LEXenstein Manual.
+		"""
+		
+		#Initialize variables:
+		total1 = 0
+		total2 = 0
+		total3 = 0
+		corrects1 = 0
+		corrects2 = 0
+		corrects3 = 0
+		recall1 = 0
+		recall2 = 0
+		recall3 = 0
+		trecall1 = 0
+		trecall2 = 0
+		trecall3 = 0
+	
+		#Read data:
+		fg = open(gold_victor_corpus)
+		fr = open(train_victor_corpus)
+		for data in fg:
+			lineg = data.strip().split('\t')
+			gold_rankings = {}
+			for subst in line[3:len(lineg)]:
+				subst_data = subst.strip().split(':')
+				word = subst_data[1].strip()
+				ranking = int(subst_data[0].strip())
+				gold_rankings[word] = ranking
+			
+			liner = fr.readline().strip().split('\t')
+			first = ''
+			for subst in line[3:len(liner)]:
+				subst_data = subst.strip().split(':')
+				word = subst_data[1].strip()
+				ranking = int(subst_data[0].strip())
+				if ranking==1:
+					first = word
+	
+			#Get recall sets:
+			set1, set2, set3 = self.getRecallSets(line[3:len(line)])
+			rankedset1 = set([])
+			rankedset2 = set([])
+			rankedset3 = set([])
+	
+			#Calculate TRank 1:
+			if first==1:
+				rankedset1 = set([ranked_candidates[0]])
+				corrects1 += 1
+			recall1 += len(rankedset1.intersection(set1))
+			trecall1 += len(set1)
+			total1 += 1
+	
+			#Calculate TRank 2:
+			if len(gold_rankings.keys())>2:
+				rankedset2 = rankedset1.union(set([ranked_candidates[1]]))
+				recall2 += len(rankedset2.intersection(set2))
+				trecall2 += len(set2)
+				if first<=2:
+					corrects2 += 1
+				total2 += 1
+	
+			#Calculate TRank 3:
+			if len(gold_rankings.keys())>3:
+				rankedset3 = rankedset2.union(set([ranked_candidates[2]]))
+				recall3 += len(rankedset3.intersection(set3))
+				trecall3 += len(set3)
+				if first<=3:
+					corrects3 += 1
+				total3 += 1
+	
+		#Return measures:
+		return float(corrects1)/float(total1), float(corrects2)/float(total2), float(corrects3)/float(total3), float(recall1)/float(trecall1), float(recall2)/float(trecall2), float(recall3)/float(trecall3)
+
+
 	def evaluateRanker(self, victor_corpus, rankings):
 		"""
 		Performs an intrinsic evaluation of a Substitution Ranking approach.
