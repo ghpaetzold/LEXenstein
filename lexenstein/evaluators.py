@@ -14,9 +14,10 @@ class GeneratorEvaluator:
 		"""
 		
 		#Initialize variables:
+		potentialc = 0
+		potentialt = 0
 		precisionc = 0
 		precisiont = 0
-		recallc = 0
 		recallt = 0
 		
 		#Calculate measures:
@@ -28,23 +29,25 @@ class GeneratorEvaluator:
 			candidates = [item.strip().split(':')[1].strip() for item in items]
 			if target in substitutions.keys():
 				overlap = set(candidates).intersection(set(substitutions[target]))
-				recallc += len(overlap)
+				precisionc += len(overlap)
 				if len(overlap)>0:
-					precisionc += 1
-			precisiont += 1
+					potentialc += 1
+			potentialt += 1
 			recallt += len(candidates)
+			precisiont += len(substitutions[target])
 		f.close()
 		
-		potential = float(precisionc)/float(precisiont)
-		precision = float(recallc)/float(recallt)
+		potential = float(potentialc)/float(potentialt)
+		precision = float(precisionc)/float(precisiont)
+		recall = float(precisionc)/float(recallt)
 		fmean = 0.0
-		if potential==0.0 and noise==0.0:
+		if precision==0.0 and recall==0.0:
 			fmean = 0.0
 		else:
-			fmean = 2*(potential*noise)/(potential+noise)
+			fmean = 2*(precision*recall)/(precision+recall)
 			
 		#Return measures:
-		return potential, precision, fmean
+		return potential, precision, recall, fmean
 
 class SelectorEvaluator:
 
@@ -60,9 +63,10 @@ class SelectorEvaluator:
 		"""
 	
 		#Initialize variables:
+		potentialc = 0
+		potentialt = 0
 		precisionc = 0
 		precisiont = 0
-		recallc = 0
 		recallt = 0
 		
 		#Calculate measures:
@@ -79,24 +83,25 @@ class SelectorEvaluator:
 			selected = substitutions[index]
 			if len(selected)>0:
 				overlap = set(candidates).intersection(set(selected))
-				recallc += len(overlap)
+				precisionc += len(overlap)
 				if len(overlap)>0:
-					precisionc += 1
-			precisiont += 1
+					potentialc += 1
+			potentialt += 1
+			precisiont += len(selected)
 			recallt += len(candidates)
 		f.close()
 
-		#Return measures:
-		potential = float(precisionc)/float(precisiont)
-		precision = float(recallc)/float(recallt)
+		potential = float(potentialc)/float(potentialt)
+		precision = float(precisionc)/float(precisiont)
+		recall = float(precisionc)/float(recallt)
 		fmean = 0.0
-		if potential==0.0 and noise==0.0:
+		if precision==0.0 and recall==0.0:
 			fmean = 0.0
 		else:
-			fmean = 2*(potential*noise)/(potential+noise)
+			fmean = 2*(precision*recall)/(precision+recall)
 			
 		#Return measures:
-		return potential, precision, fmean
+		return potential, precision, recall, fmean
 
 class RankerEvaluator:
 
