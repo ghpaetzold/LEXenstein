@@ -32,9 +32,9 @@ class GeneratorEvaluator:
 				precisionc += len(overlap)
 				if len(overlap)>0:
 					potentialc += 1
+				precisiont += len(substitutions[target])
 			potentialt += 1
 			recallt += len(candidates)
-			precisiont += len(substitutions[target])
 		f.close()
 		
 		potential = float(potentialc)/float(potentialt)

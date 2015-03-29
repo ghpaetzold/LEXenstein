@@ -154,7 +154,11 @@ class FeatureEstimator:
 				words = subst.strip().split(':')[1].strip()
 				sensec = 0
 				for word in words.split(' '):
-					senses = wn.synsets(word)
+					senses = None
+					try:
+						senses = wn.synsets(word)
+					except UnicodeDecodeError:
+						senses = []
 					sensec += len(senses)
 				resultse.append(sensec)
 		return resultse
@@ -166,7 +170,11 @@ class FeatureEstimator:
 				words = subst.strip().split(':')[1].strip()
 				syncount = 0
 				for word in words.split(' '):
-					senses = wn.synsets(word)
+					senses = None
+					try:
+						senses = wn.synsets(word)
+					except UnicodeDecodeError:
+						senses = []
 					for sense in senses:
 						syncount += len(sense.lemmas())
 				resultsy.append(syncount)
@@ -179,7 +187,11 @@ class FeatureEstimator:
 				words = subst.strip().split(':')[1].strip()
 				hypernyms = set([])
 				for word in words.split(' '):
-					senses = wn.synsets(word)
+					senses = None
+					try:
+						senses = wn.synsets(word)
+					except UnicodeDecodeError:
+						senses = []
 					for sense in senses:
 						hypernyms.update(sense.hypernyms())
 				resulthe.append(len(hypernyms))
@@ -192,7 +204,11 @@ class FeatureEstimator:
 				words = subst.strip().split(':')[1].strip()
 				hyponyms = set([])
 				for word in words.split(' '):
-					senses = wn.synsets(word)
+					senses = None
+					try:
+						senses = wn.synsets(word)
+					except UnicodeDecodeError:
+						senses = []
 					for sense in senses:
 						hyponyms.update(sense.hyponyms())
 				resultho.append(len(hyponyms))
@@ -205,7 +221,11 @@ class FeatureEstimator:
 				words = subst.strip().split(':')[1].strip()
 				mindepth = 9999999
 				for word in words.split(' '):
-					senses = wn.synsets(word)
+					senses = None
+					try:
+						senses = wn.synsets(word)
+					except UnicodeDecodeError:
+						senses = []
 					for sense in senses:
 						auxmin = sense.min_depth()
 						if auxmin<mindepth:
@@ -220,7 +240,11 @@ class FeatureEstimator:
 				words = subst.strip().split(':')[1].strip()
 				maxdepth = -1
 				for word in words.split(' '):
-					senses = wn.synsets(word)
+					senses = None
+					try:
+						senses = wn.synsets(word)
+					except UnicodeDecodeError:
+						senses = []
 					for sense in senses:
 						auxmax = sense.max_depth()
 						if auxmax>maxdepth:
