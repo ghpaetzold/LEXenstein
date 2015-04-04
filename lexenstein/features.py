@@ -32,6 +32,26 @@ class FeatureEstimator:
 				index += 1
 		return result
 		
+	def calculateInstanceFeatures(self, sent, target, head, candidate):
+		"""
+		Calculate the selected features over an instance of a VICTOR corpus.
+	
+		@param sent: Sentence containing a target complex word.
+		@param target: Target complex sentence to be simplified.
+		@param head: Position of target complex word in sentence.
+		@param candidate: Candidate substitution.
+		@return: Returns a vector containing the feature values of VICTOR instance.
+		"""
+	
+		data = [[sent, target, head, '0:'+candidate]]
+		
+		values = []
+		for feature in self.features:
+			values.append(feature[0].__call__(data, feature[1]))
+			
+		vector = self.generateVector(values, 0)
+		return vector
+		
 	def generateVector(self, feature_vector, index):
 		result = []
 		for feature in feature_vector:
