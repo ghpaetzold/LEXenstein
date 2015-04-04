@@ -75,13 +75,10 @@ class ThresholdIdentifier:
 		"""
 		f = open(testing_corpus)
 		self.Xte = []
-		self.Yte = []
 		for line in f:
 			data = line.strip().split('\t')
 			x = self.fe.calculateInstanceFeatures(data[0], data[1], data[2], '0:'+data[1])
-			y = int(data[3].strip())
 			self.Xte.append(x)
-			self.Yte.append(y)
 			
 	def trainIdentifierBruteForce(self, feature_index, step=None):
 		"""
@@ -187,17 +184,20 @@ class ThresholdIdentifier:
 
 		@return: A list of binary values, one per line, with value 1 if a target word is complex, and 0 otherwise.
 		"""
-		corrects = 0
+		result = []
 		for i in range(0, len(self.Xte)):
 			x = self.Xte[i][self.feature_index]
-			y = self.Yte[i]
 			if self.fe.identifiers[self.feature_index][1]=='Complexity':
-				if (x>self.threshold and y==1) or (x<self.threshold and y==0):
-					corrects += 1
+				if x>self.threshold:
+					result.append(1)
+				else:
+					result.append(0)
 			else:
-				if (x<self.threshold and y==1) or (x>self.threshold and y==0):
-					corrects += 1
-		return float(corrects)/float(len(self.Xte))
+				if x<self.threshold:
+					result.append(1)
+				else:
+					result.append(0)
+		return result
 		
 		
 	def getMinMax(self):
