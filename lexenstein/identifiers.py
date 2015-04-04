@@ -1,3 +1,5 @@
+import numpy as np
+
 class LexiconIdentifier:
 
 	def __init__(self, lexicon, type):
@@ -189,17 +191,17 @@ class ThresholdIdentifier:
 		for i in range(0, len(self.Xte)):
 			x = self.Xte[i][self.feature_index]
 			y = self.Yte[i]
-			if self.fe.identifiers[feature_index][1]=='Complexity':
-				if (x>threshold and y==1) or (x<threshold and y==0):
+			if self.fe.identifiers[self.feature_index][1]=='Complexity':
+				if (x>self.threshold and y==1) or (x<self.threshold and y==0):
 					corrects += 1
 			else:
-				if (x<threshold and y==1) or (x>threshold and y==0):
+				if (x<self.threshold and y==1) or (x>self.threshold and y==0):
 					corrects += 1
 		return float(corrects)/float(len(self.Xte))
 		
 		
 	def getMinMax(self):
-		return np.min(self.Xtr[:,self.feature_index]), np.max(self.Xtr[:,self.feature_index])
+		return np.min(np.array(self.Xtr)[:,self.feature_index]), np.max(np.array(self.Xtr)[:,self.feature_index])
 		
 	def getScore(self, threshold):
 		corrects = 0
