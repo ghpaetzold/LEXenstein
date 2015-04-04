@@ -1,12 +1,3 @@
-import xml.etree.ElementTree as ET
-import re
-import urllib2 as urllib
-from nltk.corpus import wordnet as wn
-import subprocess
-import nltk
-import kenlm
-import codecs
-
 class LexiconIdentifier:
 
 	def __init__(self, lexicon, type):
