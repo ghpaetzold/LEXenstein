@@ -1,4 +1,49 @@
+class IdentifierEvaluator:
 
+	def evaluateIdentifier(self, cwictor_corpus, predicted_labels):
+		"""
+		Performs an intrinsic evaluation of a Complex Word Identification approach.
+	
+		@param cwictor_corpus: Path to a training corpus in CWICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@param predicted_labels: A vector containing the predicted binary labels of each instance in the CWICTOR corpus.
+		@return: Precision, Recall and F-measure for the substitutions provided as input with respect to the gold-standard in the VICTOR corpus.
+		For more information on how the metrics are calculated, please refer to the LEXenstein Manual.
+		"""
+		
+		#Initialize variables:
+		precisionc = 0
+		precisiont = 0
+		recallc = 0
+		recallt = 0
+		
+		#Calculate measures:
+		index = -1
+		f = open(cwictor_corpus)
+		for line in f:
+			index += 1
+			data = line.strip().split('\t')
+			label = int(data[3].strip())
+			predicted_label = predicted_labels[index]
+			if label==predicted_label:
+				precisionc += 1
+				if label==1:
+					recallc += 1
+			if label==1:
+				recallt += 1
+			precisiont += 1
+		
+		precision = float(precisionc)/float(precisiont)
+		recall = float(recallc)/float(recallt)
+		fmean = 0.0
+		if precision==0.0 and recall==0.0:
+			fmean = 0.0
+		else:
+			fmean = 2*(precision*recall)/(precision+recall)
+			
+		#Return measures:
+		return precision, recall, fmean
+		
 class GeneratorEvaluator:
 
 	def evaluateGenerator(self, victor_corpus, substitutions):
@@ -9,7 +54,7 @@ class GeneratorEvaluator:
 		For more information about the file's format, refer to the LEXenstein Manual.
 		@param substitutions: A dictionary that assigns target complex words to sets of candidate substitutions.
 		Example: substitutions['perched'] = {'sat', 'roosted'}
-		@return: Values for Potential, Precision and F-measure for the substitutions provided as input with respect to the gold-standard in the VICTOR corpus.
+		@return: Values for Potential, Precision, Recall and F-measure for the substitutions provided as input with respect to the gold-standard in the VICTOR corpus.
 		For more information on how the metrics are calculated, please refer to the LEXenstein Manual.
 		"""
 		
@@ -58,7 +103,7 @@ class SelectorEvaluator:
 		@param victor_corpus: Path to a training corpus in VICTOR format.
 		For more information about the file's format, refer to the LEXenstein Manual.
 		@param substitutions: A vector of size N, containing a set of selected substitutions for each instance in the VICTOR corpus.
-		@return: Values for Potential, Precision and F-measure for the substitutions provided as input with respect to the gold-standard in the VICTOR corpus.
+		@return: Values for Potential, Recall, Precision and F-measure for the substitutions provided as input with respect to the gold-standard in the VICTOR corpus.
 		For more information on how the metrics are calculated, please refer to the LEXenstein Manual.
 		"""
 	
