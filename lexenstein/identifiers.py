@@ -12,7 +12,7 @@ class LexiconIdentifier:
 		self.type = type
 		self.feature_index = None
 
-	def identifyComplexWordsVICTOR(self, corpus):
+	def identifyComplexWords(self, corpus):
 		"""
 		Judge if the target words of a corpus in VICTOR or CWICTOR format are complex or not
 	
@@ -128,56 +128,56 @@ class ThresholdIdentifier:
 		self.minX, self.maxX = self.getMinMax()
 		
 		#Set initial min, max and pivot:
-        min = float(self.minX)
-        max = float(self.maxX)
+		min = float(self.minX)
+		max = float(self.maxX)
 
-        #Define difference threshold:
-        if diff==None:
-            diff = (max-min)/1000
+		#Define difference threshold:
+		if diff==None:
+			diff = (max-min)/1000
 
-        #Define order:
-        if order==None or order<1:
-            order = 1
+		#Define order:
+		if order==None or order<1:
+			order = 1
 
-        #Estimate best threshold:
-        best = -1
-        bestIndex = None
-        divisor = float(2**order)
-        step = (max-min)/divisor
-        for i in range(1, int(divisor)):
-            pivot = i*step
-            index, score = self.findMaxBinary(min, max, pivot, diff)
-            if score>best:
-                best = score
-                bestIndex = index
+		#Estimate best threshold:
+		best = -1
+		bestIndex = None
+		divisor = float(2**order)
+		step = (max-min)/divisor
+		for i in range(1, int(divisor)):
+			pivot = i*step
+			index, score = self.findMaxBinary(min, max, pivot, diff)
+			if score>best:
+				best = score
+				bestIndex = index
 
-        #Set threshold and score:
-        self.threshold = bestIndex
+		#Set threshold and score:
+		self.threshold = bestIndex
 		
 	def findMaxBinary(self, min, max, pivot, diff):
-        #Estimate best threshold:
-        best = -1
-        bestIndex = None
-        while (max-min)>diff:
-            left = (min+pivot)/2.0
-            right = (pivot+max)/2.0
-            scoreL = self.getScore(left)
-            scoreR = self.getScore(right)
-            if scoreL>scoreR:
-                max = pivot
-                pivot = left
-                if scoreL>best:
-                    best = scoreL
-                    bestIndex = left
-            else:
-                min = pivot
-                pivot = right
-                if scoreR>best:
-                    best = scoreR
-                    bestIndex = right
+		#Estimate best threshold:
+		best = -1
+		bestIndex = None
+		while (max-min)>diff:
+			left = (min+pivot)/2.0
+			right = (pivot+max)/2.0
+			scoreL = self.getScore(left)
+			scoreR = self.getScore(right)
+			if scoreL>scoreR:
+				max = pivot
+				pivot = left
+				if scoreL>best:
+					best = scoreL
+					bestIndex = left
+			else:
+				min = pivot
+				pivot = right
+				if scoreR>best:
+					best = scoreR
+					bestIndex = right
 
-        #Set threshold and score:
-        return bestIndex, best
+		#Set threshold and score:
+		return bestIndex, best
 		
 	def identifyComplexWords(self):
 		"""
