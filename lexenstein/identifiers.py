@@ -1,5 +1,39 @@
 import numpy as np
 
+class SimplifyAllIdentifier:
+
+	def identifyComplexWords(self, corpus):
+		"""
+		Assign label 1 (complex) to all target words in the VICTOR or CWICTOR corpus.
+	
+		@param corpus: Path to a corpus in the VICTOR or CWICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@return: A list of binary values, one per line, with value 1.
+		"""
+		result = []
+		f = open(corpus)
+		for line in f:
+			result.append(1)
+		f.close()
+		return result
+		
+class SimplifyNoneIdentifier:
+
+	def identifyComplexWords(self, corpus):
+		"""
+		Assign label 0 (simple) to all target words in the VICTOR or CWICTOR corpus.
+	
+		@param corpus: Path to a corpus in the VICTOR or CWICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@return: A list of binary values, one per line, with value 0.
+		"""
+		result = []
+		f = open(corpus)
+		for line in f:
+			result.append(0)
+		f.close()
+		return result
+		
 class LexiconIdentifier:
 
 	def __init__(self, lexicon, type):
@@ -37,6 +71,7 @@ class LexiconIdentifier:
 					result.append(1)
 				else:
 					result.append(0)
+		f.close()
 		return result
 		
 class ThresholdIdentifier:
@@ -65,6 +100,7 @@ class ThresholdIdentifier:
 			y = int(data[3].strip())
 			self.Xtr.append(x)
 			self.Ytr.append(y)
+		f.close()
 			
 	def calculateTestingFeatures(self, testing_corpus):
 		"""
@@ -79,6 +115,7 @@ class ThresholdIdentifier:
 			data = line.strip().split('\t')
 			x = self.fe.calculateInstanceFeatures(data[0], data[1], data[2], '0:'+data[1])
 			self.Xte.append(x)
+		f.close()
 			
 	def trainIdentifierBruteForce(self, feature_index, step=None):
 		"""
