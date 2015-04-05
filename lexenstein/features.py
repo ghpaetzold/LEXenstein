@@ -48,7 +48,6 @@ class FeatureEstimator:
 		values = []
 		for feature in self.features:
 			values.append(feature[0].__call__(data, feature[1]))
-			
 		vector = self.generateVector(values, 0)
 		return vector
 		

@@ -96,7 +96,7 @@ class ThresholdIdentifier:
 		self.Ytr = []
 		for line in f:
 			data = line.strip().split('\t')
-			x = self.fe.calculateInstanceFeatures(data[0], data[1], data[2], '0:'+data[1])
+			x = self.fe.calculateInstanceFeatures(data[0], data[1], data[2], data[1])
 			y = int(data[3].strip())
 			self.Xtr.append(x)
 			self.Ytr.append(y)
@@ -113,7 +113,7 @@ class ThresholdIdentifier:
 		self.Xte = []
 		for line in f:
 			data = line.strip().split('\t')
-			x = self.fe.calculateInstanceFeatures(data[0], data[1], data[2], '0:'+data[1])
+			x = self.fe.calculateInstanceFeatures(data[0], data[1], data[2], data[1])
 			self.Xte.append(x)
 		f.close()
 			
@@ -238,7 +238,15 @@ class ThresholdIdentifier:
 		
 		
 	def getMinMax(self):
-		return np.min(np.array(self.Xtr)[:,self.feature_index]), np.max(np.array(self.Xtr)[:,self.feature_index])
+		min = 99999
+		max = -99999
+		for i in range(0, len(self.Xtr)):
+			value = self.Xtr[i][self.feature_index]
+			if value>max:
+				max = value
+			if value<min:
+				min = value
+		return min, max
 		
 	def getScore(self, threshold):
 		precisionc = 0
