@@ -151,7 +151,7 @@ class ThresholdIdentifier:
 		#Set threshold and score:
 		self.threshold = bestIndex
 		
-	def trainIdentifierBinarySearch(self, feature_index, step=None):
+	def trainIdentifierBinarySearch(self, feature_index, diff=None, order=None):
 		"""
 		Trains the threshold identifier with respect to a certain feature through binary search.
 
