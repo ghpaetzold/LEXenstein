@@ -1,5 +1,6 @@
 import numpy as np
 from sklearn import svm
+from sklearn.linear_model import *
 from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import f_classif
 
@@ -56,6 +57,22 @@ class MachineLearningIdentifier:
 		please refer to http://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html#sklearn.svm.SVC
 		"""
 		self.classifier = svm.SVC(C=C, kernel=kernel, degree=degree, gamma=gamma, coef0=coef0, class_weight=class_weight)
+		self.classifier.fit(self.Xtr, self.Ytr)
+		
+	def trainPassiveAggressiveClassifier(self, C=1.0, loss='hinge'):
+		"""
+		Trains a Passive Agressive classifier. To know more about the meaning of each parameter,
+		please refer to http://scikit-learn.org/stable/modules/generated/sklearn.linear_model.PassiveAggressiveClassifier.html
+		"""
+		self.classifier = PassiveAggressiveClassifier(C=C, loss=loss)
+		self.classifier.fit(self.Xtr, self.Ytr)
+		
+	def trainSGDClassifier(self, loss='hinge', penalty='l2', alpha=0.0001, l1_ratio=0.15, epsilon=0.001, class_weight={0:1.0, 1:1.0}):
+		"""
+		Trains a Stochastic Gradient Descent classifier. To know more about the meaning of each parameter,
+		please refer to http://scikit-learn.org/stable/modules/generated/sklearn.linear_model.SGDClassifier.html
+		"""
+		self.classifier = SGDClassifier(loss=loss, penalty=penalty, alpha=alpha, l1_ratio=l1_ratio, epsilon=epsilon, class_weight=class_weight)
 		self.classifier.fit(self.Xtr, self.Ytr)
 		
 	def identifyComplexWords(self):
