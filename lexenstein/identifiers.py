@@ -1,4 +1,65 @@
 import numpy as np
+from sklearn import svm
+from sklearn.feature_selection import SelectKBest
+from sklearn.feature_selection import f_classif
+
+class MachineLearningIdentifier:
+
+	def __init__(self, fe):
+		"""
+		Creates a MachineLearningIdentifier instance.
+	
+		@param fe: FeatureEstimator object.
+		"""
+		self.fe = fe
+		self.classifier = None
+	
+	def calculateTrainingFeatures(self, training_corpus):
+		"""
+		Calculate features of a corpus in CWICTOR format.
+	
+		@param training_corpus: Path to a corpus in the CWICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		"""
+		self.Xtr = self.fe.calculateFeatures(training_corpus, format='cwictor')
+		self.Ytr = []
+		f = open(training_corpus)
+		for line in f:
+			data = line.strip().split('\t')
+			y = int(data[3].strip())
+			self.Ytr.append(y)
+		f.close()
+			
+	def calculateTestingFeatures(self, testing_corpus):
+		"""
+		Calculate testing features of a corpus in VICTOR or CWICTOR format.
+	
+		@param testing_corpus: Path to a corpus in the VICTOR or CWICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		"""
+		self.Xte = self.fe.calculateFeatures(testing_corpus, format='cwictor')
+		
+	def selectKBestFeatures(self, k='all'):
+		"""
+		Selects the k best features through univariate feature selection.
+	
+		@param k: Number of features to be selected.
+		"""
+		feature_selector = SelectKBest(f_classif, k=k)
+		feature_selector.fit(self.Xtr, self.Ytr)
+		self.Xtr = feature_selector.transform(self.Xtr)
+		self.Xte = feature_selector.transform(self.Xte)
+		
+	def trainSVM(self, C=1.0, kernel='rbf', degree=3, gamma=0.0, coef0=0.0, class_weight={0:1.0, 1:1.0}):
+		"""
+		Trains an SVM classifier. To know more about the meaning of each parameter,
+		please refer to http://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html#sklearn.svm.SVC
+		"""
+		self.classifier = svm.SVC(C=C, kernel=kernel, degree=degree, gamma=gamma, coef0=coef0, class_weight=class_weight)
+		self.classifier.fit(self.Xtr, self.Ytr)
+		
+	def identifyComplexWords(self):
+		return self.classifier.predict(self.Xte)
 
 class SimplifyAllIdentifier:
 
