@@ -1,6 +1,7 @@
 import numpy as np
 from sklearn import svm
 from sklearn.linear_model import *
+from sklearn.tree import *
 from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import f_classif
 
@@ -80,7 +81,7 @@ class MachineLearningIdentifier:
 		Trains a Decision Tree classifier. To know more about the meaning of each parameter,
 		please refer to http://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeClassifier.html
 		"""
-		self.classifier = DecisionTreeClassifier(criterion=criterion, splitter=splitter, max_features=max_features, max_depth=max_depth, class_weight=class_weight)
+		self.classifier = DecisionTreeClassifier(criterion=criterion, splitter=splitter, max_features=max_features, max_depth=max_depth)
 		self.classifier.fit(self.Xtr, self.Ytr)
 		
 	def identifyComplexWords(self):
