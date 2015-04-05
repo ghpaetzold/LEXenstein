@@ -91,14 +91,12 @@ class ThresholdIdentifier:
 		@param training_corpus: Path to a corpus in the CWICTOR format.
 		For more information about the file's format, refer to the LEXenstein Manual.
 		"""
-		f = open(training_corpus)
-		self.Xtr = []
+		self.Xtr = self.fe.calculateFeatures(training_corpus, format='cwictor')
 		self.Ytr = []
+		f = open(training_corpus)
 		for line in f:
 			data = line.strip().split('\t')
-			x = self.fe.calculateInstanceFeatures(data[0], data[1], data[2], data[1])
 			y = int(data[3].strip())
-			self.Xtr.append(x)
 			self.Ytr.append(y)
 		f.close()
 			
@@ -109,13 +107,7 @@ class ThresholdIdentifier:
 		@param testing_corpus: Path to a corpus in the VICTOR or CWICTOR format.
 		For more information about the file's format, refer to the LEXenstein Manual.
 		"""
-		f = open(testing_corpus)
-		self.Xte = []
-		for line in f:
-			data = line.strip().split('\t')
-			x = self.fe.calculateInstanceFeatures(data[0], data[1], data[2], data[1])
-			self.Xte.append(x)
-		f.close()
+		self.Xte = self.fe.calculateFeatures(testing_corpus, format='cwictor')
 			
 	def trainIdentifierBruteForce(self, feature_index, step=None):
 		"""
