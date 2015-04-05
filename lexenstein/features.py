@@ -8,16 +8,28 @@ class FeatureEstimator:
 		self.features = []
 		self.identifiers = []
 		
-	def calculateFeatures(self, victor_corpus):
+	def calculateFeatures(self, corpus, format='victor'):
 		"""
-		Calculate the selected features over the candidates of a VICTOR corpus.
+		Calculate the selected features over the candidates of a VICTOR or CWICTOR corpus.
 	
-		@param victor_corpus: Path to a corpus in the VICTOR format.
+		@param corpus: Path to a corpus in the VICTOR or CWICTOR format.
 		For more information about the file's format, refer to the LEXenstein Manual.
+		@param format: Input file format.
+		Values available: victor, cwictor
 		@return: Returns a MxN matrix, where M is the number of substitutions of all instances in the VICTOR corpus, and N the number of selected features.
 		"""
-	
-		data = [line.strip().split('\t') for line in open(victor_corpus)]
+		
+		data = []
+		if format.strip().lower()=='victor':
+			data = [line.strip().split('\t') for line in open(corpus)]
+		elif format.strip().lower()=='cwictor':
+			f = open(corpus)
+			for line in f:
+				line_data = line.strip().split('\t')
+				data.append([line_data[0].strip(), line_data[1].strip(), line_data[2].strip(), '0:'+line_data[1].strip()])
+		else:
+			print('Unknown input format during feature estimation!')
+			return []
 		
 		values = []
 		for feature in self.features:
