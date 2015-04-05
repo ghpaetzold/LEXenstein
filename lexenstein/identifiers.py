@@ -241,14 +241,34 @@ class ThresholdIdentifier:
 		return np.min(np.array(self.Xtr)[:,self.feature_index]), np.max(np.array(self.Xtr)[:,self.feature_index])
 		
 	def getScore(self, threshold):
-		corrects = 0
+		precisionc = 0
+		precisiont = 0
+		recallc = 0
+		recallt = 0
 		for i in range(0, len(self.Xtr)):
 			x = self.Xtr[i][self.feature_index]
 			y = self.Ytr[i]
 			if self.fe.identifiers[self.feature_index][1]=='Complexity':
 				if (x>threshold and y==1) or (x<threshold and y==0):
-					corrects += 1
+					precisionc += 1
+					if y==1:
+						recallc += 1
 			else:
 				if (x<threshold and y==1) or (x>threshold and y==0):
-					corrects += 1
-		return float(corrects)/float(len(self.Xtr))
+					precisionc += 1
+					if y==1:
+						recallc += 1
+			precisiont += 1
+			if y==1:
+				recallt += 1
+				
+		precision = float(precisionc)/float(precisiont)
+		recall = float(recallc)/float(recallt)
+		fmean = 0.0
+		if precision==0.0 and recall==0.0:
+			fmean = 0.0
+		else:
+			fmean = 2*(precision*recall)/(precision+recall)
+			
+		#Return F-Measure:
+		return fmean
