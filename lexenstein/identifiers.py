@@ -75,6 +75,14 @@ class MachineLearningIdentifier:
 		self.classifier = SGDClassifier(loss=loss, penalty=penalty, alpha=alpha, l1_ratio=l1_ratio, epsilon=epsilon, class_weight=class_weight)
 		self.classifier.fit(self.Xtr, self.Ytr)
 		
+	def trainDecisionTreeClassifier(self, criterion='gini', splitter='best', max_features=None, max_depth=None, class_weight={0:1.0, 1:1.0}):
+		"""
+		Trains a Decision Tree classifier. To know more about the meaning of each parameter,
+		please refer to http://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeClassifier.html
+		"""
+		self.classifier = DecisionTreeClassifier(criterion=criterion, splitter=splitter, max_features=max_features, max_depth=max_depth, class_weight=class_weight)
+		self.classifier.fit(self.Xtr, self.Ytr)
+		
 	def identifyComplexWords(self):
 		return self.classifier.predict(self.Xte)
 
