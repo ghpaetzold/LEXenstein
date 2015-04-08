@@ -4,6 +4,7 @@ from sklearn.linear_model import *
 from sklearn.tree import *
 from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import f_classif
+from sklearn.preprocessing import normalize
 
 class MachineLearningIdentifier:
 
@@ -16,12 +17,13 @@ class MachineLearningIdentifier:
 		self.fe = fe
 		self.classifier = None
 	
-	def calculateTrainingFeatures(self, training_corpus):
+	def calculateTrainingFeatures(self, training_corpus, norm=False):
 		"""
 		Calculate features of a corpus in CWICTOR format.
 	
 		@param training_corpus: Path to a corpus in the CWICTOR format.
 		For more information about the file's format, refer to the LEXenstein Manual.
+		@param norm: Boolean variable that determines whether or not feature values should be normalized.
 		"""
 		self.Xtr = self.fe.calculateFeatures(training_corpus, format='cwictor')
 		self.Ytr = []
@@ -31,15 +33,24 @@ class MachineLearningIdentifier:
 			y = int(data[3].strip())
 			self.Ytr.append(y)
 		f.close()
+		
+		#Normalize if required:
+		if norm:
+			self.Xtr = normalize(self.Xtr, axis=0)
 			
-	def calculateTestingFeatures(self, testing_corpus):
+	def calculateTestingFeatures(self, testing_corpus, norm=False):
 		"""
 		Calculate testing features of a corpus in VICTOR or CWICTOR format.
 	
 		@param testing_corpus: Path to a corpus in the VICTOR or CWICTOR format.
 		For more information about the file's format, refer to the LEXenstein Manual.
+		@param norm: Boolean variable that determines whether or not feature values should be normalized.
 		"""
 		self.Xte = self.fe.calculateFeatures(testing_corpus, format='cwictor')
+		
+		#Normalize if required:
+		if norm:
+			self.Xte = normalize(self.Xte, axis=0)
 		
 	def selectKBestFeatures(self, k='all'):
 		"""
