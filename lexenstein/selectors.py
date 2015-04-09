@@ -29,7 +29,7 @@ class POSTagSelector:
 			if target in substitutions.keys():
 				target_POS = self.getTargetPOS(sent, target, head)
 				candidates = substitutions[target]
-				candidates = self.getCandidatesWithSamePOS(candidates, target_POS)
+				candidates = self.getCandidatesWithSamePOS(sent.split(' '), head, candidates, target_POS)
 		
 			selected_substitutions.append(candidates)
 		lexf.close()
@@ -48,15 +48,29 @@ class POSTagSelector:
 				return 'None'
 			
 		
-	def getCandidatesWithSamePOS(self, candidates, pos):
+	def getCandidatesWithSamePOS(self, tokens, head, candidates, pos):
 		result = set([])
+		pref = ''
+		suff = ''
+		for i in range(0, head):
+			pref += tokens[i] + ' '
+		for i in range(head+1, len(tokens)):
+			suff += tokens[i] = ' '
+		suff = ' ' + suff.strip()
 		for candidate in candidates:
+			sent = pref + candidate + suff
+			candidate_tag = []
 			try:
-				pos_data = nltk.pos_tag(candidate)
-				if pos_data[0][1]==pos:
-					result.add(candidate)
+				pos_data = nltk.pos_tag(sent)
+				candidate_tag = pos_data[head][1]
 			except UnicodeDecodeError:
-				result = result
+				try:
+					pos_data = nltk.pos_tag(candidate)
+					candidate_tag =  pos_data[0][1]
+				except UnicodeDecodeError:
+					candidate_tag = 'NoneCand'
+			if candidate_tag==pos:
+				result.add(candidate)
 		return result
 	
 	def toVictorFormat(self, victor_corpus, substitutions, output_path, addTargetAsCandidate=False):
