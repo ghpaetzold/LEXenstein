@@ -3,6 +3,189 @@ from sklearn.preprocessing import normalize
 from sklearn.feature_selection import f_classif
 from sklearn import linear_model
 import kenlm
+import math
+from nltk.corpus import wordnet as wn
+
+class BottRanker:
+
+	def __init__(self, simple_lm):
+		"""
+		Creates an instance of the BottRanker class.
+	
+		@param simple_lm: Path to a language model built over simple text.
+		For more information on how to create the file, refer to the LEXenstein Manual.
+		"""
+		
+		self.simple_lm = kenlm.LanguageModel(simple_lm)
+		
+	def getRankings(self, victor_corpus, a1=1.0, a2=1.0):
+		"""
+		Ranks candidates with respect to their simplicity.
+	
+		@param victor_corpus: Path to a testing corpus in VICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@return: A list of ranked candidates for each instance in the VICTOR corpus, from simplest to most complex.
+		"""
+		#Create object for results:
+		result = []
+		
+		#Read feature values for each candidate in victor corpus:
+		f = open(victor_corpus)
+		for line in f:
+			#Get all substitutions in ranking instance:
+			data = line.strip().split('\t')
+			substitutions = data[3:len(data)]
+			
+			#Create dictionary of substitution to feature value:
+			scores = {}
+			for substitution in substitutions:
+				word = substitution.strip().split(':')[1].strip()
+				scores[word] = self.getCandidateComplexity(word, a1, a2)
+			
+			#Sort substitutions:
+			sorted_substitutions = sorted(scores.keys(), key=scores.__getitem__, reverse=False)
+		
+			#Add them to result:
+			result.append(sorted_substitutions)
+		f.close()
+		
+		#Return result:
+		return result
+		
+	def getCandidateComplexity(self, word, a1, a2):
+		ScoreWL = 0
+		if len(word)>4:
+			ScoreWL = math.sqrt(len(word)-4)
+		ScoreFreq = -1*self.simple_lm.score(word, bos=False, eos=False)
+		return a1*ScoreWL + a2*ScoreFreq
+
+class YamamotoRanker:
+
+	def __init__(self, simple_lm, cooc_model):
+		"""
+		Creates an instance of the YamamotoRanker class.
+	
+		@param simple_lm: Path to a language model built over simple text.
+		For more information on how to create the file, refer to the LEXenstein Manual.
+		@param cooc_model: Path to a word co-occurrence model.
+		For instructions on how to create the model, please refer to the LEXenstein Manual.
+		"""
+		
+		self.simple_lm = kenlm.LanguageModel(simple_lm)
+		self.cooc_model = self.getModel(cooc_model)
+		
+	def getRankings(self, victor_corpus, a1=1.0, a2=1.0, a3=1.0, a4=1.0, a5=1.0):
+		"""
+		Ranks candidates with respect to their simplicity.
+	
+		@param victor_corpus: Path to a testing corpus in VICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@return: A list of ranked candidates for each instance in the VICTOR corpus, from simplest to most complex.
+		"""
+		#Create object for results:
+		result = []
+		
+		#Read feature values for each candidate in victor corpus:
+		f = open(victor_corpus)
+		for line in f:
+			#Get all substitutions in ranking instance:
+			data = line.strip().split('\t')
+			sent = data[0].strip()
+			target = data[1].strip()
+			head = int(data[2].strip())
+			substitutions = data[3:len(data)]
+			
+			#Create dictionary of substitution to feature value:
+			scores = {}
+			for substitution in substitutions:
+				word = substitution.strip().split(':')[1].strip()
+				scores[word] = self.getCandidateScore(sent, target, head, word, a1, a2, a3, a4, a5)
+			
+			#Sort substitutions:
+			sorted_substitutions = sorted(scores.keys(), key=scores.__getitem__, reverse=True)
+		
+			#Add them to result:
+			result.append(sorted_substitutions)
+		f.close()
+		
+		#Return result:
+		return result
+		
+	def getModel(self, path):
+		result = {}
+		f = open(path)
+		for line in f:
+			data = line.strip().split('\t')
+			target = data[0].strip()
+			coocs = data[1:len(data)]
+			result[target] = {}
+			for cooc in coocs:
+				coocd = cooc.strip().split(':')
+				word = coocd[0].strip()
+				count = int(coocd[1].strip())
+				result[target][word] = count
+		return result
+		
+	def getCandidateScore(self, sent, target, head, word, a1, a2, a3, a4, a5):
+		Fcorpus = a1*self.simple_lm.score(word, bos=False, eos=False)
+		Sense = a2*self.getSenseScore(word, target)
+		Cooc = a3*self.getCoocScore(word, sent)
+		Log = a4*self.getLogScore(Cooc, sent, word)
+		Trigram = a5*self.getTrigramScore(sent, head, word)
+		
+		score = Fcorpus+Sense+Cooc+Log+Trigram
+		return score
+	
+	def getTrigramScore(self, sent, head, word):
+		tokens = ['', ''] + sent.strip().split(' ') + ['', '']
+		h = head + 2
+		t1 = tokens[h-2] + ' ' + tokens[h-1] + ' ' + word
+		t2 = tokens[h-1] + ' ' + word + ' ' + tokens[h+1]
+		t3 = word + ' ' + tokens[h+1] + ' ' + tokens[h+2]
+		bos = False
+		eos = False
+		if tokens[h-1]=='':
+			bos = True
+		if tokens[h+1]=='':
+			eos = True
+		result = self.simple_lm.score(t1, bos=bos, eos=eos)+self.simple_lm.score(t2, bos=bos, eos=eos)+self.simple_lm.score(t3, bos=bos, eos=eos)
+		return result
+	
+	def getLogScore(self, Cooc, sent, word):
+		dividend = Cooc
+		divisor = self.simple_lm.score(word, bos=False, eos=False)*self.simple_lm.score(sent, bos=True, eos=True)
+		if divisor==0:
+			return 0
+		else:
+			result = math.log(dividend/divisor)
+			return result
+		
+	def getCoocScore(self, word, sent):
+		tokens = sent.strip().split(' ')
+		if word not in self.cooc_model.keys():
+			return 0
+		else:
+			result = 0
+			for token in tokens:
+				if token in self.cooc_model[word].keys():
+					result += self.cooc_model[word][token]
+			return result
+		
+	def getSenseScore(self, word, target):
+		candidate_sense = None
+		try:
+			candidate_sense = wn.synsets(word)[0]
+		except Exception:
+			candidate_sense = None
+		target_sense = None
+		try:
+			target_sense = wn.synsets(target)[0]
+		except Exception:
+			target_sense = None
+		result = 999999
+		if candidate_sense!=None and target_sense!=None:
+			result = candidate_sense.shortest_path_distance(target_sense)
+		return result
 
 class BiranRanker:
 
