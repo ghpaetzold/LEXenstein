@@ -36,15 +36,27 @@ class POSTagSelector:
 		return selected_substitutions
 	
 	def getTargetPOS(self, sent, target, head):
-		pos_data = nltk.pos_tag(sent)
-		return pos_data[head][1]
+		pos_data = []
+		try:
+			pos_data = nltk.pos_tag(sent)
+			return pos_data[head][1]
+		except UnicodeDecodeError:
+			try:
+				pos_data = nltk.pos_tag(target)
+				return pos_data[0][1]
+			except UnicodeDecodeError:
+				return 'None'
+			
 		
 	def getCandidatesWithSamePOS(self, candidates, pos):
 		result = set([])
 		for candidate in candidates:
-			pos_data = nltk.pos_tag(candidate)
-			if pos_data[0][1]==pos:
-				result.add(candidate)
+			try:
+				pos_data = nltk.pos_tag(candidate)
+				if pos_data[0][1]==pos:
+					result.add(candidate)
+			except UnicodeDecodeError:
+				result = result
 		return result
 	
 	def toVictorFormat(self, victor_corpus, substitutions, output_path, addTargetAsCandidate=False):
