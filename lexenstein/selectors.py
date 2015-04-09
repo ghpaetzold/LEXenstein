@@ -29,17 +29,17 @@ class POSTagSelector:
 			if target in substitutions.keys():
 				target_POS = self.getTargetPOS(sent, target, head)
 				candidates = substitutions[target]
-				candidates = getCandidatesWithSamePOS(candidates, target_POS)
+				candidates = self.getCandidatesWithSamePOS(candidates, target_POS)
 		
 			selected_substitutions.append(candidates)
 		lexf.close()
 		return selected_substitutions
 	
-	def getTargetPOS(sent, target, head):
+	def getTargetPOS(self, sent, target, head):
 		pos_data = nltk.pos_tag(sent)
 		return pos_data[head][1]
 		
-	def getCandidatesWithSamePOS(candidates, pos):
+	def getCandidatesWithSamePOS(self, candidates, pos):
 		result = set([])
 		for candidate in candidates:
 			pos_data = nltk.pos_tag(candidate)
