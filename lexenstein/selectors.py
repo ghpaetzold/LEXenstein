@@ -55,7 +55,7 @@ class POSTagSelector:
 		for i in range(0, head):
 			pref += tokens[i] + ' '
 		for i in range(head+1, len(tokens)):
-			suff += tokens[i] = ' '
+			suff += tokens[i] + ' '
 		suff = ' ' + suff.strip()
 		for candidate in candidates:
 			sent = pref + candidate + suff

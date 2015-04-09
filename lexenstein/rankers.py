@@ -2,6 +2,61 @@ import os
 from sklearn.preprocessing import normalize
 from sklearn.feature_selection import f_classif
 from sklearn import linear_model
+import kenlm
+
+class BiranRanker:
+
+	def __init__(self, complex_lm, simple_lm):
+		"""
+		Creates an instance of the BiranRanker class.
+	
+		@param complex_lm: Path to a language model built over complex text.
+		For more information on how to create the file, refer to the LEXenstein Manual.
+		@param simple_lm: Path to a language model built over simple text.
+		For more information on how to create the file, refer to the LEXenstein Manual.
+		"""
+		
+		self.complex_lm = kenlm.LanguageModel(complex_lm)
+		self.simple_lm = kenlm.LanguageModel(simple_lm)
+		
+	def getRankings(self, victor_corpus):
+		"""
+		Ranks candidates with respect to their simplicity.
+	
+		@param victor_corpus: Path to a testing corpus in VICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@return: A list of ranked candidates for each instance in the VICTOR corpus, from simplest to most complex.
+		"""
+		#Create object for results:
+		result = []
+		
+		#Read feature values for each candidate in victor corpus:
+		f = open(victor_corpus)
+		for line in f:
+			#Get all substitutions in ranking instance:
+			data = line.strip().split('\t')
+			substitutions = data[3:len(data)]
+			
+			#Create dictionary of substitution to feature value:
+			scores = {}
+			for substitution in substitutions:
+				word = substitution.strip().split(':')[1].strip()
+				scores[word] = self.getCandidateComplexity(word)
+			
+			#Sort substitutions:
+			sorted_substitutions = sorted(scores.keys(), key=scores.__getitem__, reverse=False)
+		
+			#Add them to result:
+			result.append(sorted_substitutions)
+		f.close()
+		
+		#Return result:
+		return result
+		
+	def getCandidateComplexity(self, word):
+		C = (self.complex_lm.score(word, bos=False, eos=False))/(self.simple_lm.score(word, bos=False, eos=False))
+		L = float(len(word))
+		return C*L
 
 class BoundaryRanker:
 
