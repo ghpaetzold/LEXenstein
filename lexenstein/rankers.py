@@ -157,7 +157,11 @@ class YamamotoRanker:
 		if divisor==0:
 			return 0
 		else:
-			result = math.log(dividend/divisor)
+			result = 0
+			try:
+				result = math.log(dividend/divisor)
+			except ValueError:
+				result = 0
 			return result
 		
 	def getCoocScore(self, word, sent):
@@ -183,8 +187,10 @@ class YamamotoRanker:
 		except Exception:
 			target_sense = None
 		result = 999999
-		if candidate_sense!=None and target_sense!=None:
+		if candidate_sense and target_sense:
 			result = candidate_sense.shortest_path_distance(target_sense)
+		if not result:
+			result = 999999
 		return result
 
 class BiranRanker:
