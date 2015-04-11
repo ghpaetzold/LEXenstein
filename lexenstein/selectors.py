@@ -49,7 +49,7 @@ class ClusterSelector:
 		wc = {}
 		f = open(clusters)
 		for line in f:
-			data = line.strip().split(' ')
+			data = line.strip().split('\t')
 			cluster = data[0].strip()
 			word = data[1].strip()
 			
