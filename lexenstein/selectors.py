@@ -4,6 +4,88 @@ from scipy.spatial.distance import cosine
 import nltk
 import numpy as np
 
+class ClusterSelector:
+
+	def __init__(self, clusters):
+		"""
+		Creates an instance of the BrownSelector class.
+	
+		@param clusters: Path to a file containing clusters of words.
+		For instructions on how to create the file, please refer to the LEXenstein Manual.
+		"""
+		self.clusters_to_words, self.words_to_clusters = self.getClusterData(clusters)
+
+	def selectCandidates(self, substitutions, victor_corpus):
+		"""
+		Selects which candidates can replace the target complex words in each instance of a VICTOR corpus.
+	
+		@param substitutions: A dictionary linking complex words to a set of candidate substitutions
+		Example: substitutions['perched'] = {'sat', 'roosted'}
+		@param victor_corpus: Path to a corpus in the VICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@return: Returns a vector of size N, containing a set of selected substitutions for each instance in the VICTOR corpus.
+		"""
+		selected_substitutions = []				
+
+		lexf = open(victor_corpus)
+		for line in lexf:
+			data = line.strip().split('\t')
+			sent = data[0].strip()
+			target = data[1].strip()
+		
+			selected_candidates = set([])
+			if target in substitutions.keys():
+				if target in self.words_to_clusters.keys():	
+					cluster = self.words_to_clusters[target]
+					candidates = set(substitutions[target])
+					selected_candidates = candidates.intersection(self.clusters_to_words[cluster])
+		
+			selected_substitutions.append(selected_candidates)
+		lexf.close()
+		return selected_substitutions
+		
+	def getClusterData(self, clusters):
+		cw = {}
+		wc = {}
+		f = open(clusters)
+		for line in f:
+			data = line.strip().split(' ')
+			cluster = data[0].strip()
+			word = data[1].strip()
+			
+			if cluster in cw.keys():
+				cw[cluster].add(word)
+			else:
+				cw[cluster] = set([word])
+			
+			wc[word] = cluster
+		f.close()
+		return cw, wc
+		
+	def toVictorFormat(self, victor_corpus, substitutions, output_path, addTargetAsCandidate=False):
+		"""
+		Saves a set of selected substitutions in a file in VICTOR format.
+	
+		@param victor_corpus: Path to the corpus in the VICTOR format to which the substitutions were selected.
+		@param substitutions: The vector of substitutions selected for the VICTOR corpus.
+		@param output_path: The path in which to save the resulting VICTOR corpus.
+		@param addTargetAsCandidate: If True, adds the target complex word of each instance as a candidate substitution.
+		"""
+		o = open(output_path, 'w')
+		f = open(victor_corpus)
+		for subs in substitutions:
+			data = f.readline().strip().split('\t')
+			sentence = data[0].strip()
+			target = data[1].strip()
+			head = data[2].strip()
+			
+			newline = sentence + '\t' + target + '\t' + head + '\t'
+			for sub in subs:
+				newline += '0:'+sub + '\t'
+			o.write(newline.strip() + '\n')
+		f.close()
+		o.close()
+
 class POSTagSelector:
 
 	def selectCandidates(self, substitutions, victor_corpus):
