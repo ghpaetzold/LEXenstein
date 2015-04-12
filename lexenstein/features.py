@@ -316,8 +316,8 @@ class FeatureEstimator:
 	
 	def addTranslationProbabilityFeature(self, translation_probabilities, orientation):
 		"""
-		Adds a lexicon feature to the estimator.
-		The value will be 1 if a given candidate is in the provided lexicon, and 0 otherwise.
+		Adds a translation probability feature to the estimator.
+		The value will be the probability of a target complex word of being translated into a given candidate substitution.
 	
 		@param translation_probabilities: Path to a file containing the translation probabilities.
 		The file must produced by the following command through fast_align:
