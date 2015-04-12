@@ -2,6 +2,7 @@ from nltk.stem.porter import *
 from nltk.corpus import wordnet as wn
 import kenlm
 import math
+import gensim
 
 class FeatureEstimator:
 
@@ -77,14 +78,20 @@ class FeatureEstimator:
 		model = args[0]
 		result = []
 		for line in data:
+			target = line[1].strip().lower()
 			for subst in line[3:len(line)]:
 				words = subst.strip().split(':')[1].strip()
 				similarity = 0.0
 				cand_size = 0
 				for word in words.split(' '):
 					cand_size += 1
-					if word in model.keys():
+					try:
 						similarity += model.similarity(target, word)
+					except KeyError:
+						try:
+							similarity += model.similarity(target, word.lower())
+						except KeyError:
+							pass
 				similarity /= cand_size
 				result.append(similarity)
 		return result
@@ -332,8 +339,8 @@ class FeatureEstimator:
 		if orientation not in ['Complexity', 'Simplicity']:
 			print('Orientation must be Complexity or Simplicity')
 		else:
-			model = gensim.models.word2vec.Word2Vec.load_word2vec_format(vector_model, binary=True)
-			self.features.append((self.wordVectorSimilarityFeature, [model]))
+			m = gensim.models.word2vec.Word2Vec.load_word2vec_format(model, binary=True)
+			self.features.append((self.wordVectorSimilarityFeature, [m]))
 			self.identifiers.append(('Translation Probability', orientation))
 	
 	def addTranslationProbabilityFeature(self, translation_probabilities, orientation):
