@@ -72,6 +72,36 @@ class FeatureEstimator:
 				result.extend(feature[index])
 		return result
 		
+	def translationProbabilityFeature(self, data, args):
+		path = args[0]
+		probabilities = {}
+		f = open(path)
+		for line in f:
+			lined = line.strip().split('\t')
+			word1 = lined[0]
+			word2 = lined[1]
+			prob = math.exp(float(lined[2]))
+			if word1 in probabilities.keys():
+				probabilities[word1][word2] = prob
+			else:
+				probabilities[word1] = {word2:prob}
+		f.close()
+		result = []
+		for line in data:
+			target_probs = {}
+			if line[1].strip() in probabilities.keys()
+				target_probs = probabilities[line[1].strip()]
+			for subst in line[3:len(line)]:
+				words = subst.strip().split(':')[1].strip()
+				prob = 1.0
+				for word in words.split(' '):
+					if word in target_probs.keys():
+						prob *= target_probs[word]
+					else:
+						prob = 0.0
+				result.append(prob)
+		return result
+		
 	def lexiconFeature(self, data, args):
 		path = args[0]
 		result = []
@@ -282,7 +312,25 @@ class FeatureEstimator:
 							maxdepth = auxmax
 				resultma.append(maxdepth)
 		return resultma
+	
+	def addTranslationProbabilityFeature(self, translation_probabilities, orientation):
+		"""
+		Adds a lexicon feature to the estimator.
+		The value will be 1 if a given candidate is in the provided lexicon, and 0 otherwise.
+	
+		@param translation_probabilities: Path to a file containing the translation probabilities.
+		The file must produced by the following command through fast_align:
+			fast_align -i <parallel_data> -v -d -o <translation_probabilities>
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Possible values: Complexity, Simplicity.
+		"""
 		
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:
+			self.features.append((self.translationProbabilityFeature, [translation_probabilities]))
+			self.identifiers.append(('Translation Probability', orientation))
+	
 	def addLexiconFeature(self, lexicon, orientation):
 		"""
 		Adds a lexicon feature to the estimator.
