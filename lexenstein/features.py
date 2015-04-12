@@ -1,6 +1,7 @@
 from nltk.stem.porter import *
 from nltk.corpus import wordnet as wn
 import kenlm
+import math
 
 class FeatureEstimator:
 
@@ -89,7 +90,7 @@ class FeatureEstimator:
 		result = []
 		for line in data:
 			target_probs = {}
-			if line[1].strip() in probabilities.keys()
+			if line[1].strip() in probabilities.keys():
 				target_probs = probabilities[line[1].strip()]
 			for subst in line[3:len(line)]:
 				words = subst.strip().split(':')[1].strip()
