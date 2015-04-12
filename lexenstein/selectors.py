@@ -409,7 +409,7 @@ class WordVectorSelector:
 		"""
 		Creates an instance of the WordVectorSelector class.
 	
-		@param vector_model: Path to a word vector model.
+		@param vector_model: Path to a binary word vector model.
 		For instructions on how to create the model, please refer to the LEXenstein Manual.
 		"""
 		self.model = gensim.models.word2vec.Word2Vec.load_word2vec_format(vector_model, binary=True)

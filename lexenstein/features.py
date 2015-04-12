@@ -72,21 +72,25 @@ class FeatureEstimator:
 			else:
 				result.extend(feature[index])
 		return result
-		
+	
+	def wordVectorSimilarityFeature(self, data, args):
+		model = args[0]
+		result = []
+		for line in data:
+			for subst in line[3:len(line)]:
+				words = subst.strip().split(':')[1].strip()
+				similarity = 0.0
+				cand_size = 0
+				for word in words.split(' '):
+					cand_size += 1
+					if word in model.keys():
+						similarity += model.similarity(target, word)
+				similarity /= cand_size
+				result.append(similarity)
+		return result
+	
 	def translationProbabilityFeature(self, data, args):
-		path = args[0]
-		probabilities = {}
-		f = open(path)
-		for line in f:
-			lined = line.strip().split('\t')
-			word1 = lined[0]
-			word2 = lined[1]
-			prob = math.exp(float(lined[2]))
-			if word1 in probabilities.keys():
-				probabilities[word1][word2] = prob
-			else:
-				probabilities[word1] = {word2:prob}
-		f.close()
+		probabilities = args[0]
 		result = []
 		for line in data:
 			target_probs = {}
@@ -314,6 +318,24 @@ class FeatureEstimator:
 				resultma.append(maxdepth)
 		return resultma
 	
+	def addWordVectorSimilarityFeature(self, model, orientation):
+		"""
+		Adds a word vector similarity feature to the estimator.
+		The value will be the similarity between the word vector of a target complex word and the word vector of a candidate.
+	
+		@param vector_model: Path to a binary word vector model.
+		For instructions on how to create the model, please refer to the LEXenstein Manual.
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Possible values: Complexity, Simplicity.
+		"""
+		
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:
+			model = gensim.models.word2vec.Word2Vec.load_word2vec_format(vector_model, binary=True)
+			self.features.append((self.wordVectorSimilarityFeature, [model]))
+			self.identifiers.append(('Translation Probability', orientation))
+	
 	def addTranslationProbabilityFeature(self, translation_probabilities, orientation):
 		"""
 		Adds a translation probability feature to the estimator.
@@ -325,11 +347,24 @@ class FeatureEstimator:
 		@param orientation: Whether the feature is a simplicity of complexity measure.
 		Possible values: Complexity, Simplicity.
 		"""
+		path = translation_probabilities
+		probabilities = {}
+		f = open(path)
+		for line in f:
+			lined = line.strip().split('\t')
+			word1 = lined[0]
+			word2 = lined[1]
+			prob = math.exp(float(lined[2]))
+			if word1 in probabilities.keys():
+				probabilities[word1][word2] = prob
+			else:
+				probabilities[word1] = {word2:prob}
+		f.close()
 		
 		if orientation not in ['Complexity', 'Simplicity']:
 			print('Orientation must be Complexity or Simplicity')
 		else:
-			self.features.append((self.translationProbabilityFeature, [translation_probabilities]))
+			self.features.append((self.translationProbabilityFeature, [probabilities]))
 			self.identifiers.append(('Translation Probability', orientation))
 	
 	def addLexiconFeature(self, lexicon, orientation):
