@@ -20,10 +20,7 @@ def fitTranslationProbabilityFileToCorpus(translation_probabilities, corpus, out
 	
 	o = open(output, 'w')
 	f = open(translation_probabilities)
-	c = -1
 	for line in f:
-		c += 1
-		print(str(c))
 		data = line.strip().split('\t')
 		word = data[0].strip()
 		if word in targets:
