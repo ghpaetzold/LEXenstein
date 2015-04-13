@@ -36,6 +36,31 @@ class BoundarySelector:
 		"""
 	
 		self.ranker.trainRanker(victor_corpus, positive_range, loss, penalty, alpha, l1_ratio, epsilon)
+		
+	def trainSelectorWithCrossValidation(self, victor_corpus, positive_range, folds, test_size, losses=['hinge', 'modified_huber'], penalties=['elasticnet'], alphas=[0.0001, 0.001, 0.01], l1_ratios=[0.0, 0.15, 0.25, 0.5, 0.75, 1.0]):
+		"""
+		Trains a Boundary Selector while maximizing hyper-parameters through cross-validation.
+		It uses the TRank-at-1 as an optimization metric.
+	
+		@param victor_corpus: Path to a training corpus in VICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@param positive_range: Maximum rank to which label 1 is assigned in the binary classification setup.
+		Recommended value: 1.
+		@param folds: Number of folds to be used in cross-validation.
+		@param test_size: Percentage of the dataset to be used in testing.
+		Recommended values: 0.2, 0.25, 0.33
+		@param losses: Loss functions to be considered.
+		Values available: hinge, log, modified_huber, squared_hinge, perceptron.
+		@param penalties: Regularization terms to be considered.
+		Values available: l2, l1, elasticnet.
+		@param alphas: Constants that multiplies the regularization term.
+		Recommended values: 0.0001, 0.001, 0.01, 0.1
+		@param l1_ratios: Elastic net mixing parameters.
+		Recommended values: 0.05, 0.10, 0.15
+		@param epsilons: Acceptable error margins.
+		Recommended values: 0.0001, 0.001
+		"""
+		self.ranker.trainRankerWithCrossValidation(victor_corpus, positive_range, folds, test_size, losses=losses, penalties=penalties, alphas=alphas, l1_ratios=l1_ratios)
 
 	def selectCandidates(self, substitutions, victor_corpus, temp_file, proportion):
 		"""
