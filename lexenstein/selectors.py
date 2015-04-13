@@ -3,6 +3,7 @@ import gensim
 from scipy.spatial.distance import cosine
 import nltk
 import numpy as np
+import os
 
 class BoundarySelector:
 
@@ -36,7 +37,7 @@ class BoundarySelector:
 	
 		self.ranker.trainRanker(victor_corpus, positive_range, loss, penalty, alpha, l1_ratio, epsilon)
 
-	def selectCandidates(self, substitutions, victor_corpus, temp_file proportion):
+	def selectCandidates(self, substitutions, victor_corpus, temp_file, proportion):
 		"""
 		Selects which candidates can replace the target complex words in each instance of a VICTOR corpus.
 	
