@@ -4,11 +4,94 @@ from scipy.spatial.distance import cosine
 import nltk
 import numpy as np
 
+class BoundarySelector:
+
+	def __init__(self, boundary_ranker):
+		"""
+		Creates an instance of the BoundarySelector class.
+	
+		@param boundary_ranker: An instance of the BoundaryRanker class.
+		"""
+		self.ranker = boundary_ranker
+		
+	def trainSelector(self, victor_corpus, positive_range, loss, penalty, alpha, l1_ratio, epsilon):
+		"""
+		Trains a Boundary Ranker according to the parameters provided.
+	
+		@param victor_corpus: Path to a training corpus in VICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@param positive_range: Maximum rank to which label 1 is assigned in the binary classification setup.
+		Recommended value: 1.
+		@param loss: Loss function to be used.
+		Values available: hinge, log, modified_huber, squared_hinge, perceptron.
+		@param penalty: Regularization term to be used.
+		Values available: l2, l1, elasticnet.
+		@param alpha: Constant that multiplies the regularization term.
+		Recommended values: 0.0001, 0.001, 0.01, 0.1
+		@param l1_ratio: Elastic net mixing parameter.
+		Recommended values: 0.05, 0.10, 0.15
+		@param epsilon: Acceptable error margin.
+		Recommended values: 0.0001, 0.001
+		"""
+	
+		self.ranker.trainRanker(victor_corpus, positive_range, loss, penalty, alpha, l1_ratio, epsilon)
+
+	def selectCandidates(self, substitutions, victor_corpus, proportion):
+		"""
+		Selects which candidates can replace the target complex words in each instance of a VICTOR corpus.
+	
+		@param substitutions: A dictionary linking complex words to a set of candidate substitutions
+		Example: substitutions['perched'] = {'sat', 'roosted'}
+		@param victor_corpus: Path to a corpus in the VICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@param proportion: Percentage of substitutions to keep.
+		@return: Returns a vector of size N, containing a set of selected substitutions for each instance in the VICTOR corpus.
+		"""
+		
+		rankings = self.ranker.getRankings(victor_corpus)
+		
+		selected_substitutions = []				
+
+		lexf = open(victor_corpus)
+		index = -1
+		for line in lexf:
+			index += 1
+		
+			selected_candidates = rankings[index][0:max(1, int(proportion*float(len(rankings[index]))))]
+		
+			selected_substitutions.append(selected_candidates)
+		lexf.close()
+		return selected_substitutions
+		
+	def toVictorFormat(self, victor_corpus, substitutions, output_path, addTargetAsCandidate=False):
+		"""
+		Saves a set of selected substitutions in a file in VICTOR format.
+	
+		@param victor_corpus: Path to the corpus in the VICTOR format to which the substitutions were selected.
+		@param substitutions: The vector of substitutions selected for the VICTOR corpus.
+		@param output_path: The path in which to save the resulting VICTOR corpus.
+		@param addTargetAsCandidate: If True, adds the target complex word of each instance as a candidate substitution.
+		"""
+		o = open(output_path, 'w')
+		f = open(victor_corpus)
+		for subs in substitutions:
+			data = f.readline().strip().split('\t')
+			sentence = data[0].strip()
+			target = data[1].strip()
+			head = data[2].strip()
+			
+			newline = sentence + '\t' + target + '\t' + head + '\t'
+			for sub in subs:
+				newline += '0:'+sub + '\t'
+			o.write(newline.strip() + '\n')
+		f.close()
+		o.close()
+
 class ClusterSelector:
 
 	def __init__(self, clusters):
 		"""
-		Creates an instance of the BrownSelector class.
+		Creates an instance of the ClusterSelector class.
 	
 		@param clusters: Path to a file containing clusters of words.
 		For instructions on how to create the file, please refer to the LEXenstein Manual.
