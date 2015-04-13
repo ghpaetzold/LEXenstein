@@ -68,9 +68,9 @@ class BoundarySelector:
 		temp_victor = self.temp_folder + '/temp_victor.txt'
 		self.generateSSVictorCorpus(victor_corpus, temp_victor)
 		self.ranker.trainRankerWithCrossValidation(temp_victor, positive_range, folds, test_size, losses=losses, penalties=penalties, alphas=alphas, l1_ratios=l1_ratios)
-		os.system('rm ' + temp_victor)
+		#os.system('rm ' + temp_victor)
 
-	def generateSSVictorCorpus(victor_corpus, temp_victor):
+	def generateSSVictorCorpus(self, victor_corpus, temp_victor):
 		f = open(victor_corpus)
 		o = open(temp_victor, 'w')
 		for line in f:
