@@ -295,7 +295,7 @@ class BoundaryRanker:
 		self.classifier = linear_model.SGDClassifier(loss=loss, penalty=penalty, alpha=alpha, l1_ratio=l1_ratio, epsilon=epsilon)
 		self.classifier.fit(X, Y)
 		
-	def trainRankerWithCrossValidation(self, victor_corpus, positive_range, folds, test_size, losses=['hinge', 'modified_huber'], penalties=['elastic_net'], alphas=[0.0001, 0.001], l1_ratios=[0.0, 0.15, 0.25, 1.0])
+	def trainRankerWithCrossValidation(self, victor_corpus, positive_range, folds, test_size, losses=['hinge', 'modified_huber'], penalties=['elasticnet'], alphas=[0.0001, 0.001, 0.01], l1_ratios=[0.0, 0.15, 0.25, 0.5, 0.75, 1.0]):
 		"""
 		Trains a Boundary Ranker while maximizing hyper-parameters through cross-validation.
 		It uses the TRank-at-1 as an optimization metric.
@@ -373,13 +373,13 @@ class BoundaryRanker:
 		
 		#Get classifier with best parameters:
 		max_score = -1.0
-		parameters
+		parameters = ()
 		for l in losses:
-			print('At loss: ' + l)
 			for p in penalties:
 				for a in alphas:
 					for r in l1_ratios:
 						sum = 0.0
+						sum_total = 0
 						for dataset in datasets:
 							Xtra = dataset[0]
 							Ytra = dataset[1]
@@ -389,10 +389,15 @@ class BoundaryRanker:
 							Cte = dataset[5]
 
 							classifier = linear_model.SGDClassifier(loss=l, penalty=p, alpha=a, l1_ratio=r, epsilon=0.0001)
-							classifier.fit(Xtra, Ytra)
-							t1 = self.getCrossValidationScore(classifier, Xtea, Xte, Fte, Cte)
-							sum += t1
-						if sum>max_score:
+							try:
+								classifier.fit(Xtra, Ytra)
+								t1 = self.getCrossValidationScore(classifier, Xtea, Xte, Fte, Cte)
+								sum += t1
+								sum_total += 1
+							except Exception:
+								pass
+						sum_total = max(1, sum_total)
+						if (sum/sum_total)>max_score:
 							max_score = sum
 							parameters = (l, p, a, r)
 		self.classifier = linear_model.SGDClassifier(loss=parameters[0], penalty=parameters[1], alpha=parameters[2], l1_ratio=parameters[3], epsilon=0.0001)
