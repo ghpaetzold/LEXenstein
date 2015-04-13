@@ -7,16 +7,13 @@ import os
 
 class BoundarySelector:
 
-	def __init__(self, boundary_ranker, temp_folder):
+	def __init__(self, boundary_ranker):
 		"""
 		Creates an instance of the BoundarySelector class.
 	
 		@param boundary_ranker: An instance of the BoundaryRanker class.
-		@param temp_folder: Folder in which to save temporary files.
-		All temporary files are removed after they are no longer in use.
 		"""
 		self.ranker = boundary_ranker
-		self.temp_folder = temp_folder
 		
 	def trainSelector(self, victor_corpus, positive_range, loss, penalty, alpha, l1_ratio, epsilon):
 		"""
@@ -37,10 +34,7 @@ class BoundarySelector:
 		@param epsilon: Acceptable error margin.
 		Recommended values: 0.0001, 0.001
 		"""
-		temp_victor = self.temp_folder + '/temp_victor.txt'
-		self.generateSSVictorCorpus(victor_corpus, temp_victor)
-		self.ranker.trainRanker(temp_victor, positive_range, loss, penalty, alpha, l1_ratio, epsilon)
-		os.system('rm ' + temp_victor)
+		self.ranker.trainRanker(victor_corpus, positive_range, loss, penalty, alpha, l1_ratio, epsilon)
 	
 	def trainSelectorWithCrossValidation(self, victor_corpus, positive_range, folds, test_size, losses=['hinge', 'modified_huber'], penalties=['elasticnet'], alphas=[0.0001, 0.001, 0.01], l1_ratios=[0.0, 0.15, 0.25, 0.5, 0.75, 1.0]):
 		"""
@@ -65,10 +59,7 @@ class BoundarySelector:
 		@param epsilons: Acceptable error margins.
 		Recommended values: 0.0001, 0.001
 		"""
-		temp_victor = self.temp_folder + '/temp_victor.txt'
-		self.generateSSVictorCorpus(victor_corpus, temp_victor)
-		self.ranker.trainRankerWithCrossValidation(temp_victor, positive_range, folds, test_size, losses=losses, penalties=penalties, alphas=alphas, l1_ratios=l1_ratios)
-		#os.system('rm ' + temp_victor)
+		self.ranker.trainRankerWithCrossValidation(victor_corpus, positive_range, folds, test_size, losses=losses, penalties=penalties, alphas=alphas, l1_ratios=l1_ratios)
 
 	def generateSSVictorCorpus(self, victor_corpus, temp_victor):
 		f = open(victor_corpus)
