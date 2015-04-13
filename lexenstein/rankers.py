@@ -5,6 +5,7 @@ from sklearn import linear_model
 import kenlm
 import math
 from nltk.corpus import wordnet as wn
+from sklearn.cross_validation import train_test_split
 
 class BottRanker:
 
@@ -294,6 +295,128 @@ class BoundaryRanker:
 		self.classifier = linear_model.SGDClassifier(loss=loss, penalty=penalty, alpha=alpha, l1_ratio=l1_ratio, epsilon=epsilon)
 		self.classifier.fit(X, Y)
 		
+	def trainRankerWithCrossValidation(self, victor_corpus, positive_range, folds, test_size, losses=['hinge', 'modified_huber'], penalties=['elastic_net'], alphas=[0.0001, 0.001], l1_ratios=[0.0, 0.15, 0.25, 1.0])
+		"""
+		Trains a Boundary Ranker while maximizing hyper-parameters through cross-validation.
+		It uses the TRank-at-1 as an optimization metric.
+	
+		@param victor_corpus: Path to a training corpus in VICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@param positive_range: Maximum rank to which label 1 is assigned in the binary classification setup.
+		Recommended value: 1.
+		@param folds: Number of folds to be used in cross-validation.
+		@param test_size: Percentage of the dataset to be used in testing.
+		Recommended values: 0.2, 0.25, 0.33
+		@param losses: Loss functions to be considered.
+		Values available: hinge, log, modified_huber, squared_hinge, perceptron.
+		@param penalties: Regularization terms to be considered.
+		Values available: l2, l1, elasticnet.
+		@param alphas: Constants that multiplies the regularization term.
+		Recommended values: 0.0001, 0.001, 0.01, 0.1
+		@param l1_ratios: Elastic net mixing parameters.
+		Recommended values: 0.05, 0.10, 0.15
+		@param epsilons: Acceptable error margins.
+		Recommended values: 0.0001, 0.001
+		"""
+		#Read victor corpus:
+		data = []
+		f = open(victor_corpus)
+		for line in f:
+			data.append(line.strip().split('\t'))
+		f.close()
+		
+		#Create matrixes:
+		X = self.fe.calculateFeatures(victor_corpus)
+		Y = self.generateLabels(data, positive_range)
+		
+		#Extract ranking problems:
+		firsts = []
+		candidates = []
+		Xsets = []
+		Ysets = []
+		index = -1
+		for line in data:
+			fs = set([])
+			cs = []
+			Xs = []
+			Ys = []
+			for cand in line[3:len(line)]:
+				index += 1
+				candd = cand.split(':')
+				rank = candd[0].strip()
+				word = candd[1].strip()
+				
+				cs.append(word)
+				Xs.append(X[index])
+				Ys.append(Y[index])
+				if rank=='1':
+					fs.add(word)
+			firsts.append(fs)
+			candidates.append(cs)
+			Xsets.append(Xs)
+			Ysets.append(Ys)
+		
+		#Create data splits:
+		datasets = []
+		for i in range(0, folds):
+			Xtr, Xte, Ytr, Yte, Ftr, Fte, Ctr, Cte = train_test_split(Xsets, Ysets, firsts, candidates, test_size=test_size, random_state=i)
+			Xtra = []
+			for matrix in Xtr:
+				Xtra += matrix
+			Xtea = []
+			for matrix in Xte:
+				Xtea += matrix
+			Ytra = []
+			for matrix in Ytr:
+				Ytra += matrix
+			datasets.append((Xtra, Ytra, Xte, Xtea, Fte, Cte))
+		
+		#Get classifier with best parameters:
+		max_score = -1.0
+		parameters
+		for l in losses:
+			print('At loss: ' + l)
+			for p in penalties:
+				for a in alphas:
+					for r in l1_ratios:
+						sum = 0.0
+						for dataset in datasets:
+							Xtra = dataset[0]
+							Ytra = dataset[1]
+							Xte = dataset[2]
+							Xtea = dataset[3]
+							Fte = dataset[4]
+							Cte = dataset[5]
+
+							classifier = linear_model.SGDClassifier(loss=l, penalty=p, alpha=a, l1_ratio=r, epsilon=0.0001)
+							classifier.fit(Xtra, Ytra)
+							t1 = self.getCrossValidationScore(classifier, Xtea, Xte, Fte, Cte)
+							sum += t1
+						if sum>max_score:
+							max_score = sum
+							parameters = (l, p, a, r)
+		self.classifier = linear_model.SGDClassifier(loss=parameters[0], penalty=parameters[1], alpha=parameters[2], l1_ratio=parameters[3], epsilon=0.0001)
+		self.classifier.fit(X, Y)
+	
+	def getCrossValidationScore(self, classifier, Xtea, Xte, firsts, candidates):
+		distances = classifier.decision_function(Xtea)
+		index = -1
+		corrects = 0
+		total = 0
+		for i in range(0, len(Xte)):
+			xset = Xte[i]
+			maxd = -999999
+			for j in range(0, len(xset)):
+				index += 1
+				distance = distances[index]
+				if distance>maxd:
+					maxd = distance
+					maxc = candidates[i][j]
+			if maxc in firsts[i]:
+				corrects += 1
+			total += 1
+		return float(corrects)/float(total)
+	
 	def getRankings(self, victor_corpus):
 		"""
 		Ranks candidates with respect to their simplicity.
