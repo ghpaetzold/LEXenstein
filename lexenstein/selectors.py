@@ -36,7 +36,7 @@ class BoundarySelector:
 	
 		self.ranker.trainRanker(victor_corpus, positive_range, loss, penalty, alpha, l1_ratio, epsilon)
 
-	def selectCandidates(self, substitutions, victor_corpus, proportion):
+	def selectCandidates(self, substitutions, victor_corpus, temp_file proportion):
 		"""
 		Selects which candidates can replace the target complex words in each instance of a VICTOR corpus.
 	
@@ -44,11 +44,17 @@ class BoundarySelector:
 		Example: substitutions['perched'] = {'sat', 'roosted'}
 		@param victor_corpus: Path to a corpus in the VICTOR format.
 		For more information about the file's format, refer to the LEXenstein Manual.
+		@param temp_file: File in which to save a temporary VICTOR corpus.
+		User must have the privilege to delete such file without administrator privileges.
 		@param proportion: Percentage of substitutions to keep.
 		@return: Returns a vector of size N, containing a set of selected substitutions for each instance in the VICTOR corpus.
 		"""
 		
-		rankings = self.ranker.getRankings(victor_corpus)
+		void = VoidSelector()
+		selected_void = void.selectCandidates(substitutions, victor_corpus)
+		void.toVictorFormat(victor_corpus, selected_void, temp_file)
+		
+		rankings = self.ranker.getRankings(temp_file)
 		
 		selected_substitutions = []				
 
@@ -61,6 +67,9 @@ class BoundarySelector:
 		
 			selected_substitutions.append(selected_candidates)
 		lexf.close()
+		
+		#Delete temp_file:
+		os.system('rm ' + temp_file)
 		return selected_substitutions
 		
 	def toVictorFormat(self, victor_corpus, substitutions, output_path, addTargetAsCandidate=False):
