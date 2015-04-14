@@ -27,3 +27,18 @@ def fitTranslationProbabilityFileToCorpus(translation_probabilities, corpus, out
 			o.write(line.strip() + '\n')
 	f.close()
 	o.close()
+	
+def addTargetAsFirstToVictorCorpus(self, victor_corpus, output):
+		f = open(victor_corpus)
+		o = open(output, 'w')
+		for line in f:
+			data = line.strip().split('\t')
+			newline = data[0].strip() + '\t' + data[1].strip() + '\t' + data[2].strip() + '\t' + '1:'+data[1].strip() + '\t'
+			for subst in data[3:len(data)]:
+				substd = subst.strip().split(':')
+				rank = int(substd[0].strip())
+				word = substd[1].strip()
+				newline += str(rank+1)+':'+word + '\t'
+			o.write(newline.strip() + '\n')
+		f.close()
+		o.close()

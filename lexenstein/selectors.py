@@ -5,6 +5,137 @@ import nltk
 import numpy as np
 import os
 
+class SVMRankSelector:
+
+	def __init__(self, svm_ranker):
+		"""
+		Creates an instance of the SVMRankSelector class.
+	
+		@param svm_ranker: An instance of the SVMRanker class.
+		"""
+		self.ranker = svm_ranker
+		
+	def trainSelector(self, tr_victor_corpus, te_victor_corpus, tr_features_file, te_features_file, model_file, c, epsilon, kernel):
+		"""
+		Trains a SVM Ranker according to the parameters provided.
+	
+		@param tr_victor_corpus: Path to a training corpus in VICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@param te_victor_corpus: Path to a testing corpus in VICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@param tr_features_file: File in which to save the training features file.
+		@param te_features_file: File in which to save the testing features file.
+		@param model_file: File in which to save the trained model.
+		@param c: Trade-off between training error and margin.
+		Recommended values: 0.001, 0.01
+		@param epsilon: Acceptable error margin.
+		Recommended values: 0.00001, 0.0001
+		@param kernel: ID for the kernel to be used.
+		Kernels available:
+		0 - Linear
+		1 - Polynomial
+		2 - Radial Basis Function
+		3 - Sigmoid
+		"""
+		self.ranker.getFeaturesFile(tr_victor_corpus, tr_features_file)
+		self.ranker.getFeaturesFile(te_victor_corpus, te_features_file)
+		self.ranker.getTrainingModel(tr_features_file, c, epsilon, kernel, model_file)
+		self.model = model_file
+	
+	def trainSelectorWithCrossValidation(self, victor_corpus, features_file, model_file, folds, test_size, temp_folder, temp_id, Cs=['0.01', '0.001'], epsilons=[0.0001, 0.001], kernels=['0', '2', '3']):
+		"""
+		Trains a SVM Selector while maximizing hyper-parameters through cross-validation.
+		It uses the TRank-at-1 as an optimization metric.
+	
+		@param victor_corpus: Path to a training corpus in VICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@param features_file: File in which to save the training features file.
+		@param model_file: File in which to save the trained model.
+		@param folds: Number of folds to be used in cross-validation.
+		@param test_size: Percentage of the dataset to be used in testing.
+		Recommended values: 0.2, 0.25, 0.33
+		@param temp_folder: Folder in which to save temporary files.
+		@param temp_id: ID to be used in the identification of temporary files.
+		@param Cs: Trade-offs between training error and margin.
+		Recommended values: 0.001, 0.01
+		@param epsilons: Acceptable error margins.
+		Recommended values: 0.00001, 0.0001
+		@param kernels: ID for the kernels to be considered.
+		Kernels available:
+		0 - Linear
+		1 - Polynomial
+		2 - Radial Basis Function
+		3 - Sigmoid
+		"""
+		parameters = self.ranker.trainRankerWithCrossValidation(victor_corpus, folds, test_size, temp_folder, temp_id, Cs=Cs, epsilons=epsilons, kernels=kernels)
+		self.ranker.getFeaturesFile(victor_corpus, features_file)
+		self.ranker.getTrainingModel(features_file, parameters[0], parameters[2], parameters[1], model_file)
+		self.model = model_file
+		
+	def selectCandidates(self, substitutions, victor_corpus, features_file, scores_file, temp_file, proportion):
+		"""
+		Selects which candidates can replace the target complex words in each instance of a VICTOR corpus.
+	
+		@param substitutions: A dictionary linking complex words to a set of candidate substitutions
+		Example: substitutions['perched'] = {'sat', 'roosted'}
+		@param victor_corpus: Path to a corpus in the VICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@param features_file: File in which to save the testing features file.
+		@param scores_file: File in which to save the scores file.
+		User must have the privilege to delete such file without administrator privileges.
+		@param temp_file: File in which to save a temporary victor corpus.
+		The file is removed after the algorithm is concluded.
+		@param proportion: Percentage of substitutions to keep.
+		@return: Returns a vector of size N, containing a set of selected substitutions for each instance in the VICTOR corpus.
+		"""
+		void = VoidSelector()
+		selected_void = void.selectCandidates(substitutions, victor_corpus)
+		void.toVictorFormat(victor_corpus, selected_void, temp_file)
+		
+		self.ranker.getFeaturesFile(temp_file, features_file)
+		self.ranker.getScoresFile(features_file, self.model_file, scores_file)
+		rankings = self.ranker.getRankings(features_file, scores_file)
+		
+		selected_substitutions = []				
+
+		lexf = open(victor_corpus)
+		index = -1
+		for line in lexf:
+			index += 1
+		
+			selected_candidates = rankings[index][0:max(1, int(proportion*float(len(rankings[index]))))]
+		
+			selected_substitutions.append(selected_candidates)
+		lexf.close()
+		
+		#Delete temp_file:
+		os.system('rm ' + temp_file)
+		return selected_substitutions
+		
+	def toVictorFormat(self, victor_corpus, substitutions, output_path, addTargetAsCandidate=False):
+		"""
+		Saves a set of selected substitutions in a file in VICTOR format.
+	
+		@param victor_corpus: Path to the corpus in the VICTOR format to which the substitutions were selected.
+		@param substitutions: The vector of substitutions selected for the VICTOR corpus.
+		@param output_path: The path in which to save the resulting VICTOR corpus.
+		@param addTargetAsCandidate: If True, adds the target complex word of each instance as a candidate substitution.
+		"""
+		o = open(output_path, 'w')
+		f = open(victor_corpus)
+		for subs in substitutions:
+			data = f.readline().strip().split('\t')
+			sentence = data[0].strip()
+			target = data[1].strip()
+			head = data[2].strip()
+			
+			newline = sentence + '\t' + target + '\t' + head + '\t'
+			for sub in subs:
+				newline += '0:'+sub + '\t'
+			o.write(newline.strip() + '\n')
+		f.close()
+		o.close()
+
 class BoundarySelector:
 
 	def __init__(self, boundary_ranker):
@@ -60,21 +191,6 @@ class BoundarySelector:
 		Recommended values: 0.0001, 0.001
 		"""
 		self.ranker.trainRankerWithCrossValidation(victor_corpus, positive_range, folds, test_size, losses=losses, penalties=penalties, alphas=alphas, l1_ratios=l1_ratios)
-
-	def generateSSVictorCorpus(self, victor_corpus, temp_victor):
-		f = open(victor_corpus)
-		o = open(temp_victor, 'w')
-		for line in f:
-			data = line.strip().split('\t')
-			newline = data[0].strip() + '\t' + data[1].strip() + '\t' + data[2].strip() + '\t' + '1:'+data[1].strip() + '\t'
-			for subst in data[3:len(data)]:
-				substd = subst.strip().split(':')
-				rank = int(substd[0].strip())
-				word = substd[1].strip()
-				newline += str(rank+1)+':'+word + '\t'
-			o.write(newline.strip() + '\n')
-		f.close()
-		o.close()
 		
 	def selectCandidates(self, substitutions, victor_corpus, temp_file, proportion):
 		"""
