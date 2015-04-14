@@ -15,16 +15,13 @@ class SVMRankSelector:
 		"""
 		self.ranker = svm_ranker
 		
-	def trainSelector(self, tr_victor_corpus, te_victor_corpus, tr_features_file, te_features_file, model_file, c, epsilon, kernel):
+	def trainSelector(self, tr_victor_corpus, tr_features_file, model_file, c, epsilon, kernel):
 		"""
 		Trains a SVM Ranker according to the parameters provided.
 	
 		@param tr_victor_corpus: Path to a training corpus in VICTOR format.
 		For more information about the file's format, refer to the LEXenstein Manual.
-		@param te_victor_corpus: Path to a testing corpus in VICTOR format.
-		For more information about the file's format, refer to the LEXenstein Manual.
 		@param tr_features_file: File in which to save the training features file.
-		@param te_features_file: File in which to save the testing features file.
 		@param model_file: File in which to save the trained model.
 		@param c: Trade-off between training error and margin.
 		Recommended values: 0.001, 0.01
@@ -38,7 +35,6 @@ class SVMRankSelector:
 		3 - Sigmoid
 		"""
 		self.ranker.getFeaturesFile(tr_victor_corpus, tr_features_file)
-		self.ranker.getFeaturesFile(te_victor_corpus, te_features_file)
 		self.ranker.getTrainingModel(tr_features_file, c, epsilon, kernel, model_file)
 		self.model = model_file
 	
