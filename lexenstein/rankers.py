@@ -487,6 +487,153 @@ class SVMRanker:
 		self.svmrank = svmrank_path
 		if not self.svmrank.endswith('/'):
 			self.svmrank += '/'
+			
+	def trainRankerWithCrossValidation(self, victor_corpus, folds, test_size, temp_folder, temp_id, Cs=['0.01', '0.001'], epsilons=[0.0001, 0.001], kernels=['0, 2, 3']):
+		"""
+		Trains a SVM Ranker while maximizing hyper-parameters through cross-validation.
+		It uses the TRank-at-1 as an optimization metric.
+	
+		@param victor_corpus: Path to a training corpus in VICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@param folds: Number of folds to be used in cross-validation.
+		@param test_size: Percentage of the dataset to be used in testing.
+		Recommended values: 0.2, 0.25, 0.33
+		@param temp_folder: Folder in which to save temporary files.
+		@param temp_id: ID to be used in the identification of temporary files.
+		@param Cs: Trade-offs between training error and margin.
+		Recommended values: 0.001, 0.01
+		@param epsilons: Acceptable error margins.
+		Recommended values: 0.00001, 0.0001
+		@param kernels: ID for the kernels to be considered.
+		Kernels available:
+		0 - Linear
+		1 - Polynomial
+		2 - Radial Basis Function
+		3 - Sigmoid
+		"""
+		#Read victor corpus:
+		data = []
+		f = open(victor_corpus)
+		for line in f:
+			data.append(line.strip().split('\t'))
+		f.close()
+		
+		#Create matrixes:
+		X = self.fe.calculateFeatures(victor_corpus)
+		X = normalize(X, axis=0)
+		X = self.toSVMRankFormat(data, X)
+		
+		#Extract ranking problems:
+		firsts = []
+		candidates = []
+		Xsets = []
+		index = -1
+		for line in data:
+			fs = set([])
+			cs = []
+			Xs = []
+			for cand in line[3:len(line)]:
+				index += 1
+				candd = cand.split(':')
+				rank = candd[0].strip()
+				word = candd[1].strip()
+				
+				cs.append(word)
+				Xs.append(X[index])
+				if rank=='1':
+					fs.add(word)
+			firsts.append(fs)
+			candidates.append(cs)
+			Xsets.append(Xs)
+			
+		#Create data splits:
+		datasets = []
+		for i in range(0, folds):
+			Xtr, Xte, Ftr, Fte, Ctr, Cte = train_test_split(Xsets, firsts, candidates, test_size=test_size, random_state=i)
+			Xtra = []
+			for matrix in Xtr:
+				Xtra += matrix
+			Xtra_path = temp_folder + '/' + str(temp_ID) + '_' + str(i) + '_training_features_file.txt'
+			self.fromMatrixToFile(Xtra, Xtra_path)
+			
+			Xtea = []
+			for matrix in Xte:
+				Xtea += matrix
+			Xtea_path = temp_folder + '/' + str(temp_ID) + '_' + str(i) + '_testing_features_file.txt'
+			self.fromMatrixToFile(Xtea, Xtea_path)
+			datasets.append((Xtra_path, Xte, Xtea_path, Fte, Cte))
+			
+		#Get classifier with best parameters:
+		max_score = -1.0
+		parameters = ()
+		for C in Cs:
+			for k in kernels:
+				for e in epsilons:
+					sum = 0.0
+					sum_total = 0
+					for dataset in datasets:
+						Xtra_path = dataset[0]
+						Xte = dataset[1]
+						Xtea_path = dataset[2]
+						Fte = dataset[3]
+						Cte = dataset[4]
+
+						model_path = temp_folder + '/' + str(temp_ID) + '_' + str(i) + '_model_file.txt'
+						scores_path = temp_folder + '/' + str(temp_ID) + '_' + str(i) + '_scores_file.txt'
+						self.getTrainingModel(Xtra_path, C, e, k, model_path)
+						self.getScoresFile(Xtea_path, model_path, scores_path)
+						
+						t1 = self.getCrossValidationScore(scores_path, Xte, Fte, Cte)
+						sum += t1
+						sum_total += 1
+					sum_total = max(1, sum_total)
+					if (sum/sum_total)>max_score:
+						max_score = sum
+						parameters = (C, k, e)
+		return parameters
+		
+	def getCrossValidationScore(self, scores_path, Xte, Fte, Cte):
+		scores = [str(value.strip()) for value in open(scores_path)]
+		index = -1
+		corrects = 0
+		total = 0
+		for i in range(0, len(Xte)):
+			xset = Xte[i]
+			mind = 999999
+			minc = ''
+			for j in range(0, len(xset)):
+				index += 1
+				distance = scores[index]
+				if distance<mind:
+					mind = distance
+					minc = candidates[i][j]
+			if minc in firsts[i]:
+				corrects += 1
+			total += 1
+		return float(corrects)/float(total)
+	
+	def fromMatrixToFile(matrix, path):
+		f = open(path, 'w')
+		for line in matrix:
+			f.write(line.strip() + '\n')
+		f.close()
+		
+	def toSVMRankFormat(self, data, X):
+		result = []
+		index = 0
+		for i in range(0, len(data)):
+			inst = data[i]
+			for subst in inst[3:len(inst)]:
+				rank = subst.strip().split(':')[0].strip()
+				word = subst.strip().split(':')[1].strip()
+				newline = rank + ' qid:' + str(i+1) + ' '
+				feature_values = X[index]
+				index += 1
+				for j in range(0, len(feature_values)):
+					newline += str(j+1) + ':' + str(feature_values[j]) + ' '
+				newline += '# ' + word
+				result.append(newline.strip())
+		return result
 	
 	def getFeaturesFile(self, victor_corpus, output_file):
 		"""
