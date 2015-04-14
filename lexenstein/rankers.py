@@ -488,7 +488,7 @@ class SVMRanker:
 		if not self.svmrank.endswith('/'):
 			self.svmrank += '/'
 			
-	def trainRankerWithCrossValidation(self, victor_corpus, folds, test_size, temp_folder, temp_id, Cs=['0.01', '0.001'], epsilons=[0.0001, 0.001], kernels=['0, 2, 3']):
+	def trainRankerWithCrossValidation(self, victor_corpus, folds, test_size, temp_folder, temp_id, Cs=['0.01', '0.001'], epsilons=[0.0001, 0.001], kernels=['0', '2', '3']):
 		"""
 		Trains a SVM Ranker while maximizing hyper-parameters through cross-validation.
 		It uses the TRank-at-1 as an optimization metric.
@@ -521,7 +521,7 @@ class SVMRanker:
 		#Create matrixes:
 		X = self.fe.calculateFeatures(victor_corpus)
 		X = normalize(X, axis=0)
-		X = self.toSVMRankFormat(data, X)
+		#X = self.toSVMRankFormat(data, X)
 		
 		#Extract ranking problems:
 		firsts = []
@@ -549,18 +549,18 @@ class SVMRanker:
 		#Create data splits:
 		datasets = []
 		for i in range(0, folds):
-			Xtr, Xte, Ftr, Fte, Ctr, Cte = train_test_split(Xsets, firsts, candidates, test_size=test_size, random_state=i)
+			Xtr, Xte, Ftr, Fte, Ctr, Cte, Dtr, Dte = train_test_split(Xsets, firsts, candidates, data, test_size=test_size, random_state=i)
 			Xtra = []
 			for matrix in Xtr:
 				Xtra += matrix
-			Xtra_path = temp_folder + '/' + str(temp_ID) + '_' + str(i) + '_training_features_file.txt'
-			self.fromMatrixToFile(Xtra, Xtra_path)
+			Xtra_path = temp_folder + '/' + str(temp_id) + '_' + str(i) + '_training_features_file.txt'
+			self.fromMatrixToFile(Dtr, Xtra, Xtra_path)
 			
 			Xtea = []
 			for matrix in Xte:
 				Xtea += matrix
-			Xtea_path = temp_folder + '/' + str(temp_ID) + '_' + str(i) + '_testing_features_file.txt'
-			self.fromMatrixToFile(Xtea, Xtea_path)
+			Xtea_path = temp_folder + '/' + str(temp_id) + '_' + str(i) + '_testing_features_file.txt'
+			self.fromMatrixToFile(Dte, Xtea, Xtea_path)
 			datasets.append((Xtra_path, Xte, Xtea_path, Fte, Cte))
 			
 		#Get classifier with best parameters:
@@ -578,8 +578,8 @@ class SVMRanker:
 						Fte = dataset[3]
 						Cte = dataset[4]
 
-						model_path = temp_folder + '/' + str(temp_ID) + '_' + str(i) + '_model_file.txt'
-						scores_path = temp_folder + '/' + str(temp_ID) + '_' + str(i) + '_scores_file.txt'
+						model_path = temp_folder + '/' + str(temp_id) + '_' + str(i) + '_model_file.txt'
+						scores_path = temp_folder + '/' + str(temp_id) + '_' + str(i) + '_scores_file.txt'
 						self.getTrainingModel(Xtra_path, C, e, k, model_path)
 						self.getScoresFile(Xtea_path, model_path, scores_path)
 						
@@ -592,7 +592,7 @@ class SVMRanker:
 						parameters = (C, k, e)
 		return parameters
 		
-	def getCrossValidationScore(self, scores_path, Xte, Fte, Cte):
+	def getCrossValidationScore(self, scores_path, Xte, firsts, candidates):
 		scores = [str(value.strip()) for value in open(scores_path)]
 		index = -1
 		corrects = 0
@@ -612,10 +612,21 @@ class SVMRanker:
 			total += 1
 		return float(corrects)/float(total)
 	
-	def fromMatrixToFile(matrix, path):
+	def fromMatrixToFile(self, data, X, path):
 		f = open(path, 'w')
-		for line in matrix:
-			f.write(line.strip() + '\n')
+		index = -1
+		for i in range(0, len(data)):
+			inst = data[i]
+			for subst in inst[3:len(inst)]:
+				index += 1
+				rank = subst.strip().split(':')[0].strip()
+				word = subst.strip().split(':')[1].strip()
+				newline = rank + ' qid:' + str(i+1) + ' '
+				feature_values = X[index]
+				for j in range(0, len(feature_values)):
+					newline += str(j+1) + ':' + str(feature_values[j]) + ' '
+				newline += '# ' + word
+				f.write(newline.strip() + '\n')
 		f.close()
 		
 	def toSVMRankFormat(self, data, X):

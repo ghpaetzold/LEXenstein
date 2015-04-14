@@ -76,7 +76,7 @@ class BoundarySelector:
 		f.close()
 		o.close()
 		
-	def selectCandidates(self, substitutions, victor_corpus, proportion):
+	def selectCandidates(self, substitutions, victor_corpus, temp_file, proportion):
 		"""
 		Selects which candidates can replace the target complex words in each instance of a VICTOR corpus.
 	
@@ -85,11 +85,11 @@ class BoundarySelector:
 		@param victor_corpus: Path to a corpus in the VICTOR format.
 		For more information about the file's format, refer to the LEXenstein Manual.
 		User must have the privilege to delete such file without administrator privileges.
+		@param temp_file: File in which to save a temporary victor corpus.
+		The file is removed after the algorithm is concluded.
 		@param proportion: Percentage of substitutions to keep.
 		@return: Returns a vector of size N, containing a set of selected substitutions for each instance in the VICTOR corpus.
 		"""
-		temp_file = self.temp_folder + '/temp_file.txt'
-		
 		void = VoidSelector()
 		selected_void = void.selectCandidates(substitutions, victor_corpus)
 		void.toVictorFormat(victor_corpus, selected_void, temp_file)
