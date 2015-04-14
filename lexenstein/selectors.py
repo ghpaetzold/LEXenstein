@@ -90,7 +90,7 @@ class SVMRankSelector:
 		
 		self.ranker.getFeaturesFile(temp_file, features_file)
 		self.ranker.getScoresFile(features_file, self.model, scores_file)
-		rankings = self.ranker.getRankings(features_file, scores_file)
+		rankings = self.getRankings(temp_file, features_file, scores_file)
 		
 		selected_substitutions = []				
 
@@ -107,6 +107,55 @@ class SVMRankSelector:
 		#Delete temp_file:
 		os.system('rm ' + temp_file)
 		return selected_substitutions
+		
+	def getRankings(self, victor_corpus, features_file, scores_file):		
+		#Read features file:
+		f = open(features_file)
+		data = []
+		for line in f:
+			data.append(line.strip().split(' '))
+		f.close()
+		
+		#Read scores file:
+		f = open(scores_file)
+		scores = []
+		for line in f:
+			scores.append(float(line.strip()))
+		f.close()
+		
+		#Combine data:
+		ranking_data = {}
+		index = 0
+		for line in data:
+			id = int(line[1].strip().split(':')[1].strip())
+			starti = 0
+			while line[starti]!='#':
+				starti += 1
+			word = ''
+			for i in range(starti+1, len(line)):
+				word += line[i] + ' '
+			word = word.strip()
+			score = scores[index]
+			index += 1
+			if id in ranking_data.keys():
+				ranking_data[id][word] = score
+			else:
+				ranking_data[id] = {word:score}
+		
+		#Produce rankings:
+		result = []
+		f = open(victor_corpus)
+		id = 0
+		for line in f:
+			id += 1
+			candidates = set([])
+			if id in ranking_data.keys():
+				candidates = ranking_data[id].keys()
+				candidates = sorted(candidates, key=ranking_data[id].__getitem__, reverse=False)
+			result.append(candidates)
+			
+		#Return rankings:
+		return result
 		
 	def toVictorFormat(self, victor_corpus, substitutions, output_path, addTargetAsCandidate=False):
 		"""
