@@ -93,7 +93,7 @@ class SVMRankSelector:
 		void.toVictorFormat(victor_corpus, selected_void, temp_file)
 		
 		self.ranker.getFeaturesFile(temp_file, features_file)
-		self.ranker.getScoresFile(features_file, self.model_file, scores_file)
+		self.ranker.getScoresFile(features_file, self.model, scores_file)
 		rankings = self.ranker.getRankings(features_file, scores_file)
 		
 		selected_substitutions = []				
