@@ -148,7 +148,7 @@ class SVMRankSelector:
 		id = 0
 		for line in f:
 			id += 1
-			candidates = set([])
+			candidates = []
 			if id in ranking_data.keys():
 				candidates = ranking_data[id].keys()
 				candidates = sorted(candidates, key=ranking_data[id].__getitem__, reverse=False)
