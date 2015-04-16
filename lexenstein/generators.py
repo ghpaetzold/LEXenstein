@@ -562,7 +562,11 @@ class YamamotoGenerator:
 							postag = p[1].strip()[0].lower()
 							cand = p[0].strip()
 							if postag==node_pos:
-								cands[node_pos].add(cand)
+								try:
+									test = codecs.ascii_encode(cand)
+									cands[node_pos].add(cand)
+								except UnicodeEncodeError:
+									cands = cands
 			for pos in cands.keys():
 				if target in cands[pos]:
 					cands[pos].remove(target)
@@ -819,24 +823,28 @@ class MerriamGenerator:
 						node_pos = node_pos.text.strip()[0].lower()
 						if node_pos not in cands.keys():
 							cands[node_pos] = set([])
+					syn = None
 					for sense in root_node.iter('sens'):
-						syn = sense.findall('syn')[0]
-					res = ''
-					for snip in syn.itertext():
-						res += snip + ' '
-					finds = re.findall('\([^\)]+\)', res)
-					for find in finds:
-						res = res.replace(find, '')
+						syndata = sense.findall('syn')
+						if len(syndata)>0:
+							syn = syndata[0]
+					if syn:
+						res = ''
+						for snip in syn.itertext():
+							res += snip + ' '
+						finds = re.findall('\([^\)]+\)', res)
+						for find in finds:
+							res = res.replace(find, '')
 
-					synonyms = [s.strip() for s in res.split(',')]
+						synonyms = [s.strip() for s in res.split(',')]
 
-					for synonym in synonyms:
-						if len(synonym.split(' '))==1:
-							try:
-								test = codecs.ascii_encode(synonym)
-								cands[node_pos].add(synonym)
-							except UnicodeEncodeError:
-								cands = cands
+						for synonym in synonyms:
+							if len(synonym.split(' '))==1:
+								try:
+									test = codecs.ascii_encode(synonym)
+									cands[node_pos].add(synonym)
+								except UnicodeEncodeError:
+									cands = cands
 			for pos in cands.keys():
 				if target in cands[pos]:
 					cands[pos].remove(target)
