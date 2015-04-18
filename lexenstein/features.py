@@ -181,7 +181,7 @@ class FeatureEstimator:
 				for span1 in spanlv:
 					for span2 in spanrv:
 						ngram, bosv, eosv = self.getNgram(word, sent, head, span1, span2)
-						aux = -1.0*model.score(ngram, bos=bosv, eos=eosv)
+						aux = model.score(ngram, bos=bosv, eos=eosv)
 						values.append(aux)
 				result.append(values)
 		return result
