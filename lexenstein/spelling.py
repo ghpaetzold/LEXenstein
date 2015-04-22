@@ -16,6 +16,9 @@ class NorvigCorrector:
 		
 		#Create model:
 		self.model = self.getSpellingModel(re.findall('[a-z]+', text))
+
+		#Create alphabet:
+		self.alphabet = 'abcdefghijklmnopqrstuvwxyz'
 	
 	def correct(self, word):
 		"""
@@ -38,12 +41,12 @@ class NorvigCorrector:
 		splits = [(word[:i], word[i:]) for i in range(len(word) + 1)]
 		deletes = [a + b[1:] for a, b in splits if b]
 		transposes = [a + b[1] + b[0] + b[2:] for a, b in splits if len(b)>1]
-		replaces = [a + c + b[1:] for a, b in splits for c in alphabet if b]
-		inserts = [a + c + b for a, b in splits for c in alphabet]
+		replaces = [a + c + b[1:] for a, b in splits for c in self.alphabet if b]
+		inserts = [a + c + b for a, b in splits for c in self.alphabet]
 		return set(deletes + transposes + replaces + inserts)
 
 	def getKnownEdits(self, word):
 		return set(e2 for e1 in self.getEdits(word) for e2 in self.getEdits(e1) if e2 in self.model)
 
-	def getKnown(words):
+	def getKnown(self, words):
 		return set(w for w in words if w in self.model)
