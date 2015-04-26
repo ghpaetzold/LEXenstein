@@ -7,6 +7,271 @@ import nltk
 import kenlm
 import codecs
 
+#Class for the Wordnet Generator
+class WordnetFixedGenerator:
+
+	def __init__(self, mat):
+		"""
+		Creates a WordnetGenerator instance.
+	
+		@param mat: MorphAdornerToolkit object.
+		"""
+		self.mat = mat
+
+	def getSubstitutions(self, victor_corpus):
+		"""
+		Generates substitutions for the target words of a corpus in VICTOR format.
+	
+		@param victor_corpus: Path to a corpus in the VICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@return: A dictionary that assigns target complex words to sets of candidate substitutions.
+		Example: substitutions['perched'] = {'sat', 'roosted'}
+		"""
+		
+		#Get initial set of substitutions:
+		print('Getting initial set of substitutions...')
+		substitutions_initial = self.getInitialSet(victor_corpus)
+
+		#Get final substitutions:
+		print('Inflecting substitutions...')
+		substitutions_inflected = self.getInflectedSet(substitutions_initial)
+
+		#Return final set:
+		print('Finished!')
+		return substitutions_inflected
+
+	def getInflectedSet(self, subs):
+		#Create list of targets:
+		targets = []
+		
+		#Create lists for inflection:
+		toSingular = []
+		toPlural = []
+		toPAPEPA = []
+		toPA = []
+		toPRPA = []
+		toPAPA = []
+		toPR = []
+		
+		#Fill lists:
+		for target in subs.keys():
+			targets.append(target)
+			for pos in subs[target].keys():
+				#Get cands for a target and tag combination:
+				cands = list(subs[target][pos])
+				
+				#Add candidates to lists:
+				if pos == 'NN':
+					toSingular.extend(cands)
+				elif pos == 'NNS':
+					toPlural.extend(cands)
+				elif pos == 'VB':
+					toPAPEPA.extend(cands)
+				elif pos == 'VBD':
+					toPA.extend(cands)
+				elif pos == 'VBG':
+					toPRPA.extend(cands)
+				elif pos == 'VBN':
+					toPAPA.extend(cands)
+				elif pos == 'VBP' or pos == 'VBZ':
+					toPR.extend(cands)
+		
+		#Lemmatize targets:
+		targetsL = self.mat.lemmatizeWords(targets)
+		
+		#Lemmatize words:
+		toSingularL = self.mat.lemmatizeWords(toSingular)
+		toPluralL = self.mat.lemmatizeWords(toPlural)
+		toPAPEPAL = self.mat.lemmatizeWords(toPAPEPA)
+		toPAL = self.mat.lemmatizeWords(toPA)
+		toPRPAL = self.mat.lemmatizeWords(toPRPA)
+		toPAPAL = self.mat.lemmatizeWords(toPAPA)
+		toPRL = self.mat.lemmatizeWords(toPR)
+		
+		#Inflect nouns:
+		singulars = self.mat.inflectNouns(toSingularL, 'singular')
+		plurals = self.mat.inflectNouns(toPluralL, 'plural')
+		
+		#Inflect verbs:
+		papepas = conjugateVerbs(toPAPEPAL, 'PAST_PERFECT_PARTICIPLE')
+		pas = conjugateVerbs(toPAL, 'PAST')
+		prpas = conjugateVerbs(toPRPAL, 'PRESENT_PARTICIPLE')
+		papas = conjugateVerbs(toPAPAL, 'PAST_PARTICIPLE')
+		prs = conjugateVerbs(toPRL, 'PRESENT')
+		
+		#Create maps:
+		stemM = {}
+		singularM = {}
+		pluralM = {}
+		papepaM = {}
+		paM = {}
+		prpaM = {}
+		papaM = {}
+		prM = {}
+		for i in range(0, len(targets)):
+			stemM[targets[i]] = targetsL[i]
+		for i in range(0, len(toSingular)):
+			stemM[toSingular[i]] = toSingularL[i]
+			singularM[toSingular[i]] = singulars[i]
+		for i in range(0, len(toPlurals)):
+			stemM[toPlural[i]] = toPluralL[i]
+			pluralM[toPlural[i]] = plurals[i]
+		for i in range(0, len(toPAPEPA)):
+			stemM[toPAPEPA[i]] = toPAPEPAL[i]
+			papepaM[toPAPEPA[i]] = papepas[i]
+		for i in range(0, len(toPA)):
+			stemM[toPA[i]] = toPAL[i]
+			paM[toPA[i]] = pas[i]
+		for i in range(0, len(toPRPA)):
+			stemM[toPRPA[i]] = toPRPAL[i]
+			prpaM[toPRPA[i]] = prpas[i]
+		for i in range(0, len(toPAPA)):
+			stemM[toPAPA[i]] = toPAPAL[i]
+			papaM[toPAPA[i]] = papas[i]
+		for i in range(0, len(toPR)):
+			stemM[toPR[i]] = toPRL[i]
+			prM[toPR[i]] = prs[i]
+			
+		#Create final substitutions:
+		final_substitutions = {}
+		for target in subs.keys():
+			#Get lemma of target:
+			targetL = stemM[target]
+			
+			#Create instance in final_substitutions:
+			final_substitutions[target] = {}
+			
+			#Iterate through pos tags of target:
+			for pos in subs[target].keys():
+				#Create final cands:
+				final_cands = set([])
+				
+				#Get cands for a target and tag combination:
+				cands = list(subs[target][pos])
+				
+				#Add candidates to lists:
+				if pos == 'NN':
+					for cand in cands:
+						if targetL!=stemM[cand]:
+							final_cands.add(singularM[cand])
+				elif pos == 'NNS':
+					for cand in cands:
+						if targetL!=stemM[cand]:
+							final_cands.add(pluralM[cand])
+				elif pos == 'VB':
+					for cand in cands:
+						if targetL!=stemM[cand]:
+							final_cands.add(papepaM[cand])
+				elif pos == 'VBD':
+					for cand in cands:
+						if targetL!=stemM[cand]:
+							final_cands.add(paM[cand])
+				elif pos == 'VBG':
+					for cand in cands:
+						if targetL!=stemM[cand]:
+							final_cands.add(prpaM[cand])
+				elif pos == 'VBN':
+					for cand in cands:
+						if targetL!=stemM[cand]:
+							final_cands.add(papaM[cand])
+				elif pos == 'VBP' or pos == 'VBZ':
+					for cand in cands:
+						if targetL!=stemM[cand]:
+							final_cands.add(prM[cand])
+				else:
+					for cand in cands:
+						if targetL!=stemM[cand]:
+							final_cands.add(cand)
+					
+				#Add final cands to final substitutions:
+				final_substitutions[target][pos] = final_cands
+		return final_substitutions
+		
+	def getInflections(self, verbstems):
+		data1 = self.mat.conjugateVerbs(verbstems, 'PAST_PERFECT_PARTICIPLE')
+		data2 = self.mat.conjugateVerbs(verbstems, 'PAST_PARTICIPLE')
+		data3 = self.mat.conjugateVerbs(verbstems, 'PRESENT_PARTICIPLE')
+		return data1, data2, data3
+
+	def getSingulars(self, plurstems):
+		data = self.mat.inflectNouns(plurstems, 'singular')
+		return data
+		
+	def getPlurals(self, singstems):
+		data = self.mat.inflectNouns(singstems, 'plural')
+		return data
+
+	def getStems(self, sings, plurs, verbs):
+		data = self.mat.lemmatizeWords(sings+plurs+verbs)
+		rsings = []
+		rplurs = []
+		rverbs = []
+		c = -1
+		for sing in sings:
+			c += 1
+			if len(data[c])>0:
+				rsings.append(data[c])
+			else:
+				rsings.append(sing)
+		for plur in plurs:
+			c += 1
+			if len(data[c])>0:
+				rplurs.append(data[c])
+			else:
+				rplurs.append(plur)
+		for verb in verbs:
+			c += 1
+			if len(data[c])>0:
+				rverbs.append(data[c])
+			else:
+				rverbs.append(verb)
+		return rsings, rplurs, rverbs
+
+	def getInitialSet(self, victor_corpus):
+		substitutions_initial = {}
+		lex = open(victor_corpus)
+		for line in lex:
+			data = line.strip().split('\t')
+			sent = data[0].strip().split(' ')
+			target = data[1].strip()
+			head = int(data[2].strip())
+			pos_data = nltk.pos_tag(sent)
+			target_pos = pos_data[head][1].strip()
+			target_wnpos = self.getWordnetPOS(target_pos)
+			print('Target tag: ' + str(target_pos))
+			print('Target wn tag: ' + str(target_wnpos))
+			
+			if target_wnpos and (target not in substitutions_initial.keys() or target_wnpos not in substitutions_initial[target].keys()):
+				syns = wn.synsets(target, pos=target_wnpos)
+				cands = set([])
+				for syn in syns:
+					for lem in syn.lemmas():
+						candidate = self.cleanLemma(lem.name())
+						if len(candidate.split(' '))==1:
+							cands.add(candidate)
+				if len(cands.keys())>0:
+					if target in substitutions_initial:
+						substitutions_initial[target][target_pos] = cands
+					else:
+						substitutions_initial[target] = {target_pos:cands}
+		lex.close()
+		return substitutions_initial
+
+	def cleanLemma(self, lem):
+		result = ''
+		aux = lem.strip().split('_')
+		for word in aux:
+			result += word + ' '
+		return result.strip()
+		
+	def getWordnetPOS(self, pos):
+		if pos[0] == 'N' or pos[0] == 'V' or pos == 'RBR' or pos == 'RBS':
+			return pos[0].lower()
+		elif pos[0] == 'J':
+			return 'a'
+		else:
+			return None
+
 class KauchakGenerator:
 
 	def __init__(self, mat, parallel_pos_file, alignments_file, stop_words):
