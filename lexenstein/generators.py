@@ -45,6 +45,7 @@ class WordnetFixedGenerator:
 		targets = []
 		
 		#Create lists for inflection:
+		toNothing = []
 		toSingular = []
 		toPlural = []
 		toPAPEPA = []
@@ -75,11 +76,13 @@ class WordnetFixedGenerator:
 					toPAPA.extend(cands)
 				elif pos == 'VBP' or pos == 'VBZ':
 					toPR.extend(cands)
-		
+				else:
+					toNothing.extend(cands)
 		#Lemmatize targets:
 		targetsL = self.mat.lemmatizeWords(targets)
 		
 		#Lemmatize words:
+		toNothingL = self.mat.lemmatizeWords(toNothing)
 		toSingularL = self.mat.lemmatizeWords(toSingular)
 		toPluralL = self.mat.lemmatizeWords(toPlural)
 		toPAPEPAL = self.mat.lemmatizeWords(toPAPEPA)
@@ -93,11 +96,11 @@ class WordnetFixedGenerator:
 		plurals = self.mat.inflectNouns(toPluralL, 'plural')
 		
 		#Inflect verbs:
-		papepas = conjugateVerbs(toPAPEPAL, 'PAST_PERFECT_PARTICIPLE')
-		pas = conjugateVerbs(toPAL, 'PAST')
-		prpas = conjugateVerbs(toPRPAL, 'PRESENT_PARTICIPLE')
-		papas = conjugateVerbs(toPAPAL, 'PAST_PARTICIPLE')
-		prs = conjugateVerbs(toPRL, 'PRESENT')
+		papepas = self.mat.conjugateVerbs(toPAPEPAL, 'PAST_PERFECT_PARTICIPLE')
+		pas = self.mat.conjugateVerbs(toPAL, 'PAST')
+		prpas = self.mat.conjugateVerbs(toPRPAL, 'PRESENT_PARTICIPLE')
+		papas = self.mat.conjugateVerbs(toPAPAL, 'PAST_PARTICIPLE')
+		prs = self.mat.conjugateVerbs(toPRL, 'PRESENT')
 		
 		#Create maps:
 		stemM = {}
@@ -108,12 +111,14 @@ class WordnetFixedGenerator:
 		prpaM = {}
 		papaM = {}
 		prM = {}
+		for i in range(0, len(toNothing)):
+			stemM[toNothing[i]] = toNothingL[i]
 		for i in range(0, len(targets)):
 			stemM[targets[i]] = targetsL[i]
 		for i in range(0, len(toSingular)):
 			stemM[toSingular[i]] = toSingularL[i]
 			singularM[toSingular[i]] = singulars[i]
-		for i in range(0, len(toPlurals)):
+		for i in range(0, len(toPlural)):
 			stemM[toPlural[i]] = toPluralL[i]
 			pluralM[toPlural[i]] = plurals[i]
 		for i in range(0, len(toPAPEPA)):
@@ -238,22 +243,20 @@ class WordnetFixedGenerator:
 			pos_data = nltk.pos_tag(sent)
 			target_pos = pos_data[head][1].strip()
 			target_wnpos = self.getWordnetPOS(target_pos)
-			print('Target tag: ' + str(target_pos))
-			print('Target wn tag: ' + str(target_wnpos))
 			
-			if target_wnpos and (target not in substitutions_initial.keys() or target_wnpos not in substitutions_initial[target].keys()):
-				syns = wn.synsets(target, pos=target_wnpos)
-				cands = set([])
-				for syn in syns:
-					for lem in syn.lemmas():
-						candidate = self.cleanLemma(lem.name())
-						if len(candidate.split(' '))==1:
-							cands.add(candidate)
-				if len(cands.keys())>0:
-					if target in substitutions_initial:
-						substitutions_initial[target][target_pos] = cands
-					else:
-						substitutions_initial[target] = {target_pos:cands}
+			syns = wn.synsets(target)
+
+			cands = set([])
+			for syn in syns:
+				for lem in syn.lemmas():
+					candidate = self.cleanLemma(lem.name())
+					if len(candidate.split(' '))==1:
+						cands.add(candidate)
+			if len(cands)>0:
+				if target in substitutions_initial:
+					substitutions_initial[target][target_pos] = cands
+				else:
+					substitutions_initial[target] = {target_pos:cands}
 		lex.close()
 		return substitutions_initial
 
