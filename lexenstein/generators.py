@@ -10,13 +10,15 @@ import codecs
 #Class for the Wordnet Generator
 class WordnetFixedGenerator:
 
-	def __init__(self, mat):
+	def __init__(self, mat, nc):
 		"""
-		Creates a WordnetGenerator instance.
+		Creates a WordnetFixedGenerator instance.
 	
 		@param mat: MorphAdornerToolkit object.
+		@param nc: NorvigCorrector object.
 		"""
 		self.mat = mat
+		self.nc = nc
 
 	def getSubstitutions(self, victor_corpus):
 		"""
@@ -82,25 +84,25 @@ class WordnetFixedGenerator:
 		targetsL = self.mat.lemmatizeWords(targets)
 		
 		#Lemmatize words:
-		toNothingL = self.mat.lemmatizeWords(toNothing)
-		toSingularL = self.mat.lemmatizeWords(toSingular)
-		toPluralL = self.mat.lemmatizeWords(toPlural)
-		toPAPEPAL = self.mat.lemmatizeWords(toPAPEPA)
-		toPAL = self.mat.lemmatizeWords(toPA)
-		toPRPAL = self.mat.lemmatizeWords(toPRPA)
-		toPAPAL = self.mat.lemmatizeWords(toPAPA)
-		toPRL = self.mat.lemmatizeWords(toPR)
+		toNothingL = self.correctWords(self.mat.lemmatizeWords(toNothing))
+		toSingularL = self.correctWords(self.mat.lemmatizeWords(toSingular))
+		toPluralL = self.correctWords(self.mat.lemmatizeWords(toPlural))
+		toPAPEPAL = self.correctWords(self.mat.lemmatizeWords(toPAPEPA))
+		toPAL = self.correctWords(self.mat.lemmatizeWords(toPA))
+		toPRPAL = self.correctWords(self.mat.lemmatizeWords(toPRPA))
+		toPAPAL = self.correctWords(self.mat.lemmatizeWords(toPAPA))
+		toPRL = self.correctWords(self.mat.lemmatizeWords(toPR))
 		
 		#Inflect nouns:
-		singulars = self.mat.inflectNouns(toSingularL, 'singular')
-		plurals = self.mat.inflectNouns(toPluralL, 'plural')
+		singulars = self.correctWords(self.mat.inflectNouns(toSingularL, 'singular'))
+		plurals = self.correctWords(self.mat.inflectNouns(toPluralL, 'plural'))
 		
 		#Inflect verbs:
-		papepas = self.mat.conjugateVerbs(toPAPEPAL, 'PAST_PERFECT_PARTICIPLE')
-		pas = self.mat.conjugateVerbs(toPAL, 'PAST')
-		prpas = self.mat.conjugateVerbs(toPRPAL, 'PRESENT_PARTICIPLE')
-		papas = self.mat.conjugateVerbs(toPAPAL, 'PAST_PARTICIPLE')
-		prs = self.mat.conjugateVerbs(toPRL, 'PRESENT')
+		papepas = self.correctWords(self.mat.conjugateVerbs(toPAPEPAL, 'PAST_PERFECT_PARTICIPLE'))
+		pas = self.correctWords(self.mat.conjugateVerbs(toPAL, 'PAST'))
+		prpas = self.correctWords(self.mat.conjugateVerbs(toPRPAL, 'PRESENT_PARTICIPLE'))
+		papas = self.correctWords(self.mat.conjugateVerbs(toPAPAL, 'PAST_PARTICIPLE'))
+		prs = self.correctWords(self.mat.conjugateVerbs(toPRL, 'PRESENT'))
 		
 		#Create maps:
 		stemM = {}
@@ -191,6 +193,40 @@ class WordnetFixedGenerator:
 				#Add final cands to final substitutions:
 				final_substitutions[target][pos] = final_cands
 		return final_substitutions
+
+	def getInitialSet(self, victor_corpus):
+		substitutions_initial = {}
+		lex = open(victor_corpus)
+		for line in lex:
+			data = line.strip().split('\t')
+			sent = data[0].strip().split(' ')
+			target = data[1].strip()
+			head = int(data[2].strip())
+			pos_data = nltk.pos_tag(sent)
+			target_pos = pos_data[head][1].strip()
+			target_wnpos = self.getWordnetPOS(target_pos)
+			
+			syns = wn.synsets(target)
+
+			cands = set([])
+			for syn in syns:
+				for lem in syn.lemmas():
+					candidate = self.cleanLemma(lem.name())
+					if len(candidate.split(' '))==1:
+						cands.add(candidate)
+			if len(cands)>0:
+				if target in substitutions_initial:
+					substitutions_initial[target][target_pos] = cands
+				else:
+					substitutions_initial[target] = {target_pos:cands}
+		lex.close()
+		return substitutions_initial
+		
+	def correctWords(self, words):
+		result = []
+		for word in words:
+			result.append(self.nc.correct(word))
+		return result
 		
 	def getInflections(self, verbstems):
 		data1 = self.mat.conjugateVerbs(verbstems, 'PAST_PERFECT_PARTICIPLE')
@@ -231,34 +267,6 @@ class WordnetFixedGenerator:
 			else:
 				rverbs.append(verb)
 		return rsings, rplurs, rverbs
-
-	def getInitialSet(self, victor_corpus):
-		substitutions_initial = {}
-		lex = open(victor_corpus)
-		for line in lex:
-			data = line.strip().split('\t')
-			sent = data[0].strip().split(' ')
-			target = data[1].strip()
-			head = int(data[2].strip())
-			pos_data = nltk.pos_tag(sent)
-			target_pos = pos_data[head][1].strip()
-			target_wnpos = self.getWordnetPOS(target_pos)
-			
-			syns = wn.synsets(target)
-
-			cands = set([])
-			for syn in syns:
-				for lem in syn.lemmas():
-					candidate = self.cleanLemma(lem.name())
-					if len(candidate.split(' '))==1:
-						cands.add(candidate)
-			if len(cands)>0:
-				if target in substitutions_initial:
-					substitutions_initial[target][target_pos] = cands
-				else:
-					substitutions_initial[target] = {target_pos:cands}
-		lex.close()
-		return substitutions_initial
 
 	def cleanLemma(self, lem):
 		result = ''
