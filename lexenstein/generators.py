@@ -36,11 +36,11 @@ class WordnetFixedGenerator:
 		
 		#Get expanded set of substitutions:
 		print('Getting expanded set of substitutions...')
-		#substitutions_expanded = self.getExpandedSet(substitutions_initial)
+		substitutions_expanded = self.getExpandedSet(substitutions_initial)
 
 		#Get final substitutions:
 		print('Inflecting substitutions...')
-		substitutions_inflected = self.getInflectedSet(substitutions_initial)
+		substitutions_inflected = self.getInflectedSet(substitutions_expanded)
 
 		#Return final set:
 		print('Finished!')
@@ -228,8 +228,108 @@ class WordnetFixedGenerator:
 				final_substitutions[target][pos] = final_cands
 		return final_substitutions
 
-	#def getExpandedSet(self, subs):
+	def getExpandedSet(self, subs):
+		#Create lists for inflection:
+		nouns = set([])
+		verbs = set([])
+		adjectives = set([])
 		
+		#Fill lists:
+		for target in subs.keys():
+			for pos in subs[target].keys():
+				#Get cands for a target and tag combination:
+				cands = list(subs[target][pos])
+				
+				#Add candidates to lists:
+				if pos == 'NN' or pos == 'NNS':
+					nouns.add(target)
+				elif pos.startswith('V'):
+					verbs.add(target)
+				elif pos.startswith('J') or pos.startswith('RB'):
+					adjectives.add(target)
+		
+		#Transform sets in lists:
+		nouns = list(nouns)
+		verbs = list(verbs)
+		adjectives = list(adjectives)
+		
+		#Lemmatize words:
+		nounsL = self.correctWords(self.mat.lemmatizeWords(nouns))
+		verbsL = self.correctWords(self.mat.lemmatizeWords(verbs))
+		adjectivesL = self.correctWords(self.mat.lemmatizeWords(adjectives))
+		
+		#Create lemma maps:
+		nounM = {}
+		verbM = {}
+		adjectiveM = {}
+		for i in range(0, len(nouns)):
+			nounM[nouns[i]] = nounsL[i]
+		for i in range(0, len(verbs)):
+			verbM[verbs[i]] = verbsL[i]
+		for i in range(0, len(adjectives)):
+			adjectiveM[adjectives[i]] = adjectivesL[i]
+		
+		#Inflect words:
+		plurals = self.correctWords(self.mat.inflectNouns(nounsL, 'plural'))
+		pas = self.correctWords(self.mat.conjugateVerbs(verbsL, 'PAST'))
+		prpas = self.correctWords(self.mat.conjugateVerbs(verbsL, 'PRESENT_PARTICIPLE'))
+		papas = self.correctWords(self.mat.conjugateVerbs(verbsL, 'PAST_PARTICIPLE'))
+		prs = self.correctWords(self.mat.conjugateVerbs(verbsL, 'PRESENT'))
+		comparatives = self.correctWords(self.mat.inflectAdjectives(adjectives, 'comparative'))
+		superlatives = self.correctWords(self.mat.inflectAdjectives(adjectives, 'superlative'))
+		
+		#Create inflected maps:
+		pluralM = {}
+		paM = {}
+		prpaM = {}
+		papaM = {}
+		prM = {}
+		comparativeM = {}
+		superlativeM = {}
+		for i in range(0, len(nouns)):
+			pluralM[nouns[i]] = plurals[i]
+		for i in range(0, len(verbs)):
+			paM[verbs[i]] = pas[i]
+			prpaM[verbs[i]] = prpas[i]
+			papaM[verbs[i]] = papas[i]
+			prM[verbs[i]] = prs[i]
+		for i in range(0, len(adjectives)):
+			comparativeM[adjectives[i]] = comparatives[i]
+			superlativeM[adjectives[i]] = superlatives[i]
+		
+		#Create extended substitutions:
+		substitutions_extended = {}
+		for target in subs.keys():
+			substitutions_extended[target] = {}
+			for pos in subs[target].keys():
+				#Get cands for a target and tag combination:
+				cands = list(subs[target][pos])
+				
+				#Add candidates to lists:
+				if pos == 'NN' or pos == 'NNS':
+					singularT = nounM[target]
+					pluralT = pluralM[target]
+					substitutions_extended[singularT]['NN'] = cands
+					substitutions_extended[pluralT]['NNS'] = cands
+				elif pos.startswith('V'):
+					papepaT = verbM[target]
+					paT = paM[target]
+					prpaT = prpaM[target]
+					papaT = papaM[target]
+					prT = prM[target]
+					substitutions_extended[papepaT]['VB'] = cands
+					substitutions_extended[paT]['VBD'] = cands
+					substitutions_extended[prpaT]['VBG'] = cands
+					substitutions_extended[papaT]['VBN'] = cands
+					substitutions_extended[prT]['VBP'] = cands
+				elif pos.startswith('J') or pos.startswith('RB'):
+					originalT = adjectiveM[target]
+					comparativeT = comparativeM[target]
+					superlativeT = superlativeM[target]
+					substitutions_extended[originalT]['JJ'] = cands
+					substitutions_extended[comparativeT]['JJR'] = cands
+					substitutions_extended[superlativeT]['JJS'] = cands
+		return substitutions_extended
 		
 	def getInitialSet(self, victor_corpus):
 		substitutions_initial = {}
