@@ -18,6 +18,7 @@ class MorphAdornerToolkit:
 		self.inflector = self.root + 'NounInflector/NounInflector.jar'
 		self.tenser = self.root + 'VerbTenser/VerbTenser.jar'
 		self.syllabler = self.root + 'SyllableSplitter/SyllableSplitter.jar'
+		self.adjinflector = self.root + 'AdjectiveInflector/AdjectiveInflector.jar'
 	
 	def lemmatizeWords(self, words):
 		"""
@@ -145,5 +146,27 @@ class MorphAdornerToolkit:
 		(out, err) = proc.communicate(input)
 		
 		out = out.replace('\xc2\xad', '-')
+		result = out.strip().split('\n')
+		return result
+		
+	def inflectAdjectives(self, lemmas, form):
+		"""
+		Inflect a list of adjectives/adverbs to its singular or plural form.
+	
+		@param lemmas: Lemmas of adjectives/adverbs to be inflected.
+		@param form: Form in which to inflect the lemmas.
+		Forms available: comparative, superlative.
+		@return: List of the inflected versions of the adjective/adverb lemmas passed as input.
+		"""
+		
+		input = ''
+		for lemma in lemmas:
+			input += lemma + ' ' + form +  '\n'
+		input += '\n'
+
+		args = ['java', '-jar', self.adjinflector]
+		proc = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=False)
+		(out, err) = proc.communicate(input)
+
 		result = out.strip().split('\n')
 		return result
