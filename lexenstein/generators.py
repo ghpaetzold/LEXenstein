@@ -300,7 +300,6 @@ class WordnetFixedGenerator:
 		#Create extended substitutions:
 		substitutions_extended = {}
 		for target in subs.keys():
-			substitutions_extended[target] = {}
 			for pos in subs[target].keys():
 				#Get cands for a target and tag combination:
 				cands = list(subs[target][pos])
@@ -309,6 +308,10 @@ class WordnetFixedGenerator:
 				if pos == 'NN' or pos == 'NNS':
 					singularT = nounM[target]
 					pluralT = pluralM[target]
+					if singularT not in substitutions_extended:
+						substitutions_extended[singularT] = {}
+					if pluralT not in substitutions_extended:
+						substitutions_extended[pluralT] = {}
 					substitutions_extended[singularT]['NN'] = cands
 					substitutions_extended[pluralT]['NNS'] = cands
 				elif pos.startswith('V'):
@@ -317,6 +320,16 @@ class WordnetFixedGenerator:
 					prpaT = prpaM[target]
 					papaT = papaM[target]
 					prT = prM[target]
+					if papepaT not in substitutions_extended:
+						substitutions_extended[papepaT] = {}
+					if paT not in substitutions_extended:
+						substitutions_extended[paT] = {}
+					if prpaT not in substitutions_extended:
+						substitutions_extended[prpaT] = {}
+					if papaT not in substitutions_extended:
+						substitutions_extended[papaT] = {}
+					if prT not in substitutions_extended:
+						substitutions_extended[prT] = {}
 					substitutions_extended[papepaT]['VB'] = cands
 					substitutions_extended[paT]['VBD'] = cands
 					substitutions_extended[prpaT]['VBG'] = cands
@@ -326,6 +339,12 @@ class WordnetFixedGenerator:
 					originalT = adjectiveM[target]
 					comparativeT = comparativeM[target]
 					superlativeT = superlativeM[target]
+					if originalT not in substitutions_extended:
+						substitutions_extended[originalT] = {}
+					if comparativeT not in substitutions_extended:
+						substitutions_extended[comparativeT] = {}
+					if superlativeT not in substitutions_extended:
+						substitutions_extended[superlativeT] = {}
 					substitutions_extended[originalT]['JJ'] = cands
 					substitutions_extended[comparativeT]['JJR'] = cands
 					substitutions_extended[superlativeT]['JJS'] = cands
