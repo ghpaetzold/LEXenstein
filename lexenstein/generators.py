@@ -33,6 +33,10 @@ class WordnetFixedGenerator:
 		#Get initial set of substitutions:
 		print('Getting initial set of substitutions...')
 		substitutions_initial = self.getInitialSet(victor_corpus)
+		
+		#Get expanded set of substitutions:
+		print('Getting expanded set of substitutions...')
+		#substitutions_expanded = self.getExpandedSet(substitutions_initial)
 
 		#Get final substitutions:
 		print('Inflecting substitutions...')
@@ -55,6 +59,9 @@ class WordnetFixedGenerator:
 		toPRPA = []
 		toPAPA = []
 		toPR = []
+		toComparative = []
+		toSuperlative = []
+		toOriginal = []
 		
 		#Fill lists:
 		for target in subs.keys():
@@ -78,6 +85,10 @@ class WordnetFixedGenerator:
 					toPAPA.extend(cands)
 				elif pos == 'VBP' or pos == 'VBZ':
 					toPR.extend(cands)
+				elif pos == 'JJR' or pos == 'RBR':
+					toComparative.extend(cands)
+				elif pos == 'JJS' or pos == 'RBS':
+					toSuperlative.extend(cands)
 				else:
 					toNothing.extend(cands)
 		#Lemmatize targets:
@@ -92,6 +103,8 @@ class WordnetFixedGenerator:
 		toPRPAL = self.correctWords(self.mat.lemmatizeWords(toPRPA))
 		toPAPAL = self.correctWords(self.mat.lemmatizeWords(toPAPA))
 		toPRL = self.correctWords(self.mat.lemmatizeWords(toPR))
+		toComparativeL = self.correctWords(self.mat.lemmatizeWords(toComparative))
+		toSuperlativeL = self.correctWords(self.mat.lemmatizeWords(toSuperlative))
 		
 		#Inflect nouns:
 		singulars = self.correctWords(self.mat.inflectNouns(toSingularL, 'singular'))
@@ -104,6 +117,10 @@ class WordnetFixedGenerator:
 		papas = self.correctWords(self.mat.conjugateVerbs(toPAPAL, 'PAST_PARTICIPLE'))
 		prs = self.correctWords(self.mat.conjugateVerbs(toPRL, 'PRESENT'))
 		
+		#Inflect adjectives and adverbs:
+		comparatives = self.correctWords(self.mat.inflectAdjectives(toComparativeL, 'comparative'))
+		superlatives = self.correctWords(self.mat.inflectAdjectives(toSuperlativeL, 'superlative'))
+		
 		#Create maps:
 		stemM = {}
 		singularM = {}
@@ -113,6 +130,9 @@ class WordnetFixedGenerator:
 		prpaM = {}
 		papaM = {}
 		prM = {}
+		comparativeM = {}
+		superlativeM = {}
+
 		for i in range(0, len(toNothing)):
 			stemM[toNothing[i]] = toNothingL[i]
 		for i in range(0, len(targets)):
@@ -138,6 +158,12 @@ class WordnetFixedGenerator:
 		for i in range(0, len(toPR)):
 			stemM[toPR[i]] = toPRL[i]
 			prM[toPR[i]] = prs[i]
+		for i in range(0, len(toComparative)):
+			stemM[toComparative[i]] = toComparativeL[i]
+			comparativeM[toComparative[i]] = comparatives[i]
+		for i in range(0, len(toSuperlative)):
+			stemM[toSuperlative[i]] = toSuperlativeL[i]
+			superlativeM[toSuperlative[i]] = superlatives[i]
 			
 		#Create final substitutions:
 		final_substitutions = {}
@@ -185,6 +211,14 @@ class WordnetFixedGenerator:
 					for cand in cands:
 						if targetL!=stemM[cand]:
 							final_cands.add(prM[cand])
+				elif pos == 'JJR' or pos == 'RBR':
+					for cand in cands:
+						if targetL!=stemM[cand]:
+							final_cands.add(comparativeM[cand])
+				elif pos == 'JJS' or pos == 'RBS':
+					for cand in cands:
+						if targetL!=stemM[cand]:
+							final_cands.add(superlativeM[cand])
 				else:
 					for cand in cands:
 						if targetL!=stemM[cand]:
@@ -194,6 +228,9 @@ class WordnetFixedGenerator:
 				final_substitutions[target][pos] = final_cands
 		return final_substitutions
 
+	#def getExpandedSet(self, subs):
+		
+		
 	def getInitialSet(self, victor_corpus):
 		substitutions_initial = {}
 		lex = open(victor_corpus)
