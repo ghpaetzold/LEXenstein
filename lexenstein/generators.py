@@ -304,50 +304,106 @@ class WordnetFixedGenerator:
 				#Get cands for a target and tag combination:
 				cands = list(subs[target][pos])
 				
+				#Add original to substitution dictionary:
+				self.addToExtended(target, pos, cands, substitutions_extended)
+				
 				#Add candidates to lists:
-				if pos == 'NN' or pos == 'NNS':
-					singularT = nounM[target]
+				if pos == 'NN':
 					pluralT = pluralM[target]
-					if singularT not in substitutions_extended:
-						substitutions_extended[singularT] = {}
-					if pluralT not in substitutions_extended:
-						substitutions_extended[pluralT] = {}
-					substitutions_extended[singularT]['NN'] = cands
-					substitutions_extended[pluralT]['NNS'] = cands
-				elif pos.startswith('V'):
-					papepaT = verbM[target]
+					self.addToExtended(pluralT, 'NNS', cands, substitutions_extended)
+				elif pos == 'NNS':
+					singularT = singularM[target]
+					self.addToExtended(singularT, 'NN', cands, substitutions_extended)
+				elif pos = 'VB':
 					paT = paM[target]
 					prpaT = prpaM[target]
 					papaT = papaM[target]
 					prT = prM[target]
-					if papepaT not in substitutions_extended:
-						substitutions_extended[papepaT] = {}
-					if paT not in substitutions_extended:
-						substitutions_extended[paT] = {}
-					if prpaT not in substitutions_extended:
-						substitutions_extended[prpaT] = {}
-					if papaT not in substitutions_extended:
-						substitutions_extended[papaT] = {}
-					if prT not in substitutions_extended:
-						substitutions_extended[prT] = {}
-					substitutions_extended[papepaT]['VB'] = cands
-					substitutions_extended[paT]['VBD'] = cands
-					substitutions_extended[prpaT]['VBG'] = cands
-					substitutions_extended[papaT]['VBN'] = cands
-					substitutions_extended[prT]['VBP'] = cands
-				elif pos.startswith('J') or pos.startswith('RB'):
-					originalT = adjectiveM[target]
+					self.addToExtended(paT, 'VBD', cands, substitutions_extended)
+					self.addToExtended(prpaT, 'VBG', cands, substitutions_extended)
+					self.addToExtended(papaT, 'VBN', cands, substitutions_extended)
+					self.addToExtended(prT, 'VBP', cands, substitutions_extended)
+					self.addToExtended(prT, 'VBZ', cands, substitutions_extended)
+				elif pos == 'VBD':
+					lemmaT = verbM[target]
+					prpaT = prpaM[target]
+					papaT = papaM[target]
+					prT = prM[target]
+					self.addToExtended(lemmaT, 'VB', cands, substitutions_extended)
+					self.addToExtended(prpaT, 'VBG', cands, substitutions_extended)
+					self.addToExtended(papaT, 'VBN', cands, substitutions_extended)
+					self.addToExtended(prT, 'VBP', cands, substitutions_extended)
+					self.addToExtended(prT, 'VBZ', cands, substitutions_extended)
+				elif pos == 'VBG':
+					lemmaT = verbM[target]
+					paT = paM[target]
+					papaT = papaM[target]
+					prT = prM[target]
+					self.addToExtended(lemmaT, 'VB', cands, substitutions_extended)
+					self.addToExtended(paT, 'VBD', cands, substitutions_extended)
+					self.addToExtended(papaT, 'VBN', cands, substitutions_extended)
+					self.addToExtended(prT, 'VBP', cands, substitutions_extended)
+					self.addToExtended(prT, 'VBZ', cands, substitutions_extended)
+				elif pos == 'VBN':
+					lemmaT = verbM[target]
+					paT = paM[target]
+					prpaT = prpaM[target]
+					prT = prM[target]
+					self.addToExtended(lemmaT, 'VB', cands, substitutions_extended)
+					self.addToExtended(paT, 'VBD', cands, substitutions_extended)
+					self.addToExtended(prpaT, 'VBG', cands, substitutions_extended)
+					self.addToExtended(prT, 'VBP', cands, substitutions_extended)
+					self.addToExtended(prT, 'VBZ', cands, substitutions_extended)
+				elif pos == 'VBP':
+					lemmaT = verbM[target]
+					paT = paM[target]
+					prpaT = prpaM[target]
+					papaT = prM[target]
+					self.addToExtended(target, 'VBZ', cands, substitutions_extended)
+					self.addToExtended(lemmaT, 'VB', cands, substitutions_extended)
+					self.addToExtended(paT, 'VBD', cands, substitutions_extended)
+					self.addToExtended(prpaT, 'VBG', cands, substitutions_extended)
+					self.addToExtended(papaT, 'VBN', cands, substitutions_extended)
+				elif pos == 'VBZ':
+					lemmaT = verbM[target]
+					paT = paM[target]
+					prpaT = prpaM[target]
+					papaT = prM[target]
+					self.addToExtended(target, 'VBP', cands, substitutions_extended)
+					self.addToExtended(lemmaT, 'VB', cands, substitutions_extended)
+					self.addToExtended(paT, 'VBD', cands, substitutions_extended)
+					self.addToExtended(prpaT, 'VBG', cands, substitutions_extended)
+					self.addToExtended(papaT, 'VBN', cands, substitutions_extended)
+				elif pos == 'JJ':
 					comparativeT = comparativeM[target]
 					superlativeT = superlativeM[target]
-					if originalT not in substitutions_extended:
-						substitutions_extended[originalT] = {}
-					if comparativeT not in substitutions_extended:
-						substitutions_extended[comparativeT] = {}
-					if superlativeT not in substitutions_extended:
-						substitutions_extended[superlativeT] = {}
-					substitutions_extended[originalT]['JJ'] = cands
-					substitutions_extended[comparativeT]['JJR'] = cands
-					substitutions_extended[superlativeT]['JJS'] = cands
+					self.addToExtended(comparativeT, 'JJR', cands, substitutions_extended)
+					self.addToExtended(superlativeT, 'JJS', cands, substitutions_extended)
+				elif pos == 'JJR':
+					lemmaT = adjectiveM[target]
+					superlativeT = superlativeM[target]
+					self.addToExtended(lemmaT, 'JJ', cands, substitutions_extended)
+					self.addToExtended(superlativeT, 'JJS', cands, substitutions_extended)
+				elif pos == 'JJS':
+					lemmaT = adjectiveM[target]
+					comparativeT = comparativeM[target]
+					self.addToExtended(lemmaT, 'JJ', cands, substitutions_extended)
+					self.addToExtended(comparativeT, 'JJR', cands, substitutions_extended)
+				elif pos == 'RB':
+					comparativeT = comparativeM[target]
+					superlativeT = superlativeM[target]
+					self.addToExtended(comparativeT, 'RBR', cands, substitutions_extended)
+					self.addToExtended(superlativeT, 'RBS', cands, substitutions_extended)
+				elif pos == 'RBR':
+					lemmaT = adjectiveM[target]
+					superlativeT = superlativeM[target]
+					self.addToExtended(lemmaT, 'RB', cands, substitutions_extended)
+					self.addToExtended(superlativeT, 'RBS', cands, substitutions_extended)
+				elif pos == 'RBS':
+					lemmaT = adjectiveM[target]
+					comparativeT = comparativeM[target]
+					self.addToExtended(lemmaT, 'RB', cands, substitutions_extended)
+					self.addToExtended(comparativeT, 'RBR', cands, substitutions_extended)
 		return substitutions_extended
 		
 	def getInitialSet(self, victor_corpus):
@@ -377,6 +433,15 @@ class WordnetFixedGenerator:
 					substitutions_initial[target] = {target_pos:cands}
 		lex.close()
 		return substitutions_initial
+
+	def addToExtended(target, tag, cands, subs):
+		if target not in subs.keys():
+			subs[target] = {tag:cands}
+		else:
+			if tag not in subs[target].keys():
+				subs[target][tag] = cands
+			else:
+				subs[target][tag].extend(cands)
 		
 	def correctWords(self, words):
 		result = []
