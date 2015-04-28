@@ -160,7 +160,7 @@ class KauchakGenerator:
 		plurres = self.getSingulars(plurstems)
 
 		#Get verb inflections:
-		verbres1, verbres2, verbres3 = self.getInflections(verbstems)
+		verbres1, verbres2, verbres3, verbres4, verbres5 = self.getInflections(verbstems)
 
 		#Add information to dictionaries:
 		for i in range(0, len(singkeys)):
@@ -176,7 +176,9 @@ class KauchakGenerator:
 			verbre1 = verbres1[i]
 			verbre2 = verbres2[i]
 			verbre3 = verbres3[i]
-			verbsk[k] = {'PAST_PERFECT_PARTICIPLE': verbre1, 'PAST_PARTICIPLE': verbre2, 'PRESENT_PARTICIPLE': verbre3}
+			verbre4 = verbres4[i]
+			verbre5 = verbres5[i]
+			verbsk[k] = {'PAST_PERFECT_PARTICIPLE': verbre1, 'PAST_PARTICIPLE': verbre2, 'PRESENT_PARTICIPLE': verbre3, 'PRESENT': verbre4, 'PAST': verbre5}
 
 		#------------------------------------------------------------------------------------------------
 
@@ -195,7 +197,7 @@ class KauchakGenerator:
 		plurres = self.getSingulars(plurstems)
 
 		#Get verb inflections:
-		verbres1, verbres2, verbres3 = self.getInflections(verbstems)
+		verbres1, verbres2, verbres3, verbres4, verbres5 = self.getInflections(verbstems)
 
 		#Add information to dictionaries:
 		for i in range(0, len(singkeys)):
@@ -211,7 +213,9 @@ class KauchakGenerator:
 			verbre1 = verbres1[i]
 			verbre2 = verbres2[i]
 			verbre3 = verbres3[i]
-			verbs[k] = {'PAST_PERFECT_PARTICIPLE': verbre1, 'PAST_PARTICIPLE': verbre2, 'PRESENT_PARTICIPLE': verbre3}
+			verbre4 = verbres4[i]
+			verbre5 = verbres5[i]
+			verbs[k] = {'PAST_PERFECT_PARTICIPLE': verbre1, 'PAST_PARTICIPLE': verbre2, 'PRESENT_PARTICIPLE': verbre3, 'PRESENT': verbre4, 'PAST': verbre5}
 
 		#------------------------------------------------------------------------------------------------
 
@@ -252,7 +256,7 @@ class KauchakGenerator:
 							final_substitutions[singl] = final_substitutions[singl].union(newcands)
 				#If left is a verb:
 				elif leftp.startswith('v'):
-					for verb_tense in ['PAST_PERFECT_PARTICIPLE', 'PAST_PARTICIPLE', 'PRESENT_PARTICIPLE']:
+					for verb_tense in ['PAST_PERFECT_PARTICIPLE', 'PAST_PARTICIPLE', 'PRESENT_PARTICIPLE', 'PRESENT', 'PAST']:
 						tensedl = verbsk[leftw][verb_tense]
 						newcands = set([])
 						for candidate in result[key][leftp]:
@@ -268,7 +272,9 @@ class KauchakGenerator:
 		data1 = self.mat.conjugateVerbs(verbstems, 'PAST_PERFECT_PARTICIPLE')
 		data2 = self.mat.conjugateVerbs(verbstems, 'PAST_PARTICIPLE')
 		data3 = self.mat.conjugateVerbs(verbstems, 'PRESENT_PARTICIPLE')
-		return self.correctWords(data1), self.correctWords(data2), self.correctWords(data3)
+		data4 = self.mat.conjugateVerbs(verbstems, 'PRESENT')
+		data5 = self.mat.conjugateVerbs(verbstems, 'PAST')
+		return self.correctWords(data1), self.correctWords(data2), self.correctWords(data3), self.correctWords(data4), self.correctWords(data5)
 
 	def getSingulars(self, plurstems):
 		data = self.mat.inflectNouns(plurstems, 'singular')
