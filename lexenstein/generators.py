@@ -91,6 +91,7 @@ class WordnetFixedGenerator:
 					toSuperlative.extend(cands)
 				else:
 					toNothing.extend(cands)
+					
 		#Lemmatize targets:
 		targetsL = self.mat.lemmatizeWords(targets)
 		
