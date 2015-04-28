@@ -119,12 +119,10 @@ class KauchakGenerator:
 		singulars = {}
 		plurals = {}
 		verbs = {}
-		adjectives = {}
 
 		singularsk = {}
 		pluralsk = {}
 		verbsk = {}
-		adjectivesk = {}
 
 		for i in range(0, len(allkeys)):
 			key = allkeys[i]
@@ -144,10 +142,6 @@ class KauchakGenerator:
 					verbsk[leftw] = {}
 					for subst in result[key][leftp]:
 						verbs[subst] = {}
-				elif leftp.lower().startswith('rb') or leftp.lower().startswith('jj'):
-					adjectivesk[leftw] = {}
-					for subst in result[key][leftp.lower()]:
-						adjectives[subst] = {}
 
 		#------------------------------------------------------------------------------------------------
 
@@ -155,10 +149,9 @@ class KauchakGenerator:
 		singkeys = sorted(list(singularsk.keys()))
 		plurkeys = sorted(list(pluralsk.keys()))
 		verbkeys = sorted(list(verbsk.keys()))
-		adjectivekeys = sorted(list(adjectivesk.keys()))
 
 		#Get stems:
-		singstems, plurstems, verbstems, adjectivestems = self.getStems(singkeys, plurkeys, verbkeys, adjectivekeys)
+		singstems, plurstems, verbstems = self.getStems(singkeys, plurkeys, verbkeys)
 
 		#Get plurals:
 		singres = self.getPlurals(singstems)
@@ -168,9 +161,6 @@ class KauchakGenerator:
 
 		#Get verb inflections:
 		verbres1, verbres2, verbres3, verbres4, verbres5 = self.getInflections(verbstems)
-		
-		#Get adjective inflections:
-		adjres1, adjres2 = self.getAdjectiveInflections(adjectivestems)
 
 		#Add information to dictionaries:
 		for i in range(0, len(singkeys)):
@@ -189,11 +179,6 @@ class KauchakGenerator:
 			verbre4 = verbres4[i]
 			verbre5 = verbres5[i]
 			verbsk[k] = {'PAST_PERFECT_PARTICIPLE': verbre1, 'PAST_PARTICIPLE': verbre2, 'PRESENT_PARTICIPLE': verbre3, 'PRESENT': verbre4, 'PAST': verbre5}
-		for i in range(0, len(adjectivekeys)):
-			k = adjectivekeys[i]
-			adjre1 = adjres1[i]
-			adjre2 = adjres2[i]
-			adjectivesk[k] = {'comparative': adjre1, 'superlative': adjre2}
 
 		#------------------------------------------------------------------------------------------------
 
@@ -201,10 +186,9 @@ class KauchakGenerator:
 		singkeys = sorted(list(singulars.keys()))
 		plurkeys = sorted(list(plurals.keys()))
 		verbkeys = sorted(list(verbs.keys()))
-		adjectivekeys = sorted(list(adjectives.keys()))
 
 		#Get stems:
-		singstems, plurstems, verbstems, adjectivestems = self.getStems(singkeys, plurkeys, verbkeys, adjectivekeys)
+		singstems, plurstems, verbstems = self.getStems(singkeys, plurkeys, verbkeys)
 
 		#Get plurals:
 		singres = self.getPlurals(singstems)
@@ -214,9 +198,6 @@ class KauchakGenerator:
 
 		#Get verb inflections:
 		verbres1, verbres2, verbres3, verbres4, verbres5 = self.getInflections(verbstems)
-		
-		#Get adjective inflections:
-		adjres1, adjres2 = self.getAdjectiveInflections(adjectivestems)
 
 		#Add information to dictionaries:
 		for i in range(0, len(singkeys)):
@@ -235,11 +216,6 @@ class KauchakGenerator:
 			verbre4 = verbres4[i]
 			verbre5 = verbres5[i]
 			verbs[k] = {'PAST_PERFECT_PARTICIPLE': verbre1, 'PAST_PARTICIPLE': verbre2, 'PRESENT_PARTICIPLE': verbre3, 'PRESENT': verbre4, 'PAST': verbre5}
-		for i in range(0, len(adjectivekeys)):
-			k = adjectivekeys[i]
-			adjre1 = adjres1[i]
-			adjre2 = adjres2[i]
-			adjectivesk[k] = {'comparative': adjre1, 'superlative': adjre2}
 
 		#------------------------------------------------------------------------------------------------
 
@@ -285,18 +261,6 @@ class KauchakGenerator:
 						newcands = set([])
 						for candidate in result[key][leftp]:
 							candtensedl = verbs[candidate][verb_tense]
-							newcands.add(candtensedl)
-						if tensedl not in final_substitutions.keys():
-							final_substitutions[tensedl] = newcands
-						else:
-							final_substitutions[tensedl] = final_substitutions[tensedl].union(newcands)
-				elif leftp.startswith('rb') or leftp.startswith('jj'):
-					final_substitutions[key] = result[key][leftp]
-					for adj_tense in ['comparative', 'superlative']:
-						tensedl = adjectivesk[leftw][adj_tense]
-						newcands = set([])
-						for candidate in result[key][leftp]:
-							candtensedl = adjectives[candidate][adj_tense]
 							newcands.add(candtensedl)
 						if tensedl not in final_substitutions.keys():
 							final_substitutions[tensedl] = newcands
