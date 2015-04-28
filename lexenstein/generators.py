@@ -38,10 +38,6 @@ class WordnetFixedGenerator:
 		#Get initial set of substitutions:
 		print('Getting initial set of substitutions...')
 		substitutions_initial = self.getInitialSet(victor_corpus)
-		
-		#Get expanded set of substitutions:
-		print('Getting expanded set of substitutions...')
-		#substitutions_expanded = self.getExpandedSet(substitutions_initial)
 
 		#Get final substitutions:
 		print('Inflecting substitutions...')
@@ -176,10 +172,6 @@ class WordnetFixedGenerator:
 		#Create final substitutions:
 		final_substitutions = {}
 		for target in subs.keys():
-			if target=='casualti':
-				print('problem')
-			if target=='casualties':
-				print('?')
 			#Get lemma of target:
 			targetL = stemM[target]
 			
@@ -242,7 +234,6 @@ class WordnetFixedGenerator:
 					
 				#Add final cands to final substitutions:
 				final_substitutions[target][pos] = final_cands
-		print(str(final_substitutions['casualties']))
 		return final_substitutions
 
 	def getExpandedSet(self, subs):
@@ -445,7 +436,7 @@ class WordnetFixedGenerator:
 		
 		for i in range(0, len(sents)):
 			target = targets[i]
-			head = head[i]
+			head = heads[i]
 			target_pos = str(tagged_sents[i][head][1])
 			target_wnpos = self.getWordnetPOS(target_pos)
 			
@@ -462,7 +453,6 @@ class WordnetFixedGenerator:
 					substitutions_initial[target][target_pos] = cands
 				else:
 					substitutions_initial[target] = {target_pos:cands}
-		lex.close()
 		return substitutions_initial
 
 	def addToExtended(self, target, tag, cands, subs):
