@@ -425,14 +425,28 @@ class WordnetFixedGenerator:
 		
 	def getInitialSet(self, victor_corpus):
 		substitutions_initial = {}
-		lex = open(victor_corpus)
-		for line in lex:
+		lexf = open(victor_corpus)
+		sents = []
+		targets = []
+		heads = []
+		for line in lexf:
 			data = line.strip().split('\t')
 			sent = data[0].strip().split(' ')
 			target = data[1].strip()
 			head = int(data[2].strip())
-			pos_data = self.tagger.tag(sent)
-			target_pos = pos_data[head][1].strip()
+			sents.append(sent)
+			targets.append(target)
+			heads.append(head)
+		lexf.close()
+		
+		print('Tagging...')
+		tagged_sents = self.tagger.tag_sents(sents)
+		print('Tagged')
+		
+		for i in range(0, len(sents)):
+			target = targets[i]
+			head = head[i]
+			target_pos = str(tagged_sents[i][head][1])
 			target_wnpos = self.getWordnetPOS(target_pos)
 			
 			syns = wn.synsets(target)
