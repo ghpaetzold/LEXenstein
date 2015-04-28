@@ -129,8 +129,8 @@ class KauchakGenerator:
 			leftw = key
 
 			for leftp in result[leftw].keys():
-				if leftp.lower().startswith('n'):
-					if leftp.lower()=='nns':
+				if leftp.startswith('n'):
+					if leftp=='nns':
 						pluralsk[leftw] = set([])
 						for subst in result[key][leftp]:
 							plurals[subst] = set([])
@@ -138,7 +138,7 @@ class KauchakGenerator:
 						singularsk[leftw] = set([])
 						for subst in result[key][leftp]:
 							singulars[subst] = set([])
-				elif leftp.lower().startswith('v'):
+				elif leftp.startswith('v'):
 					verbsk[leftw] = {}
 					for subst in result[key][leftp]:
 						verbs[subst] = {}
@@ -223,8 +223,8 @@ class KauchakGenerator:
 		for i in range(0, len(allkeys)):
 			key = allkeys[i]
 			leftw = key
-			for leftpo in result[leftw].keys():			
-				leftp = leftpo.lower()
+			for leftp in result[leftw].keys():			
+
 				#Add final version to candidates:
 				if leftw not in final_substitutions.keys():
 					final_substitutions[leftw] = result[key][leftp]
@@ -266,7 +266,6 @@ class KauchakGenerator:
 							final_substitutions[tensedl] = newcands
 						else:
 							final_substitutions[tensedl] = final_substitutions[tensedl].union(newcands)
-						
 		return final_substitutions
 		
 	def getInflections(self, verbstems):
@@ -276,11 +275,6 @@ class KauchakGenerator:
 		data4 = self.mat.conjugateVerbs(verbstems, 'PRESENT')
 		data5 = self.mat.conjugateVerbs(verbstems, 'PAST')
 		return self.correctWords(data1), self.correctWords(data2), self.correctWords(data3), self.correctWords(data4), self.correctWords(data5)
-		
-	def getAdjectiveInflections(self, adjectivestems):
-		data1 = self.mat.inflectAdjectives(adjectivestems, 'comparative')
-		data2 = self.mat.inflectAdjectives(adjectivestems, 'superlative')
-		return self.correctWords(data1), self.correctWords(data2)
 
 	def getSingulars(self, plurstems):
 		data = self.mat.inflectNouns(plurstems, 'singular')
@@ -290,12 +284,11 @@ class KauchakGenerator:
 		data = self.mat.inflectNouns(singstems, 'plural')
 		return self.correctWords(data)
 
-	def getStems(self, sings, plurs, verbs, adjectives):
-		data = self.mat.lemmatizeWords(sings+plurs+verbs+adjectives)
+	def getStems(self, sings, plurs, verbs):
+		data = self.mat.lemmatizeWords(sings+plurs+verbs)
 		rsings = []
 		rplurs = []
 		rverbs = []
-		radjs = []
 		c = -1
 		for sing in sings:
 			c += 1
@@ -315,13 +308,7 @@ class KauchakGenerator:
 				rverbs.append(data[c])
 			else:
 				rverbs.append(verb)
-		for adjective in adjectives:
-			c += 1
-			if len(data[c])>0:
-				radjs.append(data[c])
-			else:
-				radjs.append(adjective)
-		return self.correctWords(rsings), self.correctWords(rplurs), self.correctWords(rverbs), self.correctWords(radjs)
+		return self.correctWords(rsings), self.correctWords(rplurs), self.correctWords(rverbs)
 		
 	def correctWords(self, words):
 		result = []
