@@ -36,11 +36,11 @@ class WordnetFixedGenerator:
 		
 		#Get expanded set of substitutions:
 		print('Getting expanded set of substitutions...')
-		substitutions_expanded = self.getExpandedSet(substitutions_initial)
+		#substitutions_expanded = self.getExpandedSet(substitutions_initial)
 
 		#Get final substitutions:
 		print('Inflecting substitutions...')
-		substitutions_inflected = self.getInflectedSet(substitutions_expanded)
+		substitutions_inflected = self.getInflectedSet(substitutions_initial)
 
 		#Return final set:
 		print('Finished!')
@@ -168,6 +168,10 @@ class WordnetFixedGenerator:
 		#Create final substitutions:
 		final_substitutions = {}
 		for target in subs.keys():
+			if target=='casualti':
+				print('problem')
+			if target=='casualties':
+				print('?')
 			#Get lemma of target:
 			targetL = stemM[target]
 			
@@ -226,6 +230,7 @@ class WordnetFixedGenerator:
 					
 				#Add final cands to final substitutions:
 				final_substitutions[target][pos] = final_cands
+		print(str(final_substitutions['casualties']))
 		return final_substitutions
 
 	def getExpandedSet(self, subs):
@@ -312,9 +317,9 @@ class WordnetFixedGenerator:
 					pluralT = pluralM[target]
 					self.addToExtended(pluralT, 'NNS', cands, substitutions_extended)
 				elif pos == 'NNS':
-					singularT = singularM[target]
+					singularT = nounM[target]
 					self.addToExtended(singularT, 'NN', cands, substitutions_extended)
-				elif pos = 'VB':
+				elif pos == 'VB':
 					paT = paM[target]
 					prpaT = prpaM[target]
 					papaT = papaM[target]
@@ -417,6 +422,9 @@ class WordnetFixedGenerator:
 			pos_data = nltk.pos_tag(sent)
 			target_pos = pos_data[head][1].strip()
 			target_wnpos = self.getWordnetPOS(target_pos)
+
+			if target=='casualties':
+				print('HERE!')
 			
 			syns = wn.synsets(target)
 
@@ -432,9 +440,10 @@ class WordnetFixedGenerator:
 				else:
 					substitutions_initial[target] = {target_pos:cands}
 		lex.close()
+		print(str(substitutions_initial['casualties']))
 		return substitutions_initial
 
-	def addToExtended(target, tag, cands, subs):
+	def addToExtended(self, target, tag, cands, subs):
 		if target not in subs.keys():
 			subs[target] = {tag:cands}
 		else:
