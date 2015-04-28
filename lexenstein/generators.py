@@ -79,9 +79,11 @@ class WordnetFixedGenerator:
 					toPAPEPA.extend(cands)
 				elif pos == 'VBD':
 					toPA.extend(cands)
+					toPAPA.extend(cands)
 				elif pos == 'VBG':
 					toPRPA.extend(cands)
 				elif pos == 'VBN':
+					toPA.extend(cands)
 					toPAPA.extend(cands)
 				elif pos == 'VBP' or pos == 'VBZ':
 					toPR.extend(cands)
@@ -204,6 +206,7 @@ class WordnetFixedGenerator:
 					for cand in cands:
 						if targetL!=stemM[cand]:
 							final_cands.add(paM[cand])
+							final_cands.add(papaM[cand])
 				elif pos == 'VBG':
 					for cand in cands:
 						if targetL!=stemM[cand]:
@@ -211,6 +214,7 @@ class WordnetFixedGenerator:
 				elif pos == 'VBN':
 					for cand in cands:
 						if targetL!=stemM[cand]:
+							final_cands.add(paM[cand])
 							final_cands.add(papaM[cand])
 				elif pos == 'VBP' or pos == 'VBZ':
 					for cand in cands:
