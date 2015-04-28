@@ -4,21 +4,26 @@ import urllib2 as urllib
 from nltk.corpus import wordnet as wn
 import subprocess
 import nltk
+from nltk.tag.stanford import POSTagger
 import kenlm
 import codecs
 
 #Class for the Wordnet Generator
 class WordnetFixedGenerator:
 
-	def __init__(self, mat, nc):
+	def __init__(self, mat, nc, pos_model, stanford_tagger):
 		"""
 		Creates a WordnetFixedGenerator instance.
 	
 		@param mat: MorphAdornerToolkit object.
 		@param nc: NorvigCorrector object.
+		@param pos_model: Path to a POS tagging model for the Stanford POS Tagger.
+		@param stanford_tagger: Path to the "stanford-tagger.jar" file.
+		The file can be downloaded from the following link: http://nlp.stanford.edu/software/tagger.shtml
 		"""
 		self.mat = mat
 		self.nc = nc
+		self.tagger = POSTagger(pos_model, stanford_tagger)
 
 	def getSubstitutions(self, victor_corpus):
 		"""
@@ -199,6 +204,7 @@ class WordnetFixedGenerator:
 					for cand in cands:
 						if targetL!=stemM[cand]:
 							final_cands.add(pluralM[cand])
+							final_cands.add(cand)
 				elif pos == 'VB':
 					for cand in cands:
 						if targetL!=stemM[cand]:
@@ -425,12 +431,9 @@ class WordnetFixedGenerator:
 			sent = data[0].strip().split(' ')
 			target = data[1].strip()
 			head = int(data[2].strip())
-			pos_data = nltk.pos_tag(sent)
+			pos_data = self.tagger.tag(sent)
 			target_pos = pos_data[head][1].strip()
 			target_wnpos = self.getWordnetPOS(target_pos)
-
-			if target=='casualties':
-				print('HERE!')
 			
 			syns = wn.synsets(target)
 
@@ -446,7 +449,6 @@ class WordnetFixedGenerator:
 				else:
 					substitutions_initial[target] = {target_pos:cands}
 		lex.close()
-		print(str(substitutions_initial['casualties']))
 		return substitutions_initial
 
 	def addToExtended(self, target, tag, cands, subs):
