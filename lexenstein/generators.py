@@ -194,6 +194,7 @@ class WordnetFixedGenerator:
 					for cand in cands:
 						if targetL!=stemM[cand]:
 							final_cands.add(singularM[cand])
+							final_cands.add(cand)
 				elif pos == 'NNS':
 					for cand in cands:
 						if targetL!=stemM[cand]:
