@@ -2165,3 +2165,17 @@ class BiranGenerator:
 		for word in aux:
 			result += word + ' '
 		return result.strip()
+
+	def getWordnetPOS(self, pos):
+		if pos[0] == 'N' or pos[0] == 'V' or pos == 'RBR' or pos == 'RBS':
+			return pos[0].lower()
+		elif pos[0] == 'J':
+			return 'a'
+		else:
+			return None
+
+	def correctWords(self, words):
+		result = []
+		for word in words:
+			result.append(self.nc.correct(word))
+		return result
