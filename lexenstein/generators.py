@@ -10,7 +10,7 @@ import codecs
 
 class KauchakGenerator:
 
-	def __init__(self, mat, parallel_pos_file, alignments_file, stop_words):
+	def __init__(self, mat, parallel_pos_file, alignments_file, stop_words, nc):
 		"""
 		Creates a KauchakGenerator instance.
 	
@@ -21,11 +21,13 @@ class KauchakGenerator:
 		For more information about the file's format, refer to the LEXenstein Manual.
 		@param stop_words: Path to the file containing stop words of the desired language.
 		The file must contain one stop word per line.
+		@param nc: NorvigCorrector object.
 		"""
 		self.mat = mat
 		self.parallel_pos_file = parallel_pos_file
 		self.alignments_file = alignments_file
 		self.stop_words = set([word.strip() for word in open(stop_words)])
+		self.nc = nc
 
 	def getSubstitutions(self, victor_corpus):
 		"""
@@ -266,15 +268,15 @@ class KauchakGenerator:
 		data1 = self.mat.conjugateVerbs(verbstems, 'PAST_PERFECT_PARTICIPLE')
 		data2 = self.mat.conjugateVerbs(verbstems, 'PAST_PARTICIPLE')
 		data3 = self.mat.conjugateVerbs(verbstems, 'PRESENT_PARTICIPLE')
-		return data1, data2, data3
+		return self.correctWords(data1), self.correctWords(data2), self.correctWords(data3)
 
 	def getSingulars(self, plurstems):
 		data = self.mat.inflectNouns(plurstems, 'singular')
-		return data
+		return self.correctWords(data)
 		
 	def getPlurals(self, singstems):
 		data = self.mat.inflectNouns(singstems, 'plural')
-		return data
+		return self.correctWords(data)
 
 	def getStems(self, sings, plurs, verbs):
 		data = self.mat.lemmatizeWords(sings+plurs+verbs)
@@ -300,7 +302,13 @@ class KauchakGenerator:
 				rverbs.append(data[c])
 			else:
 				rverbs.append(verb)
-		return rsings, rplurs, rverbs
+		return self.correctWords(rsings), self.correctWords(rplurs), self.correctWords(rverbs)
+		
+	def correctWords(self, words):
+		result = []
+		for word in words:
+			result.append(self.nc.correct(word))
+		return result
 
 class YamamotoGenerator:
 
