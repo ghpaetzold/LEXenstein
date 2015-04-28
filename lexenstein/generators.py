@@ -239,7 +239,7 @@ class KauchakGenerator:
 			k = adjectivekeys[i]
 			adjre1 = adjres1[i]
 			adjre2 = adjres2[i]
-			adjectivesk[k] = {'comparative': adjre1, 'superlative': adjre2}
+			adjectives[k] = {'comparative': adjre1, 'superlative': adjre2}
 
 		#------------------------------------------------------------------------------------------------
 
@@ -327,7 +327,7 @@ class KauchakGenerator:
 		return self.correctWords(data)
 
 	def getStems(self, sings, plurs, verbs, adjectives):
-		data = self.mat.lemmatizeWords(sings+plurs+verbs)
+		data = self.mat.lemmatizeWords(sings+plurs+verbs+adjectives)
 		rsings = []
 		rplurs = []
 		rverbs = []
@@ -401,7 +401,7 @@ class YamamotoGenerator:
 		print('Finished!')
 		return substitutions_inflected
 
-		def getInflectedSet(self, result):
+	def getInflectedSet(self, result):
 		final_substitutions = {}
 
 		#Get inflections:
@@ -679,7 +679,7 @@ class MerriamGenerator:
 		print('Finished!')
 		return substitutions_inflected
 
-		def getInflectedSet(self, result):
+	def getInflectedSet(self, result):
 		final_substitutions = {}
 
 		#Get inflections:
