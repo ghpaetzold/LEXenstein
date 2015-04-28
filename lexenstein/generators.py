@@ -97,7 +97,7 @@ class KauchakGenerator:
 		falignments.close()
 		return substitutions_initial
 
-	def getPOSMap(self, path):
+	def getPOSMap(self, victor_corpus):
 		result = {}
 		
 		lexf = open(victor_corpus)
@@ -319,45 +319,11 @@ class KauchakGenerator:
 				final_substitutions[target].update(final_cands)
 		return final_substitutions
 		
-	def getInflections(self, verbstems):
-		data1 = self.mat.conjugateVerbs(verbstems, 'PAST_PERFECT_PARTICIPLE')
-		data2 = self.mat.conjugateVerbs(verbstems, 'PAST_PARTICIPLE')
-		data3 = self.mat.conjugateVerbs(verbstems, 'PRESENT_PARTICIPLE')
-		return data1, data2, data3
-
-	def getSingulars(self, plurstems):
-		data = self.mat.inflectNouns(plurstems, 'singular')
-		return data
-		
-	def getPlurals(self, singstems):
-		data = self.mat.inflectNouns(singstems, 'plural')
-		return data
-
-	def getStems(self, sings, plurs, verbs):
-		data = self.mat.lemmatizeWords(sings+plurs+verbs)
-		rsings = []
-		rplurs = []
-		rverbs = []
-		c = -1
-		for sing in sings:
-			c += 1
-			if len(data[c])>0:
-				rsings.append(data[c])
-			else:
-				rsings.append(sing)
-		for plur in plurs:
-			c += 1
-			if len(data[c])>0:
-				rplurs.append(data[c])
-			else:
-				rplurs.append(plur)
-		for verb in verbs:
-			c += 1
-			if len(data[c])>0:
-				rverbs.append(data[c])
-			else:
-				rverbs.append(verb)
-		return rsings, rplurs, rverbs
+	def correctWords(self, words):
+		result = []
+		for word in words:
+			result.append(self.nc.correct(word))
+		return result
 
 class YamamotoGenerator:
 
@@ -650,7 +616,7 @@ class YamamotoGenerator:
 
 class MerriamGenerator:
 
-	def __init__(self, mat, thesaurus_key, pos_model, stanford_tagger):
+	def __init__(self, mat, thesaurus_key, nc, pos_model, stanford_tagger):
 		"""
 		Creates a MerriamGenerator instance.
 	
