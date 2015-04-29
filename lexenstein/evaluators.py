@@ -71,9 +71,9 @@ class GeneratorEvaluator:
 			data = line.strip().split('\t')
 			target = data[1].strip()
 			items = data[3:len(data)]
-			candidates = [item.strip().split(':')[1].strip() for item in items]
+			candidates = set([item.strip().split(':')[1].strip() for item in items])
 			if target in substitutions.keys():
-				overlap = set(candidates).intersection(set(substitutions[target]))
+				overlap = candidates.intersection(set(substitutions[target]))
 				precisionc += len(overlap)
 				if len(overlap)>0:
 					potentialc += 1
@@ -123,11 +123,11 @@ class SelectorEvaluator:
 			data = line.strip().split('\t')
 			target = data[1].strip()
 			items = data[3:len(data)]
-			candidates = [item.strip().split(':')[1].strip() for item in items]
+			candidates = set([item.strip().split(':')[1].strip() for item in items])
 			
 			selected = substitutions[index]
 			if len(selected)>0:
-				overlap = set(candidates).intersection(set(selected))
+				overlap = candidates.intersection(set(selected))
 				precisionc += len(overlap)
 				if len(overlap)>0:
 					potentialc += 1
