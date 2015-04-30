@@ -594,6 +594,12 @@ class YamamotoGenerator:
 		lex.close()
 		return substitutions_initial
 
+	def correctWords(self, words):
+		result = []
+		for word in words:
+			result.append(self.nc.correct(word))
+		return result
+
 class MerriamGenerator:
 
 	def __init__(self, mat, thesaurus_key, nc):
@@ -875,6 +881,12 @@ class MerriamGenerator:
 				substitutions_initial[target] = cands
 		lex.close()
 		return substitutions_initial
+
+	def correctWords(self, words):
+		result = []
+		for word in words:
+			result.append(self.nc.correct(word))
+		return result
 
 #Class for the Wordnet Generator
 class WordnetGenerator:
