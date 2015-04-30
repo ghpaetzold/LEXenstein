@@ -6,6 +6,8 @@ import kenlm
 import math
 from nltk.corpus import wordnet as wn
 from sklearn.cross_validation import train_test_split
+from sklearn.feature_selection import SelectKBest
+from sklearn.feature_selection import f_classif
 
 class BottRanker:
 
@@ -259,8 +261,9 @@ class BoundaryRanker:
 		
 		self.fe = fe
 		self.classifier = None
+		self.feature_selector = None
 		
-	def trainRanker(self, victor_corpus, positive_range, loss, penalty, alpha, l1_ratio, epsilon):
+	def trainRanker(self, victor_corpus, positive_range, loss, penalty, alpha, l1_ratio, epsilon, k='all'):
 		"""
 		Trains a Boundary Ranker according to the parameters provided.
 	
@@ -278,6 +281,8 @@ class BoundaryRanker:
 		Recommended values: 0.05, 0.10, 0.15
 		@param epsilon: Acceptable error margin.
 		Recommended values: 0.0001, 0.001
+		@param k: Number of best features to be selected through univariate feature selection.
+		If k='all', then no feature selection is performed.
 		"""
 	
 		#Read victor corpus:
@@ -290,12 +295,17 @@ class BoundaryRanker:
 		#Create matrixes:
 		X = self.fe.calculateFeatures(victor_corpus)
 		Y = self.generateLabels(data, positive_range)
+		
+		#Select features:
+		self.feature_selector = SelectKBest(f_classif, k=k)
+		self.feature_selector.fit(X, Y)
+		X = feature_selector.transform(X)
 	
 		#Train classifier:
 		self.classifier = linear_model.SGDClassifier(loss=loss, penalty=penalty, alpha=alpha, l1_ratio=l1_ratio, epsilon=epsilon)
 		self.classifier.fit(X, Y)
 		
-	def trainRankerWithCrossValidation(self, victor_corpus, positive_range, folds, test_size, losses=['hinge', 'modified_huber'], penalties=['elasticnet'], alphas=[0.0001, 0.001, 0.01], l1_ratios=[0.0, 0.15, 0.25, 0.5, 0.75, 1.0]):
+	def trainRankerWithCrossValidation(self, victor_corpus, positive_range, folds, test_size, losses=['hinge', 'modified_huber'], penalties=['elasticnet'], alphas=[0.0001, 0.001, 0.01], l1_ratios=[0.0, 0.15, 0.25, 0.5, 0.75, 1.0], k='all'):
 		"""
 		Trains a Boundary Ranker while maximizing hyper-parameters through cross-validation.
 		It uses the TRank-at-1 as an optimization metric.
@@ -317,6 +327,8 @@ class BoundaryRanker:
 		Recommended values: 0.05, 0.10, 0.15
 		@param epsilons: Acceptable error margins.
 		Recommended values: 0.0001, 0.001
+		@param k: Number of best features to be selected through univariate feature selection.
+		If k='all', then no feature selection is performed.
 		"""
 		#Read victor corpus:
 		data = []
@@ -328,6 +340,11 @@ class BoundaryRanker:
 		#Create matrixes:
 		X = self.fe.calculateFeatures(victor_corpus)
 		Y = self.generateLabels(data, positive_range)
+		
+		#Select features:
+		self.feature_selector = SelectKBest(f_classif, k=k)
+		self.feature_selector.fit(X, Y)
+		X = feature_selector.transform(X)
 		
 		#Extract ranking problems:
 		firsts = []
@@ -441,6 +458,9 @@ class BoundaryRanker:
 		
 		#Create matrixes:
 		X = self.fe.calculateFeatures(victor_corpus)
+		
+		#Select features:
+		X = feature_selector.transform(X)
 		
 		#Get boundary distances:
 		distances = self.classifier.decision_function(X)

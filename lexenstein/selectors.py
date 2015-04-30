@@ -191,7 +191,7 @@ class BoundarySelector:
 		"""
 		self.ranker = boundary_ranker
 		
-	def trainSelector(self, victor_corpus, positive_range, loss, penalty, alpha, l1_ratio, epsilon):
+	def trainSelector(self, victor_corpus, positive_range, loss, penalty, alpha, l1_ratio, epsilon, k='all'):
 		"""
 		Trains a Boundary Ranker according to the parameters provided.
 	
@@ -209,10 +209,12 @@ class BoundarySelector:
 		Recommended values: 0.05, 0.10, 0.15
 		@param epsilon: Acceptable error margin.
 		Recommended values: 0.0001, 0.001
+		@param k: Number of best features to be selected through univariate feature selection.
+		If k='all', then no feature selection is performed.
 		"""
-		self.ranker.trainRanker(victor_corpus, positive_range, loss, penalty, alpha, l1_ratio, epsilon)
+		self.ranker.trainRanker(victor_corpus, positive_range, loss, penalty, alpha, l1_ratio, epsilon, k=k)
 	
-	def trainSelectorWithCrossValidation(self, victor_corpus, positive_range, folds, test_size, losses=['hinge', 'modified_huber'], penalties=['elasticnet'], alphas=[0.0001, 0.001, 0.01], l1_ratios=[0.0, 0.15, 0.25, 0.5, 0.75, 1.0]):
+	def trainSelectorWithCrossValidation(self, victor_corpus, positive_range, folds, test_size, losses=['hinge', 'modified_huber'], penalties=['elasticnet'], alphas=[0.0001, 0.001, 0.01], l1_ratios=[0.0, 0.15, 0.25, 0.5, 0.75, 1.0], , k='all'):
 		"""
 		Trains a Boundary Selector while maximizing hyper-parameters through cross-validation.
 		It uses the TRank-at-1 as an optimization metric.
@@ -234,8 +236,10 @@ class BoundarySelector:
 		Recommended values: 0.05, 0.10, 0.15
 		@param epsilons: Acceptable error margins.
 		Recommended values: 0.0001, 0.001
+		@param k: Number of best features to be selected through univariate feature selection.
+		If k='all', then no feature selection is performed.
 		"""
-		self.ranker.trainRankerWithCrossValidation(victor_corpus, positive_range, folds, test_size, losses=losses, penalties=penalties, alphas=alphas, l1_ratios=l1_ratios)
+		self.ranker.trainRankerWithCrossValidation(victor_corpus, positive_range, folds, test_size, losses=losses, penalties=penalties, alphas=alphas, l1_ratios=l1_ratios, k=k)
 		
 	def selectCandidates(self, substitutions, victor_corpus, temp_file, proportion):
 		"""
