@@ -299,7 +299,7 @@ class BoundaryRanker:
 		#Select features:
 		self.feature_selector = SelectKBest(f_classif, k=k)
 		self.feature_selector.fit(X, Y)
-		X = feature_selector.transform(X)
+		X = self.feature_selector.transform(X)
 	
 		#Train classifier:
 		self.classifier = linear_model.SGDClassifier(loss=loss, penalty=penalty, alpha=alpha, l1_ratio=l1_ratio, epsilon=epsilon)
@@ -344,7 +344,7 @@ class BoundaryRanker:
 		#Select features:
 		self.feature_selector = SelectKBest(f_classif, k=k)
 		self.feature_selector.fit(X, Y)
-		X = feature_selector.transform(X)
+		X = self.feature_selector.transform(X)
 		
 		#Extract ranking problems:
 		firsts = []
@@ -460,7 +460,7 @@ class BoundaryRanker:
 		X = self.fe.calculateFeatures(victor_corpus)
 		
 		#Select features:
-		X = feature_selector.transform(X)
+		X = self.feature_selector.transform(X)
 		
 		#Get boundary distances:
 		distances = self.classifier.decision_function(X)
