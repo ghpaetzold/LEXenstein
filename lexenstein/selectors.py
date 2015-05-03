@@ -564,7 +564,7 @@ class BiranSelector:
 		"""
 		self.model = self.getModel(cooc_model)
 		
-	def selectCandidates(self, substitutions, victor_corpus, common_distance, candidate_distance):
+	def selectCandidates(self, substitutions, victor_corpus, common_distance=0.01, candidate_distance=0.9):
 		"""
 		Selects which candidates can replace the target complex words in each instance of a VICTOR corpus.
 	
@@ -604,7 +604,8 @@ class BiranSelector:
 			candidates = set(substitution_candidates[c])
 		
 			final_candidates = set([])
-			for candidate in candidates:
+			for candidate_raw in candidates:
+				candidate = str(candidate_raw)
 				candidate_vec = self.getVec(candidate)
 				candidate_dist = 1.0
 				try:
