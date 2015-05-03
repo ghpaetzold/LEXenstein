@@ -350,7 +350,7 @@ class FeatureEstimator:
 	
 		@param translation_probabilities: Path to a file containing the translation probabilities.
 		The file must produced by the following command through fast_align:
-			fast_align -i <parallel_data> -v -d -o <translation_probabilities>
+			fast_align -i <parallel_data> -v -d -o <translation_probabilities_file>
 		@param orientation: Whether the feature is a simplicity of complexity measure.
 		Possible values: Complexity, Simplicity.
 		"""

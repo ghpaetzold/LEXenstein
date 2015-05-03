@@ -27,6 +27,8 @@ class BottRanker:
 	
 		@param victor_corpus: Path to a testing corpus in VICTOR format.
 		For more information about the file's format, refer to the LEXenstein Manual.
+		@param a1: Weight of the word's length score.
+		@param a2: Weight of the word's frequency score.
 		@return: A list of ranked candidates for each instance in the VICTOR corpus, from simplest to most complex.
 		"""
 		#Create object for results:
@@ -83,6 +85,11 @@ class YamamotoRanker:
 	
 		@param victor_corpus: Path to a testing corpus in VICTOR format.
 		For more information about the file's format, refer to the LEXenstein Manual.
+		@param a1: Weight of the word's frequency score.
+		@param a2: Weight of the word's sense score.
+		@param a3: Weight of the word's collocational score.
+		@param a4: Weight of the word's log score.
+		@param a5: Weight of the word's trigram score.
 		@return: A list of ranked candidates for each instance in the VICTOR corpus, from simplest to most complex.
 		"""
 		#Create object for results:

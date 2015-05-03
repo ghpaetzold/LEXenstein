@@ -72,7 +72,7 @@ class SVMRankSelector:
 		"""
 		Selects which candidates can replace the target complex words in each instance of a VICTOR corpus.
 	
-		@param substitutions: A dictionary linking complex words to a set of candidate substitutions
+		@param substitutions: A dictionary linking complex words to a set of candidate substitutions.
 		Example: substitutions['perched'] = {'sat', 'roosted'}
 		@param victor_corpus: Path to a corpus in the VICTOR format.
 		For more information about the file's format, refer to the LEXenstein Manual.
@@ -322,20 +322,31 @@ class ClusterSelector:
 		For more information about the file's format, refer to the LEXenstein Manual.
 		@return: Returns a vector of size N, containing a set of selected substitutions for each instance in the VICTOR corpus.
 		"""
-		selected_substitutions = []				
+		selected_substitutions = []
 
+		substitution_candidates = []
+		if isinstance(substitutions, list):
+			substitution_candidates = substitutions
+		elif isinstance(substitutions, dict):
+			void = VoidSelector()
+			substitution_candidates = void.selectCandidates(substitutions, victor_corpus)
+		else:
+			print('ERROR: Substitutions are neither a dictionary or a list!')
+			return selected_substitutions
+
+		c = -1
 		lexf = open(victor_corpus)
 		for line in lexf:
+			c += 1
 			data = line.strip().split('\t')
 			sent = data[0].strip()
 			target = data[1].strip()
 		
 			selected_candidates = set([])
-			if target in substitutions.keys():
-				if target in self.words_to_clusters.keys():	
-					cluster = self.words_to_clusters[target]
-					candidates = set(substitutions[target])
-					selected_candidates = candidates.intersection(self.clusters_to_words[cluster])
+			if target in self.words_to_clusters.keys():	
+				cluster = self.words_to_clusters[target]
+				candidates = set(substitution_candidates[c])
+				selected_candidates = candidates.intersection(self.clusters_to_words[cluster])
 		
 			selected_substitutions.append(selected_candidates)
 		lexf.close()
