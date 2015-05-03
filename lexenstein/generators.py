@@ -899,7 +899,7 @@ class WordnetGenerator:
 		@param nc: NorvigCorrector object.
 		@param pos_model: Path to a POS tagging model for the Stanford POS Tagger.
 		The models can be downloaded from the following link: http://nlp.stanford.edu/software/tagger.shtml
-		@param stanford_tagger: Path to the "stanford-tagger.jar" file.
+		@param stanford_tagger: Path to the "stanford-postagger.jar" file.
 		The tagger can be downloaded from the following link: http://nlp.stanford.edu/software/tagger.shtml
 		"""
 		self.mat = mat
@@ -1383,7 +1383,7 @@ class BiranGenerator:
 		@param nc: NorvigCorrector object.
 		@param pos_model: Path to a POS tagging model for the Stanford POS Tagger.
 		The models can be downloaded from the following link: http://nlp.stanford.edu/software/tagger.shtml
-		@param stanford_tagger: Path to the "stanford-tagger.jar" file.
+		@param stanford_tagger: Path to the "stanford-postagger.jar" file.
 		The tagger can be downloaded from the following link: http://nlp.stanford.edu/software/tagger.shtml
 		"""
 

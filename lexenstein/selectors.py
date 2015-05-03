@@ -406,20 +406,31 @@ class POSTagSelector:
 		For more information about the file's format, refer to the LEXenstein Manual.
 		@return: Returns a vector of size N, containing a set of selected substitutions for each instance in the VICTOR corpus.
 		"""
-		selected_substitutions = []				
+		selected_substitutions = []
 
+		substitution_candidates = []
+		if isinstance(substitutions, list):
+			substitution_candidates = substitutions
+		elif isinstance(substitutions, dict):
+			void = VoidSelector()
+			substitution_candidates = void.selectCandidates(substitutions, victor_corpus)
+		else:
+			print('ERROR: Substitutions are neither a dictionary or a list!')
+			return selected_substitutions
+
+		c = -1
 		lexf = open(victor_corpus)
 		for line in lexf:
+			c += 1
 			data = line.strip().split('\t')
 			sent = data[0].strip()
 			target = data[1].strip()
 			head = int(data[2].strip())
 		
 			candidates = []
-			if target in substitutions.keys():
-				target_POS = self.getTargetPOS(sent, target, head)
-				candidates = substitutions[target]
-				candidates = self.getCandidatesWithSamePOS(sent.split(' '), head, candidates, target_POS)
+			target_POS = self.getTargetPOS(sent, target, head)
+			candidates = set(substitution_candidates[c])
+			candidates = self.getCandidatesWithSamePOS(sent.split(' '), head, candidates, target_POS)
 		
 			selected_substitutions.append(candidates)
 		lexf.close()
@@ -499,7 +510,10 @@ class VoidSelector:
 		For more information about the file's format, refer to the LEXenstein Manual.
 		@return: Returns a vector of size N, containing a set of selected substitutions for each instance in the VICTOR corpus.
 		"""
-		selected_substitutions = []				
+		selected_substitutions = []
+
+		if isinstance(substitutions, list):
+			return substitutions	
 
 		lexf = open(victor_corpus)
 		for line in lexf:
@@ -564,10 +578,22 @@ class BiranSelector:
 		We recommend using values close to 1.0, such as 0.8, or 0.9.
 		@return: Returns a vector of size N, containing a set of selected substitutions for each instance in the VICTOR corpus.
 		"""
-		selected_substitutions = []				
+		selected_substitutions = []
 
+		substitution_candidates = []
+		if isinstance(substitutions, list):
+			substitution_candidates = substitutions
+		elif isinstance(substitutions, dict):
+			void = VoidSelector()
+			substitution_candidates = void.selectCandidates(substitutions, victor_corpus)
+		else:
+			print('ERROR: Substitutions are neither a dictionary or a list!')
+			return selected_substitutions			
+
+		c = -1
 		lexf = open(victor_corpus)
 		for line in lexf:
+			c += 1
 			data = line.strip().split('\t')
 			sent = data[0].strip()
 			target = data[1].strip()
@@ -575,9 +601,7 @@ class BiranSelector:
 		
 			target_vec = self.getSentVec(sent, head)
 
-			candidates = []
-			if target in substitutions.keys():
-				candidates = substitutions[target]
+			candidates = set(substitution_candidates[c])
 		
 			final_candidates = set([])
 			for candidate in candidates:
@@ -739,15 +763,26 @@ class WordVectorSelector:
 		@param onePerWord: If True, a word in the complex word's context can only contribute once to its resulting word vector.
 		@return: Returns a vector of size N, containing a set of selected substitutions for each instance in the VICTOR corpus.
 		"""
-		
 		stop_words = set([])
 		if stop_words_file != None:
 			stop_words = set([word.strip() for word in open(stop_words_file)])
 	
-		selected_substitutions = []				
+		selected_substitutions = []
 
+		substitution_candidates = []
+		if isinstance(substitutions, list):
+			substitution_candidates = substitutions
+		elif isinstance(substitutions, dict):
+			void = VoidSelector()
+			substitution_candidates = void.selectCandidates(substitutions, victor_corpus)
+		else:
+			print('ERROR: Substitutions are neither a dictionary or a list!')
+			return selected_substitutions			
+
+		c = -1
 		lexf = open(victor_corpus)
 		for line in lexf:
+			c += 1
 			data = line.strip().split('\t')
 			sent = data[0].strip()
 			target = data[1].strip()
@@ -755,10 +790,7 @@ class WordVectorSelector:
 		
 			target_vec = self.getSentVec(sent, head, stop_words, window, onlyInformative, keepTarget, onePerWord)
 		
-			candidates = []
-			if target in substitutions.keys():
-				candidates = substitutions[target]
-	
+			candidates = substitution_candidates[c]
 
 			candidate_dists = {}
 			for candidate in candidates:
@@ -901,10 +933,22 @@ class WSDSelector:
 		@return: Returns a vector of size N, containing a set of selected substitutions for each instance in the VICTOR corpus.
 		"""
 		
-		selected_substitutions = []				
+		selected_substitutions = []
 
+		substitution_candidates = []
+		if isinstance(substitutions, list):
+			substitution_candidates = substitutions
+		elif isinstance(substitutions, dict):
+			void = VoidSelector()
+			substitution_candidates = void.selectCandidates(substitutions, victor_corpus)
+		else:
+			print('ERROR: Substitutions are neither a dictionary or a list!')
+			return selected_substitutions					
+
+		c = -1
 		lexf = open(victor_corpus)
 		for line in lexf:
+			c += 1
 			data = line.strip().split('\t')
 			sent = data[0].strip()
 			target = data[1].strip()
@@ -912,9 +956,7 @@ class WSDSelector:
 		
 			target_sense = self.WSDfunction.__call__(sent, target)
 		
-			candidates = []
-			if target in substitutions.keys():
-				candidates = substitutions[target]
+			candidates = substitution_candidates[c]
 		
 			selected_candidates = set([])
 			for candidate in candidates:
