@@ -332,8 +332,6 @@ class BoundaryRanker:
 		Recommended values: 0.0001, 0.001, 0.01, 0.1
 		@param l1_ratios: Elastic net mixing parameters.
 		Recommended values: 0.05, 0.10, 0.15
-		@param epsilons: Acceptable error margins.
-		Recommended values: 0.0001, 0.001
 		@param k: Number of best features to be selected through univariate feature selection.
 		If k='all', then no feature selection is performed.
 		"""

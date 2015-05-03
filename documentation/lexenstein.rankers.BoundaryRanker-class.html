@@ -121,6 +121,27 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
+          <td><span class="summary-sig"><a name="getCrossValidationScore"></a><span class="summary-sig-name">getCrossValidationScore</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">classifier</span>,
+        <span class="summary-sig-arg">Xtea</span>,
+        <span class="summary-sig-arg">Xte</span>,
+        <span class="summary-sig-arg">firsts</span>,
+        <span class="summary-sig-arg">candidates</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.rankers-pysrc.html#BoundaryRanker.getCrossValidationScore">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
           <td><span class="summary-sig"><a href="lexenstein.rankers.BoundaryRanker-class.html#getRankings" class="summary-sig-name">getRankings</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">victor_corpus</span>)</span><br />
       Ranks candidates with respect to their simplicity.</td>
@@ -146,10 +167,38 @@
         <span class="summary-sig-arg">penalty</span>,
         <span class="summary-sig-arg">alpha</span>,
         <span class="summary-sig-arg">l1_ratio</span>,
-        <span class="summary-sig-arg">epsilon</span>)</span><br />
+        <span class="summary-sig-arg">epsilon</span>,
+        <span class="summary-sig-arg">k</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">all</code><code class="variable-quote">'</code></span>)</span><br />
       Trains a Boundary Ranker according to the parameters provided.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="lexenstein.rankers-pysrc.html#BoundaryRanker.trainRanker">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="lexenstein.rankers.BoundaryRanker-class.html#trainRankerWithCrossValidation" class="summary-sig-name">trainRankerWithCrossValidation</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">victor_corpus</span>,
+        <span class="summary-sig-arg">positive_range</span>,
+        <span class="summary-sig-arg">folds</span>,
+        <span class="summary-sig-arg">test_size</span>,
+        <span class="summary-sig-arg">losses</span>=<span class="summary-sig-default"><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">hinge</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">modified_huber</code><code class="variable-quote">'</code><code class="variable-group">]</code></span>,
+        <span class="summary-sig-arg">penalties</span>=<span class="summary-sig-default"><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">elasticnet</code><code class="variable-quote">'</code><code class="variable-group">]</code></span>,
+        <span class="summary-sig-arg">alphas</span>=<span class="summary-sig-default"><code class="variable-group">[</code>0.0001<code class="variable-op">, </code>0.001<code class="variable-op">, </code>0.01<code class="variable-group">]</code></span>,
+        <span class="summary-sig-arg">l1_ratios</span>=<span class="summary-sig-default"><code class="variable-group">[</code>0.0<code class="variable-op">, </code>0.15<code class="variable-op">, </code>0.25<code class="variable-op">, </code>0.5<code class="variable-op">, </code>0.75<code class="variable-op">, </code>1.0<code class="variable-group">]</code></span>,
+        <span class="summary-sig-arg">k</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">all</code><code class="variable-quote">'</code></span>)</span><br />
+      Trains a Boundary Ranker while maximizing hyper-parameters through 
+      cross-validation.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.rankers-pysrc.html#BoundaryRanker.trainRankerWithCrossValidation">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -245,7 +294,8 @@
         <span class="sig-arg">penalty</span>,
         <span class="sig-arg">alpha</span>,
         <span class="sig-arg">l1_ratio</span>,
-        <span class="sig-arg">epsilon</span>)</span>
+        <span class="sig-arg">epsilon</span>,
+        <span class="sig-arg">k</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string">all</code><code class="variable-quote">'</code></span>)</span>
   </h3>
   </td><td align="right" valign="top"
     ><span class="codelink"><a href="lexenstein.rankers-pysrc.html#BoundaryRanker.trainRanker">source&nbsp;code</a></span>&nbsp;
@@ -269,6 +319,57 @@
         <li><strong class="pname"><code>l1_ratio</code></strong> - Elastic net mixing parameter. Recommended values: 0.05, 0.10, 
           0.15</li>
         <li><strong class="pname"><code>epsilon</code></strong> - Acceptable error margin. Recommended values: 0.0001, 0.001</li>
+        <li><strong class="pname"><code>k</code></strong> - Number of best features to be selected through univariate feature
+          selection. If k='all', then no feature selection is performed.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="trainRankerWithCrossValidation"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">trainRankerWithCrossValidation</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">victor_corpus</span>,
+        <span class="sig-arg">positive_range</span>,
+        <span class="sig-arg">folds</span>,
+        <span class="sig-arg">test_size</span>,
+        <span class="sig-arg">losses</span>=<span class="sig-default"><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">hinge</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">modified_huber</code><code class="variable-quote">'</code><code class="variable-group">]</code></span>,
+        <span class="sig-arg">penalties</span>=<span class="sig-default"><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">elasticnet</code><code class="variable-quote">'</code><code class="variable-group">]</code></span>,
+        <span class="sig-arg">alphas</span>=<span class="sig-default"><code class="variable-group">[</code>0.0001<code class="variable-op">, </code>0.001<code class="variable-op">, </code>0.01<code class="variable-group">]</code></span>,
+        <span class="sig-arg">l1_ratios</span>=<span class="sig-default"><code class="variable-group">[</code>0.0<code class="variable-op">, </code>0.15<code class="variable-op">, </code>0.25<code class="variable-op">, </code>0.5<code class="variable-op">, </code>0.75<code class="variable-op">, </code>1.0<code class="variable-group">]</code></span>,
+        <span class="sig-arg">k</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string">all</code><code class="variable-quote">'</code></span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="lexenstein.rankers-pysrc.html#BoundaryRanker.trainRankerWithCrossValidation">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Trains a Boundary Ranker while maximizing hyper-parameters through 
+  cross-validation. It uses the TRank-at-1 as an optimization metric.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>victor_corpus</code></strong> - Path to a training corpus in VICTOR format. For more information 
+          about the file's format, refer to the LEXenstein Manual.</li>
+        <li><strong class="pname"><code>positive_range</code></strong> - Maximum rank to which label 1 is assigned in the binary 
+          classification setup. Recommended value: 1.</li>
+        <li><strong class="pname"><code>folds</code></strong> - Number of folds to be used in cross-validation.</li>
+        <li><strong class="pname"><code>test_size</code></strong> - Percentage of the dataset to be used in testing. Recommended 
+          values: 0.2, 0.25, 0.33</li>
+        <li><strong class="pname"><code>losses</code></strong> - Loss functions to be considered. Values available: hinge, log, 
+          modified_huber, squared_hinge, perceptron.</li>
+        <li><strong class="pname"><code>penalties</code></strong> - Regularization terms to be considered. Values available: l2, l1, 
+          elasticnet.</li>
+        <li><strong class="pname"><code>alphas</code></strong> - Constants that multiplies the regularization term. Recommended 
+          values: 0.0001, 0.001, 0.01, 0.1</li>
+        <li><strong class="pname"><code>l1_ratios</code></strong> - Elastic net mixing parameters. Recommended values: 0.05, 0.10, 
+          0.15</li>
+        <li><strong class="pname"><code>k</code></strong> - Number of best features to be selected through univariate feature
+          selection. If k='all', then no feature selection is performed.</li>
     </ul></dd>
   </dl>
 </td></tr></table>
@@ -305,7 +406,7 @@
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Mon Mar 23 13:24:32 2015
+    Generated by Epydoc 3.0.1 on Sun May  3 19:29:55 2015
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

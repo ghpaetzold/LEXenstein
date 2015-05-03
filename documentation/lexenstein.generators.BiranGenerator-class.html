@@ -90,7 +90,10 @@
         <span class="summary-sig-arg">complex_vocab</span>,
         <span class="summary-sig-arg">simple_vocab</span>,
         <span class="summary-sig-arg">complex_lm</span>,
-        <span class="summary-sig-arg">simple_lm</span>)</span><br />
+        <span class="summary-sig-arg">simple_lm</span>,
+        <span class="summary-sig-arg">nc</span>,
+        <span class="summary-sig-arg">pos_model</span>,
+        <span class="summary-sig-arg">stanford_tagger</span>)</span><br />
       Creates a BiranGenerator instance.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="lexenstein.generators-pysrc.html#BiranGenerator.__init__">source&nbsp;code</a></span>
@@ -111,6 +114,23 @@
         <span class="summary-sig-arg">lem</span>)</span></td>
           <td align="right" valign="top">
             <span class="codelink"><a href="lexenstein.generators-pysrc.html#BiranGenerator.cleanLemma">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="correctWords"></a><span class="summary-sig-name">correctWords</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">words</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.generators-pysrc.html#BiranGenerator.correctWords">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -161,26 +181,9 @@
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a name="getInflectedSet"></a><span class="summary-sig-name">getInflectedSet</span>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">result</span>)</span></td>
+        <span class="summary-sig-arg">subs</span>)</span></td>
           <td align="right" valign="top">
             <span class="codelink"><a href="lexenstein.generators-pysrc.html#BiranGenerator.getInflectedSet">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a name="getInflections"></a><span class="summary-sig-name">getInflections</span>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">verbstems</span>)</span></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="lexenstein.generators-pysrc.html#BiranGenerator.getInflections">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -198,59 +201,6 @@
         <span class="summary-sig-arg">victor_corpus</span>)</span></td>
           <td align="right" valign="top">
             <span class="codelink"><a href="lexenstein.generators-pysrc.html#BiranGenerator.getInitialSet">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a name="getPlurals"></a><span class="summary-sig-name">getPlurals</span>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">singstems</span>)</span></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="lexenstein.generators-pysrc.html#BiranGenerator.getPlurals">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a name="getSingulars"></a><span class="summary-sig-name">getSingulars</span>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">plurstems</span>)</span></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="lexenstein.generators-pysrc.html#BiranGenerator.getSingulars">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a name="getStems"></a><span class="summary-sig-name">getStems</span>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">sings</span>,
-        <span class="summary-sig-arg">plurs</span>,
-        <span class="summary-sig-arg">verbs</span>)</span></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="lexenstein.generators-pysrc.html#BiranGenerator.getStems">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -294,6 +244,23 @@
       
     </td>
   </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="getWordnetPOS"></a><span class="summary-sig-name">getWordnetPOS</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">pos</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.generators-pysrc.html#BiranGenerator.getWordnetPOS">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
 </table>
 <!-- ==================== METHOD DETAILS ==================== -->
 <a name="section-MethodDetails"></a>
@@ -325,7 +292,10 @@
         <span class="sig-arg">complex_vocab</span>,
         <span class="sig-arg">simple_vocab</span>,
         <span class="sig-arg">complex_lm</span>,
-        <span class="sig-arg">simple_lm</span>)</span>
+        <span class="sig-arg">simple_lm</span>,
+        <span class="sig-arg">nc</span>,
+        <span class="sig-arg">pos_model</span>,
+        <span class="sig-arg">stanford_tagger</span>)</span>
     <br /><em class="fname">(Constructor)</em>
   </h3>
   </td><td align="right" valign="top"
@@ -348,6 +318,13 @@
         <li><strong class="pname"><code>simple_lm</code></strong> - Path to a language model built over simple text. For more 
           information on how to create the file, refer to the LEXenstein 
           Manual.</li>
+        <li><strong class="pname"><code>nc</code></strong> - NorvigCorrector object.</li>
+        <li><strong class="pname"><code>pos_model</code></strong> - Path to a POS tagging model for the Stanford POS Tagger. The 
+          models can be downloaded from the following link: 
+          http://nlp.stanford.edu/software/tagger.shtml</li>
+        <li><strong class="pname"><code>stanford_tagger</code></strong> - Path to the &quot;stanford-postagger.jar&quot; file. The tagger 
+          can be downloaded from the following link: 
+          http://nlp.stanford.edu/software/tagger.shtml</li>
     </ul></dd>
   </dl>
 </td></tr></table>
@@ -414,7 +391,7 @@
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Mon Mar 23 13:24:32 2015
+    Generated by Epydoc 3.0.1 on Sun May  3 19:29:55 2015
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

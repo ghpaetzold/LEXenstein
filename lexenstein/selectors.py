@@ -74,10 +74,10 @@ class SVMRankSelector:
 	
 		@param substitutions: Candidate substitutions to be filtered.
 		It can be in two formats:
-		- A dictionary produced by a Substitution Generator linking complex words to a set of candidate substitutions.
-			Example: substitutions['perched'] = {'sat', 'roosted'}
-		- A list of candidate substitutions selected for the "victor_corpus" dataset by a Substitution Selector.
-			Example: [['sat', 'roosted'], ['easy', 'uncomplicated']]
+		A dictionary produced by a Substitution Generator linking complex words to a set of candidate substitutions.
+		Example: substitutions['perched'] = {'sat', 'roosted'}
+		A list of candidate substitutions selected for the "victor_corpus" dataset by a Substitution Selector.
+		Example: [['sat', 'roosted'], ['easy', 'uncomplicated']]
 		@param victor_corpus: Path to a corpus in the VICTOR format.
 		For more information about the file's format, refer to the LEXenstein Manual.
 		@param features_file: File in which to save the testing features file.
@@ -238,8 +238,6 @@ class BoundarySelector:
 		Recommended values: 0.0001, 0.001, 0.01, 0.1
 		@param l1_ratios: Elastic net mixing parameters.
 		Recommended values: 0.05, 0.10, 0.15
-		@param epsilons: Acceptable error margins.
-		Recommended values: 0.0001, 0.001
 		@param k: Number of best features to be selected through univariate feature selection.
 		If k='all', then no feature selection is performed.
 		"""
@@ -251,10 +249,10 @@ class BoundarySelector:
 	
 		@param substitutions: Candidate substitutions to be filtered.
 		It can be in two formats:
-		- A dictionary produced by a Substitution Generator linking complex words to a set of candidate substitutions.
-			Example: substitutions['perched'] = {'sat', 'roosted'}
-		- A list of candidate substitutions selected for the "victor_corpus" dataset by a Substitution Selector.
-			Example: [['sat', 'roosted'], ['easy', 'uncomplicated']]
+		A dictionary produced by a Substitution Generator linking complex words to a set of candidate substitutions.
+		Example: substitutions['perched'] = {'sat', 'roosted'}
+		A list of candidate substitutions selected for the "victor_corpus" dataset by a Substitution Selector.
+		Example: [['sat', 'roosted'], ['easy', 'uncomplicated']]
 		@param victor_corpus: Path to a corpus in the VICTOR format.
 		For more information about the file's format, refer to the LEXenstein Manual.
 		User must have the privilege to delete such file without administrator privileges.
@@ -326,10 +324,10 @@ class ClusterSelector:
 	
 		@param substitutions: Candidate substitutions to be filtered.
 		It can be in two formats:
-		- A dictionary produced by a Substitution Generator linking complex words to a set of candidate substitutions.
-			Example: substitutions['perched'] = {'sat', 'roosted'}
-		- A list of candidate substitutions selected for the "victor_corpus" dataset by a Substitution Selector.
-			Example: [['sat', 'roosted'], ['easy', 'uncomplicated']]
+		A dictionary produced by a Substitution Generator linking complex words to a set of candidate substitutions.
+		Example: substitutions['perched'] = {'sat', 'roosted'}
+		A list of candidate substitutions selected for the "victor_corpus" dataset by a Substitution Selector.
+		Example: [['sat', 'roosted'], ['easy', 'uncomplicated']]
 		@param victor_corpus: Path to a corpus in the VICTOR format.
 		For more information about the file's format, refer to the LEXenstein Manual.
 		@return: Returns a vector of size N, containing a set of selected substitutions for each instance in the VICTOR corpus.
@@ -414,10 +412,10 @@ class POSTagSelector:
 	
 		@param substitutions: Candidate substitutions to be filtered.
 		It can be in two formats:
-		- A dictionary produced by a Substitution Generator linking complex words to a set of candidate substitutions.
-			Example: substitutions['perched'] = {'sat', 'roosted'}
-		- A list of candidate substitutions selected for the "victor_corpus" dataset by a Substitution Selector.
-			Example: [['sat', 'roosted'], ['easy', 'uncomplicated']]
+		A dictionary produced by a Substitution Generator linking complex words to a set of candidate substitutions.
+		Example: substitutions['perched'] = {'sat', 'roosted'}
+		A list of candidate substitutions selected for the "victor_corpus" dataset by a Substitution Selector.
+		Example: [['sat', 'roosted'], ['easy', 'uncomplicated']]
 		@param victor_corpus: Path to a corpus in the VICTOR format.
 		For more information about the file's format, refer to the LEXenstein Manual.
 		@return: Returns a vector of size N, containing a set of selected substitutions for each instance in the VICTOR corpus.
@@ -522,10 +520,10 @@ class VoidSelector:
 	
 		@param substitutions: Candidate substitutions to be filtered.
 		It can be in two formats:
-		- A dictionary produced by a Substitution Generator linking complex words to a set of candidate substitutions.
-			Example: substitutions['perched'] = {'sat', 'roosted'}
-		- A list of candidate substitutions selected for the "victor_corpus" dataset by a Substitution Selector.
-			Example: [['sat', 'roosted'], ['easy', 'uncomplicated']]
+		A dictionary produced by a Substitution Generator linking complex words to a set of candidate substitutions.
+		Example: substitutions['perched'] = {'sat', 'roosted'}
+		A list of candidate substitutions selected for the "victor_corpus" dataset by a Substitution Selector.
+		Example: [['sat', 'roosted'], ['easy', 'uncomplicated']]
 		@param victor_corpus: Path to a corpus in the VICTOR format.
 		For more information about the file's format, refer to the LEXenstein Manual.
 		@return: Returns a vector of size N, containing a set of selected substitutions for each instance in the VICTOR corpus.
@@ -590,10 +588,10 @@ class BiranSelector:
 	
 		@param substitutions: Candidate substitutions to be filtered.
 		It can be in two formats:
-		- A dictionary produced by a Substitution Generator linking complex words to a set of candidate substitutions.
-			Example: substitutions['perched'] = {'sat', 'roosted'}
-		- A list of candidate substitutions selected for the "victor_corpus" dataset by a Substitution Selector.
-			Example: [['sat', 'roosted'], ['easy', 'uncomplicated']]
+		A dictionary produced by a Substitution Generator linking complex words to a set of candidate substitutions.
+		Example: substitutions['perched'] = {'sat', 'roosted'}
+		A list of candidate substitutions selected for the "victor_corpus" dataset by a Substitution Selector.
+		Example: [['sat', 'roosted'], ['easy', 'uncomplicated']]
 		@param victor_corpus: Path to a corpus in the VICTOR format.
 		For more information about the file's format, refer to the LEXenstein Manual.
 		@param common_distance: The cutoff minimum distance from the sentence's co-occurrence vector and the common vector between the target complex word and the candidate.
@@ -777,10 +775,10 @@ class WordVectorSelector:
 	
 		@param substitutions: Candidate substitutions to be filtered.
 		It can be in two formats:
-		- A dictionary produced by a Substitution Generator linking complex words to a set of candidate substitutions.
-			Example: substitutions['perched'] = {'sat', 'roosted'}
-		- A list of candidate substitutions selected for the "victor_corpus" dataset by a Substitution Selector.
-			Example: [['sat', 'roosted'], ['easy', 'uncomplicated']]
+		A dictionary produced by a Substitution Generator linking complex words to a set of candidate substitutions.
+		Example: substitutions['perched'] = {'sat', 'roosted'}
+		A list of candidate substitutions selected for the "victor_corpus" dataset by a Substitution Selector.
+		Example: [['sat', 'roosted'], ['easy', 'uncomplicated']]
 		@param victor_corpus: Path to a corpus in the VICTOR format.
 		For more information about the file's format, refer to the LEXenstein Manual.
 		@param proportion: Percentage of substitutions to keep.
@@ -957,10 +955,10 @@ class WSDSelector:
 	
 		@param substitutions: Candidate substitutions to be filtered.
 		It can be in two formats:
-		- A dictionary produced by a Substitution Generator linking complex words to a set of candidate substitutions.
-			Example: substitutions['perched'] = {'sat', 'roosted'}
-		- A list of candidate substitutions selected for the "victor_corpus" dataset by a Substitution Selector.
-			Example: [['sat', 'roosted'], ['easy', 'uncomplicated']]
+		A dictionary produced by a Substitution Generator linking complex words to a set of candidate substitutions.
+		Example: substitutions['perched'] = {'sat', 'roosted'}
+		A list of candidate substitutions selected for the "victor_corpus" dataset by a Substitution Selector.
+		Example: [['sat', 'roosted'], ['easy', 'uncomplicated']]
 		@param victor_corpus: Path to a corpus in the VICTOR format.
 		For more information about the file's format, refer to the LEXenstein Manual.
 		@return: Returns a vector of size N, containing a set of selected substitutions for each instance in the VICTOR corpus.

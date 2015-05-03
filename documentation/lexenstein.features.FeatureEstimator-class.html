@@ -305,12 +305,72 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
+          <td><span class="summary-sig"><a href="lexenstein.features.FeatureEstimator-class.html#addTranslationProbabilityFeature" class="summary-sig-name">addTranslationProbabilityFeature</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">translation_probabilities</span>,
+        <span class="summary-sig-arg">orientation</span>)</span><br />
+      Adds a translation probability feature to the estimator.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.addTranslationProbabilityFeature">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="lexenstein.features.FeatureEstimator-class.html#addWordVectorSimilarityFeature" class="summary-sig-name">addWordVectorSimilarityFeature</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">model</span>,
+        <span class="summary-sig-arg">orientation</span>)</span><br />
+      Adds a word vector similarity feature to the estimator.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.addWordVectorSimilarityFeature">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
           <td><span class="summary-sig"><a href="lexenstein.features.FeatureEstimator-class.html#calculateFeatures" class="summary-sig-name">calculateFeatures</a>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">victor_corpus</span>)</span><br />
-      Calculate the selected features over the candidates of a VICTOR 
-      corpus.</td>
+        <span class="summary-sig-arg">corpus</span>,
+        <span class="summary-sig-arg">format</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">victor</code><code class="variable-quote">'</code></span>)</span><br />
+      Calculate the selected features over the candidates of a VICTOR or 
+      CWICTOR corpus.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.calculateFeatures">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="lexenstein.features.FeatureEstimator-class.html#calculateInstanceFeatures" class="summary-sig-name">calculateInstanceFeatures</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">sent</span>,
+        <span class="summary-sig-arg">target</span>,
+        <span class="summary-sig-arg">head</span>,
+        <span class="summary-sig-arg">candidate</span>)</span><br />
+      Calculate the selected features over an instance of a VICTOR corpus.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.calculateInstanceFeatures">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -548,6 +608,42 @@
         <span class="summary-sig-arg">args</span>)</span></td>
           <td align="right" valign="top">
             <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.synonymCount">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="translationProbabilityFeature"></a><span class="summary-sig-name">translationProbabilityFeature</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">data</span>,
+        <span class="summary-sig-arg">args</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.translationProbabilityFeature">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="wordVectorSimilarityFeature"></a><span class="summary-sig-name">wordVectorSimilarityFeature</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">data</span>,
+        <span class="summary-sig-arg">args</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.wordVectorSimilarityFeature">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -877,6 +973,68 @@
   </dl>
 </td></tr></table>
 </div>
+<a name="addTranslationProbabilityFeature"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">addTranslationProbabilityFeature</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">translation_probabilities</span>,
+        <span class="sig-arg">orientation</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.addTranslationProbabilityFeature">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Adds a translation probability feature to the estimator. The value 
+  will be the probability of a target complex word of being translated into
+  a given candidate substitution.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>translation_probabilities</code></strong> - Path to a file containing the translation probabilities. The file
+          must produced by the following command through fast_align: 
+          fast_align -i &lt;parallel_data&gt; -v -d -o 
+          &lt;translation_probabilities_file&gt;</li>
+        <li><strong class="pname"><code>orientation</code></strong> - Whether the feature is a simplicity of complexity measure. 
+          Possible values: Complexity, Simplicity.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="addWordVectorSimilarityFeature"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">addWordVectorSimilarityFeature</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">model</span>,
+        <span class="sig-arg">orientation</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.addWordVectorSimilarityFeature">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Adds a word vector similarity feature to the estimator. The value will
+  be the similarity between the word vector of a target complex word and 
+  the word vector of a candidate.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>model</code></strong> - Path to a binary word vector model. For instructions on how to 
+          create the model, please refer to the LEXenstein Manual.</li>
+        <li><strong class="pname"><code>orientation</code></strong> - Whether the feature is a simplicity of complexity measure. 
+          Possible values: Complexity, Simplicity.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
 <a name="calculateFeatures"></a>
 <div>
 <table class="details" border="1" cellpadding="3"
@@ -885,25 +1043,62 @@
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr valign="top"><td>
   <h3 class="epydoc"><span class="sig"><span class="sig-name">calculateFeatures</span>(<span class="sig-arg">self</span>,
-        <span class="sig-arg">victor_corpus</span>)</span>
+        <span class="sig-arg">corpus</span>,
+        <span class="sig-arg">format</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string">victor</code><code class="variable-quote">'</code></span>)</span>
   </h3>
   </td><td align="right" valign="top"
     ><span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.calculateFeatures">source&nbsp;code</a></span>&nbsp;
     </td>
   </tr></table>
   
-  <p>Calculate the selected features over the candidates of a VICTOR 
-  corpus.</p>
+  <p>Calculate the selected features over the candidates of a VICTOR or 
+  CWICTOR corpus.</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>victor_corpus</code></strong> - Path to a corpus in the VICTOR format. For more information about
-          the file's format, refer to the LEXenstein Manual.</li>
+        <li><strong class="pname"><code>corpus</code></strong> - Path to a corpus in the VICTOR or CWICTOR format. For more 
+          information about the file's format, refer to the LEXenstein 
+          Manual.</li>
+        <li><strong class="pname"><code>format</code></strong> - Input file format. Values available: victor, cwictor</li>
     </ul></dd>
     <dt>Returns:</dt>
         <dd>Returns a MxN matrix, where M is the number of substitutions of 
           all instances in the VICTOR corpus, and N the number of selected 
           features.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="calculateInstanceFeatures"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">calculateInstanceFeatures</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">sent</span>,
+        <span class="sig-arg">target</span>,
+        <span class="sig-arg">head</span>,
+        <span class="sig-arg">candidate</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.calculateInstanceFeatures">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Calculate the selected features over an instance of a VICTOR 
+  corpus.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>sent</code></strong> - Sentence containing a target complex word.</li>
+        <li><strong class="pname"><code>target</code></strong> - Target complex sentence to be simplified.</li>
+        <li><strong class="pname"><code>head</code></strong> - Position of target complex word in sentence.</li>
+        <li><strong class="pname"><code>candidate</code></strong> - Candidate substitution.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Returns a vector containing the feature values of VICTOR 
+          instance.</dd>
   </dl>
 </td></tr></table>
 </div>
@@ -939,7 +1134,7 @@
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Mon Mar 23 13:24:32 2015
+    Generated by Epydoc 3.0.1 on Sun May  3 19:29:55 2015
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

@@ -86,10 +86,33 @@
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="lexenstein.generators.WordnetGenerator-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">mat</span>)</span><br />
+        <span class="summary-sig-arg">mat</span>,
+        <span class="summary-sig-arg">nc</span>,
+        <span class="summary-sig-arg">pos_model</span>,
+        <span class="summary-sig-arg">stanford_tagger</span>)</span><br />
       Creates a WordnetGenerator instance.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="lexenstein.generators-pysrc.html#WordnetGenerator.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="addToExtended"></a><span class="summary-sig-name">addToExtended</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">target</span>,
+        <span class="summary-sig-arg">tag</span>,
+        <span class="summary-sig-arg">cands</span>,
+        <span class="summary-sig-arg">subs</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.generators-pysrc.html#WordnetGenerator.addToExtended">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -120,10 +143,10 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="getInflectedSet"></a><span class="summary-sig-name">getInflectedSet</span>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">result</span>)</span></td>
+          <td><span class="summary-sig"><a name="correctWords"></a><span class="summary-sig-name">correctWords</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">words</span>)</span></td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="lexenstein.generators-pysrc.html#WordnetGenerator.getInflectedSet">source&nbsp;code</a></span>
+            <span class="codelink"><a href="lexenstein.generators-pysrc.html#WordnetGenerator.correctWords">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -137,10 +160,27 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="getInflections"></a><span class="summary-sig-name">getInflections</span>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">verbstems</span>)</span></td>
+          <td><span class="summary-sig"><a name="getExpandedSet"></a><span class="summary-sig-name">getExpandedSet</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">subs</span>)</span></td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="lexenstein.generators-pysrc.html#WordnetGenerator.getInflections">source&nbsp;code</a></span>
+            <span class="codelink"><a href="lexenstein.generators-pysrc.html#WordnetGenerator.getExpandedSet">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="getInflectedSet"></a><span class="summary-sig-name">getInflectedSet</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">subs</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.generators-pysrc.html#WordnetGenerator.getInflectedSet">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -171,65 +211,29 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="getPlurals"></a><span class="summary-sig-name">getPlurals</span>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">singstems</span>)</span></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="lexenstein.generators-pysrc.html#WordnetGenerator.getPlurals">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a name="getSingulars"></a><span class="summary-sig-name">getSingulars</span>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">plurstems</span>)</span></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="lexenstein.generators-pysrc.html#WordnetGenerator.getSingulars">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a name="getStems"></a><span class="summary-sig-name">getStems</span>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">sings</span>,
-        <span class="summary-sig-arg">plurs</span>,
-        <span class="summary-sig-arg">verbs</span>)</span></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="lexenstein.generators-pysrc.html#WordnetGenerator.getStems">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
           <td><span class="summary-sig"><a href="lexenstein.generators.WordnetGenerator-class.html#getSubstitutions" class="summary-sig-name">getSubstitutions</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">victor_corpus</span>)</span><br />
       Generates substitutions for the target words of a corpus in VICTOR 
       format.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="lexenstein.generators-pysrc.html#WordnetGenerator.getSubstitutions">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="getWordnetPOS"></a><span class="summary-sig-name">getWordnetPOS</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">pos</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.generators-pysrc.html#WordnetGenerator.getWordnetPOS">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -264,7 +268,10 @@
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr valign="top"><td>
   <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
-        <span class="sig-arg">mat</span>)</span>
+        <span class="sig-arg">mat</span>,
+        <span class="sig-arg">nc</span>,
+        <span class="sig-arg">pos_model</span>,
+        <span class="sig-arg">stanford_tagger</span>)</span>
     <br /><em class="fname">(Constructor)</em>
   </h3>
   </td><td align="right" valign="top"
@@ -277,6 +284,13 @@
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
         <li><strong class="pname"><code>mat</code></strong> - MorphAdornerToolkit object.</li>
+        <li><strong class="pname"><code>nc</code></strong> - NorvigCorrector object.</li>
+        <li><strong class="pname"><code>pos_model</code></strong> - Path to a POS tagging model for the Stanford POS Tagger. The 
+          models can be downloaded from the following link: 
+          http://nlp.stanford.edu/software/tagger.shtml</li>
+        <li><strong class="pname"><code>stanford_tagger</code></strong> - Path to the &quot;stanford-postagger.jar&quot; file. The tagger 
+          can be downloaded from the following link: 
+          http://nlp.stanford.edu/software/tagger.shtml</li>
     </ul></dd>
   </dl>
 </td></tr></table>
@@ -343,7 +357,7 @@
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Mon Mar 23 13:24:32 2015
+    Generated by Epydoc 3.0.1 on Sun May  3 19:29:55 2015
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"
