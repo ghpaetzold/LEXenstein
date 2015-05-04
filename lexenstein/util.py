@@ -1,3 +1,31 @@
+import nltk
+import pickle
+
+def createConditionalProbabilityModel(folder, fileids, model, sep='/', encoding='utf8'):
+	"""
+	Creates an tagging probability model to be used along with the FeatureEstimator object.
+	Files of tagged data must contain one sentence per line, and each line must follow the following format:
+	<word_1><separator><tag_1> <word_2><separator><tag_2> ... <word_n-1><separator><tag_n-1> <word_n><separator><tag_n>
+	
+	@param folder: Folder containing files of tagged sentences.
+	@param fileids: A list or regular expressions specifying the file names with tagged data in "folder".
+	@param model: File in which to save the trained model.
+	@param sep: Separator between words and tags in the files with tagged data.
+	@param encoding: Encoding of the files with tagged data.
+	"""
+	print('Reading files...')
+	tcr = nltk.corpus.reader.tagged.TaggedCorpusReader(folder, fileids, sep=sep, encoding=encoding)
+	
+	print('Extracting tagged data...')
+	data = tcr.tagged_words()
+	
+	print('Creating conditional probability maps...')
+	cfd_tagwords = nltk.ConditionalFreqDist(data)
+	cpd_tagwords = nltk.ConditionalProbDist(cfd_tagwords, nltk.MLEProbDist)
+	
+	print('Saving model...')
+	pickle.dump(cpd_tagwords, open(model, "wb"))
+	print('Finished!')
 
 def fitTranslationProbabilityFileToCorpus(translation_probabilities, corpus, output):
 	"""
