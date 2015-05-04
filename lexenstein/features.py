@@ -3,6 +3,8 @@ from nltk.corpus import wordnet as wn
 import kenlm
 import math
 import gensim
+from nltk.tag.stanford import POSTagger
+import os
 
 class FeatureEstimator:
 
@@ -72,6 +74,27 @@ class FeatureEstimator:
 				result.append(feature[index])
 			else:
 				result.extend(feature[index])
+		return result
+	
+	def targetPOSTagProbability(self, data, args):
+		model = args[0]
+		tagger = args[1]
+		result = []
+		
+		#Get tagged sentences:
+		sentences = [l[0].strip().split(' ') for l in data]
+		tagged_sents = tagger.tag_sents(sentences)
+		
+		for i in range(0, len(data)):
+			line = data[i]
+			target = line[1].strip().lower()
+			head = int(line[2].strip())
+			target_pos = tagged_sents[i][head][1]
+			
+			for subst in line[3:len(line)]:
+				words = subst.strip().split(':')[1].strip()
+				probability = model[words].prob(target_pos)
+				result.append(probability)
 		return result
 	
 	def wordVectorSimilarityFeature(self, data, args):
@@ -324,6 +347,32 @@ class FeatureEstimator:
 							maxdepth = auxmax
 				resultma.append(maxdepth)
 		return resultma
+	
+	def addTargetPOSTagProbability(self, condprob_model, pos_model, stanford_tagger, java_path, orientation):
+		"""
+		Adds a target POS tag probability feature to the estimator.
+		The value will be the conditional probability between a candidate substitution and the POS tag of a given target word.
+	
+		@param condprob_model: Path to a binary conditional probability model.
+		For instructions on how to create the model, please refer to the LEXenstein Manual.
+		@param pos_model: Path to a POS tagging model for the Stanford POS Tagger.
+		The models can be downloaded from the following link: http://nlp.stanford.edu/software/tagger.shtml
+		@param stanford_tagger: Path to the "stanford-postagger.jar" file.
+		The tagger can be downloaded from the following link: http://nlp.stanford.edu/software/tagger.shtml
+		@param java_path: Path to the system's "java" executable.
+		Can be commonly found in "/usr/bin/java" in Unix/Linux systems, or in "C:/Program Files/Java/jdk_version/java.exe" in Windows systems.
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Possible values: Complexity, Simplicity.
+		"""
+		
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:
+			os.environ['JAVAHOME'] = java_path
+			tagger = POSTagger(pos_model, stanford_tagger)
+			m = pickle.load(open(condprob_model), 'rb')
+			self.features.append((self.targetPOSTagProbability, [m, tagger]))
+			self.identifiers.append(('Target POS Tag Probability (Conditional Probability Model:' + str(condprob_model) + ')', orientation))
 	
 	def addWordVectorSimilarityFeature(self, model, orientation):
 		"""
