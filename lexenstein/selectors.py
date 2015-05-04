@@ -467,19 +467,15 @@ class POSTagSelector:
 		lexf.close()
 		
 		#Tag sentences:
-		print('Tagging sents:')
 		tagged_sents = self.tagger.tag_sents(sents)
-		print('Tagged sents!')
 		
 		#Tag words:
-		print('Tagging words:')
 		words = list(words)
 		words_sents = [[w] for w in words]
 		tagged_words = self.tagger.tag_sents(words_sents)
 		word_to_tag = {}
 		for i in range(0, len(words)):
 			word_to_tag[words[i]] = tagged_words[i][0][1]
-		print('Tagged words!')
 		
 		for i in range(0, len(sents)):
 			target = targets[i]
