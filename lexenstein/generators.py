@@ -7,6 +7,7 @@ import nltk
 from nltk.tag.stanford import POSTagger
 import kenlm
 import codecs
+import os
 
 class KauchakGenerator:
 
@@ -891,7 +892,7 @@ class MerriamGenerator:
 #Class for the Wordnet Generator
 class WordnetGenerator:
 
-	def __init__(self, mat, nc, pos_model, stanford_tagger):
+	def __init__(self, mat, nc, pos_model, stanford_tagger, java_path):
 		"""
 		Creates a WordnetGenerator instance.
 	
@@ -901,9 +902,12 @@ class WordnetGenerator:
 		The models can be downloaded from the following link: http://nlp.stanford.edu/software/tagger.shtml
 		@param stanford_tagger: Path to the "stanford-postagger.jar" file.
 		The tagger can be downloaded from the following link: http://nlp.stanford.edu/software/tagger.shtml
+		@param java_path: Path to the system's "java" executable.
+		Can be commonly found in "/usr/bin/java" in Unix/Linux systems, or in "C:/Program Files/Java/jdk_version/java.exe" in Windows systems.
 		"""
 		self.mat = mat
 		self.nc = nc
+		os.environ['JAVAHOME'] = java_path
 		self.tagger = POSTagger(pos_model, stanford_tagger)
 
 	def getSubstitutions(self, victor_corpus):
@@ -1367,7 +1371,7 @@ class WordnetGenerator:
 #Class for the Biran Generator:
 class BiranGenerator:
 
-	def __init__(self, mat, complex_vocab, simple_vocab, complex_lm, simple_lm, nc, pos_model, stanford_tagger):
+	def __init__(self, mat, complex_vocab, simple_vocab, complex_lm, simple_lm, nc, pos_model, stanford_tagger, java_path):
 		"""
 		Creates a BiranGenerator instance.
 	
@@ -1385,6 +1389,8 @@ class BiranGenerator:
 		The models can be downloaded from the following link: http://nlp.stanford.edu/software/tagger.shtml
 		@param stanford_tagger: Path to the "stanford-postagger.jar" file.
 		The tagger can be downloaded from the following link: http://nlp.stanford.edu/software/tagger.shtml
+		@param java_path: Path to the system's "java" executable.
+		Can be commonly found in "/usr/bin/java" in Unix/Linux systems, or in "C:/Program Files/Java/jdk_version/java.exe" in Windows systems.
 		"""
 
 		self.complex_vocab = self.getVocab(complex_vocab)
@@ -1393,6 +1399,7 @@ class BiranGenerator:
 		self.simple_lm = kenlm.LanguageModel(simple_lm)
 		self.mat = mat
 		self.nc = nc
+		os.environ['JAVAHOME'] = java_path
 		self.tagger = POSTagger(pos_model, stanford_tagger)
 
 	def getSubstitutions(self, victor_corpus):
