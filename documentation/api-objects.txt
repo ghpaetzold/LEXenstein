@@ -21,8 +21,9 @@ lexenstein.spelling	lexenstein.spelling-module.html
 lexenstein.spelling.__package__	lexenstein.spelling-module.html#__package__
 lexenstein.util	lexenstein.util-module.html
 lexenstein.util.fitTranslationProbabilityFileToCorpus	lexenstein.util-module.html#fitTranslationProbabilityFileToCorpus
-lexenstein.util.addTargetAsFirstToVictorCorpus	lexenstein.util-module.html#addTargetAsFirstToVictorCorpus
+lexenstein.util.createConditionalProbabilityModel	lexenstein.util-module.html#createConditionalProbabilityModel
 lexenstein.util.__package__	lexenstein.util-module.html#__package__
+lexenstein.util.addTargetAsFirstToVictorCorpus	lexenstein.util-module.html#addTargetAsFirstToVictorCorpus
 lexenstein.evaluators.GeneratorEvaluator	lexenstein.evaluators.GeneratorEvaluator-class.html
 lexenstein.evaluators.GeneratorEvaluator.evaluateGenerator	lexenstein.evaluators.GeneratorEvaluator-class.html#evaluateGenerator
 lexenstein.evaluators.IdentifierEvaluator	lexenstein.evaluators.IdentifierEvaluator-class.html
@@ -39,6 +40,7 @@ lexenstein.features.FeatureEstimator	lexenstein.features.FeatureEstimator-class.
 lexenstein.features.FeatureEstimator.synonymCount	lexenstein.features.FeatureEstimator-class.html#synonymCount
 lexenstein.features.FeatureEstimator.hypernymCount	lexenstein.features.FeatureEstimator-class.html#hypernymCount
 lexenstein.features.FeatureEstimator.lengthFeature	lexenstein.features.FeatureEstimator-class.html#lengthFeature
+lexenstein.features.FeatureEstimator.targetPOSTagProbability	lexenstein.features.FeatureEstimator-class.html#targetPOSTagProbability
 lexenstein.features.FeatureEstimator.addMinDepthFeature	lexenstein.features.FeatureEstimator-class.html#addMinDepthFeature
 lexenstein.features.FeatureEstimator.sentenceProbabilityFeature	lexenstein.features.FeatureEstimator-class.html#sentenceProbabilityFeature
 lexenstein.features.FeatureEstimator.addHypernymCountFeature	lexenstein.features.FeatureEstimator-class.html#addHypernymCountFeature
@@ -62,6 +64,7 @@ lexenstein.features.FeatureEstimator.addMaxDepthFeature	lexenstein.features.Feat
 lexenstein.features.FeatureEstimator.addHyponymCountFeature	lexenstein.features.FeatureEstimator-class.html#addHyponymCountFeature
 lexenstein.features.FeatureEstimator.addTranslationProbabilityFeature	lexenstein.features.FeatureEstimator-class.html#addTranslationProbabilityFeature
 lexenstein.features.FeatureEstimator.calculateFeatures	lexenstein.features.FeatureEstimator-class.html#calculateFeatures
+lexenstein.features.FeatureEstimator.addTargetPOSTagProbability	lexenstein.features.FeatureEstimator-class.html#addTargetPOSTagProbability
 lexenstein.features.FeatureEstimator.addLengthFeature	lexenstein.features.FeatureEstimator-class.html#addLengthFeature
 lexenstein.features.FeatureEstimator.calculateInstanceFeatures	lexenstein.features.FeatureEstimator-class.html#calculateInstanceFeatures
 lexenstein.features.FeatureEstimator.addSyllableFeature	lexenstein.features.FeatureEstimator-class.html#addSyllableFeature
@@ -216,6 +219,7 @@ lexenstein.selectors.ClusterSelector.getClusterData	lexenstein.selectors.Cluster
 lexenstein.selectors.ClusterSelector.toVictorFormat	lexenstein.selectors.ClusterSelector-class.html#toVictorFormat
 lexenstein.selectors.ClusterSelector.selectCandidates	lexenstein.selectors.ClusterSelector-class.html#selectCandidates
 lexenstein.selectors.POSTagSelector	lexenstein.selectors.POSTagSelector-class.html
+lexenstein.selectors.POSTagSelector.__init__	lexenstein.selectors.POSTagSelector-class.html#__init__
 lexenstein.selectors.POSTagSelector.getCandidatesWithSamePOS	lexenstein.selectors.POSTagSelector-class.html#getCandidatesWithSamePOS
 lexenstein.selectors.POSTagSelector.toVictorFormat	lexenstein.selectors.POSTagSelector-class.html#toVictorFormat
 lexenstein.selectors.POSTagSelector.selectCandidates	lexenstein.selectors.POSTagSelector-class.html#selectCandidates

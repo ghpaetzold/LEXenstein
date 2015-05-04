@@ -305,6 +305,28 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
+          <td><span class="summary-sig"><a href="lexenstein.features.FeatureEstimator-class.html#addTargetPOSTagProbability" class="summary-sig-name">addTargetPOSTagProbability</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">condprob_model</span>,
+        <span class="summary-sig-arg">pos_model</span>,
+        <span class="summary-sig-arg">stanford_tagger</span>,
+        <span class="summary-sig-arg">java_path</span>,
+        <span class="summary-sig-arg">orientation</span>)</span><br />
+      Adds a target POS tag probability feature to the estimator.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.addTargetPOSTagProbability">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
           <td><span class="summary-sig"><a href="lexenstein.features.FeatureEstimator-class.html#addTranslationProbabilityFeature" class="summary-sig-name">addTranslationProbabilityFeature</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">translation_probabilities</span>,
         <span class="summary-sig-arg">orientation</span>)</span><br />
@@ -608,6 +630,24 @@
         <span class="summary-sig-arg">args</span>)</span></td>
           <td align="right" valign="top">
             <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.synonymCount">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="targetPOSTagProbability"></a><span class="summary-sig-name">targetPOSTagProbability</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">data</span>,
+        <span class="summary-sig-arg">args</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.targetPOSTagProbability">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -973,6 +1013,50 @@
   </dl>
 </td></tr></table>
 </div>
+<a name="addTargetPOSTagProbability"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">addTargetPOSTagProbability</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">condprob_model</span>,
+        <span class="sig-arg">pos_model</span>,
+        <span class="sig-arg">stanford_tagger</span>,
+        <span class="sig-arg">java_path</span>,
+        <span class="sig-arg">orientation</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.addTargetPOSTagProbability">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Adds a target POS tag probability feature to the estimator. The value 
+  will be the conditional probability between a candidate substitution and 
+  the POS tag of a given target word.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>condprob_model</code></strong> - Path to a binary conditional probability model. For instructions 
+          on how to create the model, please refer to the LEXenstein 
+          Manual.</li>
+        <li><strong class="pname"><code>pos_model</code></strong> - Path to a POS tagging model for the Stanford POS Tagger. The 
+          models can be downloaded from the following link: 
+          http://nlp.stanford.edu/software/tagger.shtml</li>
+        <li><strong class="pname"><code>stanford_tagger</code></strong> - Path to the &quot;stanford-postagger.jar&quot; file. The tagger 
+          can be downloaded from the following link: 
+          http://nlp.stanford.edu/software/tagger.shtml</li>
+        <li><strong class="pname"><code>java_path</code></strong> - Path to the system's &quot;java&quot; executable. Can be commonly
+          found in &quot;/usr/bin/java&quot; in Unix/Linux systems, or in 
+          &quot;C:/Program Files/Java/jdk_version/java.exe&quot; in Windows
+          systems.</li>
+        <li><strong class="pname"><code>orientation</code></strong> - Whether the feature is a simplicity of complexity measure. 
+          Possible values: Complexity, Simplicity.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
 <a name="addTranslationProbabilityFeature"></a>
 <div>
 <table class="details" border="1" cellpadding="3"
@@ -1134,7 +1218,7 @@
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Sun May  3 19:35:12 2015
+    Generated by Epydoc 3.0.1 on Mon May  4 20:09:34 2015
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"
