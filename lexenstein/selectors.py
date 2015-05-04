@@ -2,6 +2,7 @@ import pywsd
 import gensim
 from scipy.spatial.distance import cosine
 import nltk
+from nltk.tag.stanford import POSTagger
 import numpy as np
 import os
 
@@ -406,6 +407,20 @@ class ClusterSelector:
 
 class POSTagSelector:
 
+	def __init__(self, pos_model, stanford_tagger, java_path):
+		"""
+		Creates a POSTagSelector instance.
+	
+		@param pos_model: Path to a POS tagging model for the Stanford POS Tagger.
+		The models can be downloaded from the following link: http://nlp.stanford.edu/software/tagger.shtml
+		@param stanford_tagger: Path to the "stanford-postagger.jar" file.
+		The tagger can be downloaded from the following link: http://nlp.stanford.edu/software/tagger.shtml
+		@param java_path: Path to the system's "java" executable.
+		Can be commonly found in "/usr/bin/java" in Unix/Linux systems, or in "C:/Program Files/Java/jdk_version/java.exe" in Windows systems.
+		"""
+		os.environ['JAVAHOME'] = java_path
+		self.tagger = POSTagger(pos_model, stanford_tagger)
+
 	def selectCandidates(self, substitutions, victor_corpus):
 		"""
 		Selects which candidates can replace the target complex words in each instance of a VICTOR corpus.
@@ -431,20 +446,49 @@ class POSTagSelector:
 		else:
 			print('ERROR: Substitutions are neither a dictionary or a list!')
 			return selected_substitutions
-
-		c = -1
+		
+		#Read VICTOR corpus:
 		lexf = open(victor_corpus)
+		sents = []
+		targets = []
+		heads = []
+		words = set([])
+		c = -1
 		for line in lexf:
 			c += 1
 			data = line.strip().split('\t')
-			sent = data[0].strip()
+			sent = data[0].strip().split(' ')
 			target = data[1].strip()
 			head = int(data[2].strip())
+			sents.append(sent)
+			targets.append(target)
+			heads.append(head)
+			words.update(set(substitution_candidates[c]))
+		lexf.close()
+		
+		#Tag sentences:
+		print('Tagging sents:')
+		tagged_sents = self.tagger.tag_sents(sents)
+		print('Tagged sents!')
+		
+		#Tag words:
+		print('Tagging words:')
+		words = list(words)
+		words_sents = [[w] for w in words]
+		tagged_words = self.tagger.tag_sents(words_sents)
+		word_to_tag = {}
+		for i in range(0, len(words)):
+			word_to_tag[words[i]] = tagged_words[i][0][1]
+		print('Tagged words!')
+		
+		for i in range(0, len(sents)):
+			target = targets[i]
+			head = heads[i]
+			target_pos = str(tagged_sents[i][head][1])
 		
 			candidates = []
-			target_POS = self.getTargetPOS(sent, target, head)
-			candidates = set(substitution_candidates[c])
-			candidates = self.getCandidatesWithSamePOS(sent.split(' '), head, candidates, target_POS)
+			candidates = set(substitution_candidates[i])
+			candidates = self.getCandidatesWithSamePOS(candidates, word_to_tag, target_pos)
 		
 			selected_substitutions.append(candidates)
 		lexf.close()
@@ -463,29 +507,13 @@ class POSTagSelector:
 				return 'None'
 			
 		
-	def getCandidatesWithSamePOS(self, tokens, head, candidates, pos):
+	def getCandidatesWithSamePOS(self, candidates, word_to_tag, target_pos):
 		result = set([])
-		pref = ''
-		suff = ''
-		for i in range(0, head):
-			pref += tokens[i] + ' '
-		for i in range(head+1, len(tokens)):
-			suff += tokens[i] + ' '
-		suff = ' ' + suff.strip()
 		for candidate in candidates:
-			sent = pref + candidate + suff
-			candidate_tag = []
-			try:
-				pos_data = nltk.pos_tag(sent)
-				candidate_tag = pos_data[head][1]
-			except UnicodeDecodeError:
-				try:
-					pos_data = nltk.pos_tag(candidate)
-					candidate_tag =  pos_data[0][1]
-				except UnicodeDecodeError:
-					candidate_tag = 'NoneCand'
-			if candidate_tag==pos:
-				result.add(candidate)
+			if candidate in word_to_tag.keys():
+				ctag = word_to_tag[candidate]
+				if ctag==target_pos:
+					result.add(candidate)
 		return result
 	
 	def toVictorFormat(self, victor_corpus, substitutions, output_path, addTargetAsCandidate=False):
