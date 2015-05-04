@@ -5,6 +5,7 @@ import math
 import gensim
 from nltk.tag.stanford import POSTagger
 import os
+import pickle
 
 class FeatureEstimator:
 
@@ -370,7 +371,7 @@ class FeatureEstimator:
 		else:
 			os.environ['JAVAHOME'] = java_path
 			tagger = POSTagger(pos_model, stanford_tagger)
-			m = pickle.load(open(condprob_model), 'rb')
+			m = pickle.load(open(condprob_model, 'rb'))
 			self.features.append((self.targetPOSTagProbability, [m, tagger]))
 			self.identifiers.append(('Target POS Tag Probability (Conditional Probability Model:' + str(condprob_model) + ')', orientation))
 	
