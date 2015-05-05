@@ -373,7 +373,7 @@ class FeatureEstimator:
 			tagger = POSTagger(pos_model, stanford_tagger)
 			m = pickle.load(open(condprob_model, 'rb'))
 			self.features.append((self.targetPOSTagProbability, [m, tagger]))
-			self.identifiers.append(('Target POS Tag Probability (Conditional Probability Model:' + str(condprob_model) + ')', orientation))
+			self.identifiers.append(('Target POS Tag Probability (Model:'+str(condprob_model)+')', orientation))
 	
 	def addWordVectorSimilarityFeature(self, model, orientation):
 		"""
@@ -391,7 +391,7 @@ class FeatureEstimator:
 		else:
 			m = gensim.models.word2vec.Word2Vec.load_word2vec_format(model, binary=True)
 			self.features.append((self.wordVectorSimilarityFeature, [m]))
-			self.identifiers.append(('Translation Probability', orientation))
+			self.identifiers.append(('Word Vector Similarity (Model: '+model+')', orientation))
 	
 	def addTranslationProbabilityFeature(self, translation_probabilities, orientation):
 		"""
@@ -422,7 +422,7 @@ class FeatureEstimator:
 			print('Orientation must be Complexity or Simplicity')
 		else:
 			self.features.append((self.translationProbabilityFeature, [probabilities]))
-			self.identifiers.append(('Translation Probability', orientation))
+			self.identifiers.append(('Translation Probability (File: '+translation_probabilities+')', orientation))
 	
 	def addLexiconFeature(self, lexicon, orientation):
 		"""
@@ -439,7 +439,7 @@ class FeatureEstimator:
 			print('Orientation must be Complexity or Simplicity')
 		else:
 			self.features.append((self.lexiconFeature, [lexicon]))
-			self.identifiers.append(('Lexicon Occurrence', orientation))
+			self.identifiers.append(('Lexicon Occurrence (Lexicon: '+lexicon+')', orientation))
 	
 	def addLengthFeature(self, orientation):
 		"""
@@ -492,7 +492,7 @@ class FeatureEstimator:
 			self.features.append((self.collocationalFeature, [language_model, leftw, rightw]))
 			for i in range(0, leftw+1):
 				for j in range(0, rightw+1):
-					self.identifiers.append(('Collocational Feature (' + str(i) + ', ' + str(j) + ')', orientation))
+					self.identifiers.append(('Collocational Feature ['+str(i)+', '+str(j)+'] (LM: '+language_model+')', orientation))
 		
 	def addSentenceProbabilityFeature(self, language_model, orientation):
 		"""
@@ -507,7 +507,7 @@ class FeatureEstimator:
 			print('Orientation must be Complexity or Simplicity')
 		else:
 			self.features.append((self.sentenceProbabilityFeature, [language_model]))
-			self.identifiers.append(('Sentence Probability', orientation))
+			self.identifiers.append(('Sentence Probability (LM: '+language_model+')', orientation))
 		
 	def addSenseCountFeature(self, orientation):
 		"""
