@@ -65,7 +65,7 @@ class SVMBoundaryRanker:
 		self.classifier = SVC(C=C, kernel=kernel, degree=degree, gamma=gamma, coef0=coef0)
 		self.classifier.fit(X, Y)
 		
-	def trainRankerWithCrossValidation(self, victor_corpus, positive_range, folds, test_size, Cs=[0.1, 1, 10], kernels=['rbf', 'poly'], degrees=[2, 3], gammas=[0.01, 0.1, 1], coef0s=[0, 1], k='all'):
+	def trainRankerWithCrossValidation(self, victor_corpus, positive_range, folds, test_size, Cs=[0.1, 1, 10], kernels=['rbf', 'poly'], degrees=[2], gammas=[0.01, 0.1, 1], coef0s=[0, 1], k='all'):
 		"""
 		Trains a SVM Boundary Ranker while maximizing hyper-parameters through cross-validation.
 		It uses the TRank-at-1 as an optimization metric.
