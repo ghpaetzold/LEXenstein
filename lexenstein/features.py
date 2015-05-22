@@ -6,12 +6,19 @@ import gensim
 from nltk.tag.stanford import POSTagger
 import os
 import pickle
+from sklearn.preprocessing import normalize
 
 class FeatureEstimator:
 
-	def __init__(self):
+	def __init__(self, norm=False):
+		"""
+		Creates an instance of the FeatureEstimator class.
+	
+		@param norm: Boolean variable that determines whether or not feature values should be normalized.
+		"""
 		self.features = []
 		self.identifiers = []
+		self.norm = norm
 		
 	def calculateFeatures(self, corpus, format='victor'):
 		"""
@@ -47,6 +54,11 @@ class FeatureEstimator:
 				vector = self.generateVector(values, index)
 				result.append(vector)
 				index += 1
+				
+		#Normalize if required:
+		if self.norm:
+			result = normalize(result, axis=0)
+			
 		return result
 		
 	def calculateInstanceFeatures(self, sent, target, head, candidate):

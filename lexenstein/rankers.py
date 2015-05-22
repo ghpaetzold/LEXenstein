@@ -1,13 +1,285 @@
 import os
-from sklearn.preprocessing import normalize
-from sklearn.feature_selection import f_classif
-from sklearn import linear_model
 import kenlm
 import math
 from nltk.corpus import wordnet as wn
+from sklearn.preprocessing import normalize
+from sklearn.feature_selection import f_classif
+from sklearn import linear_model
+from sklearn.svm import SVC
 from sklearn.cross_validation import train_test_split
 from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import f_classif
+
+class SVMBoundaryRanker:
+
+	def __init__(self, fe):
+		"""
+		Creates an instance of the SVMBoundaryRanker class.
+	
+		@param fe: A configured FeatureEstimator object.
+		"""
+		
+		self.fe = fe
+		self.classifier = None
+		self.feature_selector = None
+		
+	def trainRanker(self, victor_corpus, positive_range, C, kernel, degree, gamma, coef0, k='all'):
+		"""
+		Trains a SVM Boundary Ranker according to the parameters provided.
+	
+		@param victor_corpus: Path to a training corpus in VICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@param positive_range: Maximum rank to which label 1 is assigned in the binary classification setup.
+		Recommended value: 1.
+		@param C: Penalty parameter.
+		Recommended values: 0.1, 1, 10.
+		@param kernel: Kernel function to be used.
+		Supported values: 'linear', 'poly', 'rbf', 'sigmoid'.
+		@param degree: Degree of the polynomial kernel.
+		Recommended values: 2, 3.
+		@param gamma: Kernel coefficient.
+		Recommended values: 0.01, 0.1, 1.
+		@param coef0: Independent term value.
+		Recommended values: 0, 1.
+		@param k: Number of best features to be selected through univariate feature selection.
+		If k='all', then no feature selection is performed.
+		"""
+	
+		#Read victor corpus:
+		data = []
+		f = open(victor_corpus)
+		for line in f:
+			data.append(line.strip().split('\t'))
+		f.close()
+		
+		#Create matrixes:
+		X = self.fe.calculateFeatures(victor_corpus)
+		Y = self.generateLabels(data, positive_range)
+		
+		#Select features:
+		self.feature_selector = SelectKBest(f_classif, k=k)
+		self.feature_selector.fit(X, Y)
+		X = self.feature_selector.transform(X)
+	
+		#Train classifier:
+		self.classifier = SVC(C=C, kernel=kernel, degree=degree, gamma=gamma, coef0=coef0)
+		self.classifier.fit(X, Y)
+		
+	def trainRankerWithCrossValidation(self, victor_corpus, positive_range, folds, test_size, Cs=[0.1, 1, 10], kernels=['rbf', 'poly'], degrees=[2, 3], gammas=[0.01, 0.1, 1], coef0s=[0, 1], k='all'):
+		"""
+		Trains a SVM Boundary Ranker while maximizing hyper-parameters through cross-validation.
+		It uses the TRank-at-1 as an optimization metric.
+	
+		@param victor_corpus: Path to a training corpus in VICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@param positive_range: Maximum rank to which label 1 is assigned in the binary classification setup.
+		Recommended value: 1.
+		@param folds: Number of folds to be used in cross-validation.
+		@param test_size: Percentage of the dataset to be used in testing.
+		Recommended values: 0.2, 0.25, 0.33
+		@param Cs: Penalty parameters.
+		Recommended values: 0.1, 1, 10.
+		@param kernels: Kernel functions to be used.
+		Supported values: 'linear', 'poly', 'rbf', 'sigmoid'.
+		@param degrees: Degrees of the polynomial kernel.
+		Recommended values: 2, 3.
+		@param gammas: Kernel coefficients.
+		Recommended values: 0.01, 0.1, 1.
+		@param coef0s: Independent term values.
+		Recommended values: 0, 1.
+		@param k: Number of best features to be selected through univariate feature selection.
+		If k='all', then no feature selection is performed.
+		"""
+		#Read victor corpus:
+		data = []
+		f = open(victor_corpus)
+		for line in f:
+			data.append(line.strip().split('\t'))
+		f.close()
+		
+		#Create matrixes:
+		X = self.fe.calculateFeatures(victor_corpus)
+		Y = self.generateLabels(data, positive_range)
+		
+		#Select features:
+		self.feature_selector = SelectKBest(f_classif, k=k)
+		self.feature_selector.fit(X, Y)
+		X = self.feature_selector.transform(X)
+		
+		#Extract ranking problems:
+		firsts = []
+		candidates = []
+		Xsets = []
+		Ysets = []
+		index = -1
+		for line in data:
+			fs = set([])
+			cs = []
+			Xs = []
+			Ys = []
+			for cand in line[3:len(line)]:
+				index += 1
+				candd = cand.split(':')
+				rank = candd[0].strip()
+				word = candd[1].strip()
+				
+				cs.append(word)
+				Xs.append(X[index])
+				Ys.append(Y[index])
+				if rank=='1':
+					fs.add(word)
+			firsts.append(fs)
+			candidates.append(cs)
+			Xsets.append(Xs)
+			Ysets.append(Ys)
+		
+		#Create data splits:
+		datasets = []
+		for i in range(0, folds):
+			Xtr, Xte, Ytr, Yte, Ftr, Fte, Ctr, Cte = train_test_split(Xsets, Ysets, firsts, candidates, test_size=test_size, random_state=i)
+			Xtra = []
+			for matrix in Xtr:
+				Xtra += matrix
+			Xtea = []
+			for matrix in Xte:
+				Xtea += matrix
+			Ytra = []
+			for matrix in Ytr:
+				Ytra += matrix
+			datasets.append((Xtra, Ytra, Xte, Xtea, Fte, Cte))
+		
+		#Get classifier with best parameters for RBF kernel:
+		max_score = -1.0
+		parameters = ()
+		for C in Cs:
+			for g in gammas:
+				sum = 0.0
+				sum_total = 0
+				for dataset in datasets:
+					Xtra = dataset[0]
+					Ytra = dataset[1]
+					Xte = dataset[2]
+					Xtea = dataset[3]
+					Fte = dataset[4]
+					Cte = dataset[5]
+
+					classifier = SVC(kernel='rbf', C=C, gamma=g)
+					try:
+						classifier.fit(Xtra, Ytra)
+						t1 = self.getCrossValidationScore(classifier, Xtea, Xte, Fte, Cte)
+						sum += t1
+						sum_total += 1
+					except Exception:
+						pass
+				sum_total = max(1, sum_total)
+				if (sum/sum_total)>max_score:
+					max_score = sum
+					parameters = (C, 'rbf', 1, g, 0)
+					
+		#Get classifier with best parameters:
+		max_score = -1.0
+		parameters = ()
+		for C in Cs:
+			for d in degrees:
+				for g in gammas:
+					for c in coef0s:
+						sum = 0.0
+						sum_total = 0
+						for dataset in datasets:
+							Xtra = dataset[0]
+							Ytra = dataset[1]
+							Xte = dataset[2]
+							Xtea = dataset[3]
+							Fte = dataset[4]
+							Cte = dataset[5]
+
+							classifier = SVC(kernel='poly', C=C, degree=d, gamma=g, coef0=c)
+							try:
+								classifier.fit(Xtra, Ytra)
+								t1 = self.getCrossValidationScore(classifier, Xtea, Xte, Fte, Cte)
+								sum += t1
+								sum_total += 1
+							except Exception:
+								pass
+						sum_total = max(1, sum_total)
+						if (sum/sum_total)>max_score:
+							max_score = sum
+							parameters = (C, 'poly', d, g, c)
+		self.classifier = SVC(C=parameters[0], kernel=parameters[1], degree=parameters[2], gamma=parameters[3], coef0=parameters[4])
+		self.classifier.fit(X, Y)
+	
+	def getCrossValidationScore(self, classifier, Xtea, Xte, firsts, candidates):
+		distances = classifier.decision_function(Xtea)
+		index = -1
+		corrects = 0
+		total = 0
+		for i in range(0, len(Xte)):
+			xset = Xte[i]
+			maxd = -999999
+			for j in range(0, len(xset)):
+				index += 1
+				distance = distances[index]
+				if distance>maxd:
+					maxd = distance
+					maxc = candidates[i][j]
+			if maxc in firsts[i]:
+				corrects += 1
+			total += 1
+		return float(corrects)/float(total)
+	
+	def getRankings(self, victor_corpus):
+		"""
+		Ranks candidates with respect to their simplicity.
+		Requires for the trainRanker function to be previously called so that a model can be trained.
+	
+		@param victor_corpus: Path to a testing corpus in VICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@return: A list of ranked candidates for each instance in the VICTOR corpus, from simplest to most complex.
+		"""
+		
+		#Read victor corpus:
+		data = []
+		f = open(victor_corpus)
+		for line in f:
+			data.append(line.strip().split('\t'))
+		f.close()
+		
+		#Create matrixes:
+		X = self.fe.calculateFeatures(victor_corpus)
+		
+		#Select features:
+		X = self.feature_selector.transform(X)
+		
+		#Get boundary distances:
+		distances = self.classifier.decision_function(X)
+		
+		#Get rankings:
+		result = []
+		index = 0
+		for i in range(0, len(data)):
+			line = data[i]
+			scores = {}
+			for subst in line[3:len(line)]:
+				word = subst.strip().split(':')[1].strip()
+				scores[word] = distances[index]
+				index += 1
+			ranking_data = sorted(scores.keys(), key=scores.__getitem__, reverse=True)
+			result.append(ranking_data)
+		
+		#Return rankings:
+		return result
+
+	def generateLabels(self, data, positive_range):
+		Y = []
+		for line in data:
+			max_range = min(int(line[len(line)-1].split(':')[0].strip()), positive_range)
+			for i in range(3, len(line)):
+				rank_index = int(line[i].split(':')[0].strip())
+				if rank_index<3+max_range:
+					Y.append(1)
+				else:
+					Y.append(0)
+		return Y
 
 class BottRanker:
 
