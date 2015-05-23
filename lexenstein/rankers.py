@@ -151,60 +151,60 @@ class SVMBoundaryRanker:
 		#Get classifier with best parameters for RBF kernel:
 		max_score = -1.0
 		parameters = ()
-		for C in Cs:
-			for g in gammas:
-				sum = 0.0
-				sum_total = 0
-				for dataset in datasets:
-					Xtra = dataset[0]
-					Ytra = dataset[1]
-					Xte = dataset[2]
-					Xtea = dataset[3]
-					Fte = dataset[4]
-					Cte = dataset[5]
+		if 'rbf' in kernels:
+			for C in Cs:
+				for g in gammas:
+					sum = 0.0
+					sum_total = 0
+					for dataset in datasets:
+						Xtra = dataset[0]
+						Ytra = dataset[1]
+						Xte = dataset[2]
+						Xtea = dataset[3]
+						Fte = dataset[4]
+						Cte = dataset[5]
 
-					classifier = SVC(kernel='rbf', C=C, gamma=g)
-					try:
-						classifier.fit(Xtra, Ytra)
-						t1 = self.getCrossValidationScore(classifier, Xtea, Xte, Fte, Cte)
-						sum += t1
-						sum_total += 1
-					except Exception:
-						pass
-				sum_total = max(1, sum_total)
-				if (sum/sum_total)>max_score:
-					max_score = sum
-					parameters = (C, 'rbf', 1, g, 0)
+						classifier = SVC(kernel='rbf', C=C, gamma=g)
+						try:
+							classifier.fit(Xtra, Ytra)
+							t1 = self.getCrossValidationScore(classifier, Xtea, Xte, Fte, Cte)
+							sum += t1
+							sum_total += 1
+						except Exception:
+							pass
+					sum_total = max(1, sum_total)
+					if (sum/sum_total)>max_score:
+						max_score = sum
+						parameters = (C, 'rbf', 1, g, 0)
 					
 		#Get classifier with best parameters:
-		max_score = -1.0
-		parameters = ()
-		for C in Cs:
-			for d in degrees:
-				for g in gammas:
-					for c in coef0s:
-						sum = 0.0
-						sum_total = 0
-						for dataset in datasets:
-							Xtra = dataset[0]
-							Ytra = dataset[1]
-							Xte = dataset[2]
-							Xtea = dataset[3]
-							Fte = dataset[4]
-							Cte = dataset[5]
+		if 'poly' in kernels:
+			for C in Cs:
+				for d in degrees:
+					for g in gammas:
+						for c in coef0s:
+							sum = 0.0
+							sum_total = 0
+							for dataset in datasets:
+								Xtra = dataset[0]
+								Ytra = dataset[1]
+								Xte = dataset[2]
+								Xtea = dataset[3]
+								Fte = dataset[4]
+								Cte = dataset[5]
 
-							classifier = SVC(kernel='poly', C=C, degree=d, gamma=g, coef0=c)
-							try:
-								classifier.fit(Xtra, Ytra)
-								t1 = self.getCrossValidationScore(classifier, Xtea, Xte, Fte, Cte)
-								sum += t1
-								sum_total += 1
-							except Exception:
-								pass
-						sum_total = max(1, sum_total)
-						if (sum/sum_total)>max_score:
-							max_score = sum
-							parameters = (C, 'poly', d, g, c)
+								classifier = SVC(kernel='poly', C=C, degree=d, gamma=g, coef0=c)
+								try:
+									classifier.fit(Xtra, Ytra)
+									t1 = self.getCrossValidationScore(classifier, Xtea, Xte, Fte, Cte)
+									sum += t1
+									sum_total += 1
+								except Exception:
+									pass
+							sum_total = max(1, sum_total)
+							if (sum/sum_total)>max_score:
+								max_score = sum
+								parameters = (C, 'poly', d, g, c)
 		self.classifier = SVC(C=parameters[0], kernel=parameters[1], degree=parameters[2], gamma=parameters[3], coef0=parameters[4])
 		self.classifier.fit(X, Y)
 	
