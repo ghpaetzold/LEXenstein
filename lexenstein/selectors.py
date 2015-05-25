@@ -219,7 +219,7 @@ class SVMBoundarySelector:
 		"""
 		self.ranker.trainRanker(victor_corpus, positive_range, C, kernel, degree, gamma, coef0, k=k)
 	
-	def trainSelectorWithCrossValidation(self, victor_corpus, positive_range, folds, test_size, Cs=[0.1, 1, 10], kernels=['rbf', 'poly'], degrees=[2], gammas=[0.01, 0.1, 1], coef0s=[0, 1], k='all'):
+	def trainSelectorWithCrossValidation(self, victor_corpus, positive_range, folds, test_size, Cs=[0.1, 1, 10], kernels=['linear', 'rbf', 'poly', 'sigmoid'], degrees=[2], gammas=[0.01, 0.1, 1], coef0s=[0, 1], k='all'):
 		"""
 		Trains a Boundary Selector while maximizing hyper-parameters through cross-validation.
 		It uses the TRank-at-1 as an optimization metric.

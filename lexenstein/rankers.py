@@ -65,7 +65,7 @@ class SVMBoundaryRanker:
 		self.classifier = SVC(C=C, kernel=kernel, degree=degree, gamma=gamma, coef0=coef0)
 		self.classifier.fit(X, Y)
 		
-	def trainRankerWithCrossValidation(self, victor_corpus, positive_range, folds, test_size, Cs=[0.1, 1, 10], kernels=['rbf', 'poly'], degrees=[2], gammas=[0.01, 0.1, 1], coef0s=[0, 1], k='all'):
+	def trainRankerWithCrossValidation(self, victor_corpus, positive_range, folds, test_size, Cs=[0.1, 1, 10], kernels=['linear', 'rbf', 'poly', 'sigmoid'], degrees=[2], gammas=[0.01, 0.1, 1], coef0s=[0, 1], k='all'):
 		"""
 		Trains a SVM Boundary Ranker while maximizing hyper-parameters through cross-validation.
 		It uses the TRank-at-1 as an optimization metric.
@@ -148,7 +148,7 @@ class SVMBoundaryRanker:
 				Ytra += matrix
 			datasets.append((Xtra, Ytra, Xte, Xtea, Fte, Cte))
 		
-		#Get classifier with best parameters for RBF kernel:
+		#Get classifier with best parameters for the RBF kernel:
 		max_score = -1.0
 		parameters = ()
 		if 'rbf' in kernels:
@@ -177,7 +177,7 @@ class SVMBoundaryRanker:
 						max_score = sum
 						parameters = (C, 'rbf', 1, g, 0)
 					
-		#Get classifier with best parameters:
+		#Get classifier with best parameters for the Polynomial kernel:
 		if 'poly' in kernels:
 			for C in Cs:
 				for d in degrees:
@@ -205,6 +205,60 @@ class SVMBoundaryRanker:
 							if (sum/sum_total)>max_score:
 								max_score = sum
 								parameters = (C, 'poly', d, g, c)
+								
+		#Get classifier with best parameters for the Sigmoid kernel:
+		if 'sigmoid' in kernels:
+			for C in Cs:
+				for g in gammas:
+					for c in coef0s:
+						sum = 0.0
+						sum_total = 0
+						for dataset in datasets:
+							Xtra = dataset[0]
+							Ytra = dataset[1]
+							Xte = dataset[2]
+							Xtea = dataset[3]
+							Fte = dataset[4]
+							Cte = dataset[5]
+
+							classifier = SVC(kernel='sigmoid', C=C, gamma=g, coef0=c)
+							try:
+								classifier.fit(Xtra, Ytra)
+								t1 = self.getCrossValidationScore(classifier, Xtea, Xte, Fte, Cte)
+								sum += t1
+								sum_total += 1
+							except Exception:
+								pass
+						sum_total = max(1, sum_total)
+						if (sum/sum_total)>max_score:
+							max_score = sum
+							parameters = (C, 'sigmoid', d, g, c)
+							
+		#Get classifier with best parameters for the Linear kernel:
+		if 'linear' in kernels:
+			for C in Cs:
+				sum = 0.0
+				sum_total = 0
+				for dataset in datasets:
+					Xtra = dataset[0]
+					Ytra = dataset[1]
+					Xte = dataset[2]
+					Xtea = dataset[3]
+					Fte = dataset[4]
+					Cte = dataset[5]
+
+					classifier = SVC(kernel='linear', C=C, gamma=g, coef0=c)
+					try:
+						classifier.fit(Xtra, Ytra)
+						t1 = self.getCrossValidationScore(classifier, Xtea, Xte, Fte, Cte)
+						sum += t1
+						sum_total += 1
+					except Exception:
+						pass
+				sum_total = max(1, sum_total)
+				if (sum/sum_total)>max_score:
+					max_score = sum
+					parameters = (C, 'linear', d, g, c)
 		self.classifier = SVC(C=parameters[0], kernel=parameters[1], degree=parameters[2], gamma=parameters[3], coef0=parameters[4])
 		self.classifier.fit(X, Y)
 	
