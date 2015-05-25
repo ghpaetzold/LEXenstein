@@ -4,6 +4,7 @@
 /.idea/
 /manual/
 test_pipe.py
+test_features.py
 /epydoc/
 TODO.txt
 main.py

@@ -154,7 +154,7 @@ class FeatureEstimator:
 	def lexiconFeature(self, data, args):
 		path = args[0]
 		result = []
-		basics = self.resources(path)
+		basics = self.resources[path]
 		for line in data:
 			for subst in line[3:len(line)]:
 				words = subst.strip().split(':')[1].strip()
@@ -532,7 +532,7 @@ class FeatureEstimator:
 			print('Orientation must be Complexity or Simplicity')
 		else:
 			if language_model not in self.resources.keys():
-				model = kenlm.LanguageModel(lm)
+				model = kenlm.LanguageModel(language_model)
 				self.resources[language_model] = model
 			self.features.append((self.collocationalFeature, [language_model, leftw, rightw]))
 			for i in range(0, leftw+1):
@@ -555,10 +555,10 @@ class FeatureEstimator:
 			print('Orientation must be Complexity or Simplicity')
 		else:
 			if language_model not in self.resources.keys():
-				model = kenlm.LanguageModel(lm)
+				model = kenlm.LanguageModel(language_model)
 				self.resources[language_model] = model
 			self.features.append((self.ngramFrequencyFeature, [language_model, leftw, rightw]))
-			self.identifiers.append(('N-Gram Frequency Feature ['+str(i)+', '+str(j)+'] (LM: '+language_model+')', orientation))
+			self.identifiers.append(('N-Gram Frequency Feature ['+str(leftw)+', '+str(rightw)+'] (LM: '+language_model+')', orientation))
 		
 	def addSentenceProbabilityFeature(self, language_model, orientation):
 		"""
@@ -573,7 +573,7 @@ class FeatureEstimator:
 			print('Orientation must be Complexity or Simplicity')
 		else:
 			if language_model not in self.resources.keys():
-				model = kenlm.LanguageModel(lm)
+				model = kenlm.LanguageModel(language_model)
 				self.resources[language_model] = model
 			self.features.append((self.sentenceProbabilityFeature, [language_model]))
 			self.identifiers.append(('Sentence Probability (LM: '+language_model+')', orientation))
