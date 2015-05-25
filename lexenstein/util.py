@@ -57,16 +57,24 @@ def fitTranslationProbabilityFileToCorpus(translation_probabilities, corpus, out
 	o.close()
 	
 def addTargetAsFirstToVictorCorpus(self, victor_corpus, output):
-		f = open(victor_corpus)
-		o = open(output, 'w')
-		for line in f:
-			data = line.strip().split('\t')
-			newline = data[0].strip() + '\t' + data[1].strip() + '\t' + data[2].strip() + '\t' + '1:'+data[1].strip() + '\t'
-			for subst in data[3:len(data)]:
-				substd = subst.strip().split(':')
-				rank = int(substd[0].strip())
-				word = substd[1].strip()
-				newline += str(rank+1)+':'+word + '\t'
-			o.write(newline.strip() + '\n')
-		f.close()
-		o.close()
+	"""
+	Creates a modified version of an input VICTOR corpus in which the target complex word is ranked first.
+	Can be very useful for the training of Substitution Selection Models
+	
+	@param victor_corpus: Path to a corpus in the VICTOR format.
+	For more information about the file's format, refer to the LEXenstein Manual.
+	@param output: Path in which to save the modified VICTOR corpus.
+	"""
+	f = open(victor_corpus)
+	o = open(output, 'w')
+	for line in f:
+		data = line.strip().split('\t')
+		newline = data[0].strip() + '\t' + data[1].strip() + '\t' + data[2].strip() + '\t' + '1:'+data[1].strip() + '\t'
+		for subst in data[3:len(data)]:
+			substd = subst.strip().split(':')
+			rank = int(substd[0].strip())
+			word = substd[1].strip()
+			newline += str(rank+1)+':'+word + '\t'
+		o.write(newline.strip() + '\n')
+	f.close()
+	o.close()
