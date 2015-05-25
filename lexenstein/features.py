@@ -519,7 +519,7 @@ class FeatureEstimator:
 		Adds a set of collocational features to the estimator.
 		The values will be the language model probabilities of all collocational features selected.
 		Each feature is the probability of an n-gram with 0<=l<=leftw tokens to the left and 0<=r<=rightw tokens to the right.
-		This method creates leftw*rightw+1 features.
+		This method creates (leftw+1)*(rightw+1) features.
 	
 		@param language_model: Path to the language model from which to extract probabilities.
 		@param leftw: Maximum number of tokens to the left.
