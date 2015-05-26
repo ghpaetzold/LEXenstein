@@ -329,7 +329,7 @@ class SVMBoundaryRanker:
 			max_range = min(int(line[len(line)-1].split(':')[0].strip()), positive_range)
 			for i in range(3, len(line)):
 				rank_index = int(line[i].split(':')[0].strip())
-				if rank_index<3+max_range:
+				if rank_index<=max_range:
 					Y.append(1)
 				else:
 					Y.append(0)
@@ -818,7 +818,7 @@ class BoundaryRanker:
 			max_range = min(int(line[len(line)-1].split(':')[0].strip()), positive_range)
 			for i in range(3, len(line)):
 				rank_index = int(line[i].split(':')[0].strip())
-				if rank_index<3+max_range:
+				if rank_index<=max_range:
 					Y.append(1)
 				else:
 					Y.append(0)
