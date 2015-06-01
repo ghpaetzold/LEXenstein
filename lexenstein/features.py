@@ -406,12 +406,13 @@ class FeatureEstimator:
 				resultma.append(maxdepth)
 		return resultma
 	
-	def addWordVectorValues(self, model, orientation):
+	def addWordVectorValues(self, model, size, orientation):
 		"""
 		Adds all the word vector values of a model to the estimator.
 	
 		@param model: Path to a binary word vector model.
 		For instructions on how to create the model, please refer to the LEXenstein Manual.
+		@param size: Number of feature values that represent a word in the model.
 		@param orientation: Whether the feature is a simplicity of complexity measure.
 		Possible values: Complexity, Simplicity.
 		"""
@@ -423,7 +424,6 @@ class FeatureEstimator:
 				m = gensim.models.word2vec.Word2Vec.load_word2vec_format(model, binary=True)
 				self.resources[model] = m
 			self.features.append((self.wordVectorValuesFeature, [model]))
-			size = self.resources[model].size()
 			for i in range(0, size):
 				self.identifiers.append(('Word Vector Value '+str(i)+' (Model: '+model+')', orientation))
 	
