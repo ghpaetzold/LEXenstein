@@ -7,6 +7,7 @@ from nltk.tag.stanford import POSTagger
 import os
 import pickle
 from sklearn.preprocessing import normalize
+import numpy
 
 class FeatureEstimator:
 
@@ -135,19 +136,21 @@ class FeatureEstimator:
 	
 	def wordVectorValuesFeature(self, data, args):
 		model = self.resources[args[0]]
-		size = self.resources[args[1]]
+		size = args[1]
 		result = []
 		for line in data:
 			target = line[1].strip().lower()
 			for subst in line[3:len(line)]:
 				words = subst.strip().split(':')[1].strip()
-				word_vector = numpy.zeroes(size)
+				word_vector = numpy.zeros(size)
 				for word in words.split(' '):
 					try:
-						word_vector += model[word]
+						word_vector = numpy.add(word_vector, model[words])
 					except KeyError:
 						pass
 				result.append(word_vector)
+		for i in range(0, len(result)):
+			result[i] = result[i].tolist()
 		return result
 	
 	def translationProbabilityFeature(self, data, args):
