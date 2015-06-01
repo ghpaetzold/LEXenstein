@@ -133,6 +133,23 @@ class FeatureEstimator:
 				result.append(similarity)
 		return result
 	
+	def wordVectorValuesFeature(self, data, args):
+		model = self.resources[args[0]]
+		vector_size = model.size
+		result = []
+		for line in data:
+			target = line[1].strip().lower()
+			for subst in line[3:len(line)]:
+				words = subst.strip().split(':')[1].strip()
+				word_vector = numpy.zeros(vector_size)
+				for word in words.split(' '):
+					try:
+						word_vector += model[word]
+					except KeyError:
+						pass
+				result.append(word_vector)
+		return result
+	
 	def translationProbabilityFeature(self, data, args):
 		probabilities = self.resources[args[0]]
 		result = []
@@ -378,6 +395,27 @@ class FeatureEstimator:
 							maxdepth = auxmax
 				resultma.append(maxdepth)
 		return resultma
+	
+	def addWordVectorValues(self, model, orientation):
+		"""
+		Adds all the word vector values of a model to the estimator.
+	
+		@param model: Path to a binary word vector model.
+		For instructions on how to create the model, please refer to the LEXenstein Manual.
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Possible values: Complexity, Simplicity.
+		"""
+		
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:
+			if model not in self.resources.keys():
+				m = gensim.models.word2vec.Word2Vec.load_word2vec_format(model, binary=True)
+				self.resources[model] = m
+			self.features.append((self.wordVectorValuesFeature, [model]))
+			size = self.resources[model].size
+			for i in range(0, size):
+				self.identifiers.append(('Word Vector Value '+str(i)+' (Model: '+model+')', orientation))
 	
 	def addTargetPOSTagProbability(self, condprob_model, pos_model, stanford_tagger, java_path, orientation):
 		"""
