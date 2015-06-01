@@ -33,10 +33,6 @@ class MachineLearningIdentifier:
 			self.Ytr.append(y)
 		f.close()
 		
-		#Normalize if required:
-		if norm:
-			self.Xtr = normalize(self.Xtr, axis=0)
-			
 	def calculateTestingFeatures(self, testing_corpus):
 		"""
 		Calculate testing features of a corpus in VICTOR or CWICTOR format.
