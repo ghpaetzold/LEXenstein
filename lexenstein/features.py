@@ -413,7 +413,7 @@ class FeatureEstimator:
 				m = gensim.models.word2vec.Word2Vec.load_word2vec_format(model, binary=True)
 				self.resources[model] = m
 			self.features.append((self.wordVectorValuesFeature, [model]))
-			size = self.resources[model].size
+			size = self.resources[model].size()
 			for i in range(0, size):
 				self.identifiers.append(('Word Vector Value '+str(i)+' (Model: '+model+')', orientation))
 	
