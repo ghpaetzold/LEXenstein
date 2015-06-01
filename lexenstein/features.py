@@ -135,30 +135,20 @@ class FeatureEstimator:
 	
 	def wordVectorValuesFeature(self, data, args):
 		model = self.resources[args[0]]
+		size = self.resources[args[1]]
 		result = []
 		for line in data:
 			target = line[1].strip().lower()
 			for subst in line[3:len(line)]:
 				words = subst.strip().split(':')[1].strip()
-				word_vector = []
+				word_vector = numpy.zeroes(size)
 				for word in words.split(' '):
 					try:
 						word_vector += model[word]
 					except KeyError:
 						pass
 				result.append(word_vector)
-		finalresult = []
-		size = 0
-		for inst in result:
-			size = max(size, len(inst))
-		placeholder = numpy.zeroes(size)
-		for i in range(0, len(result)):
-			inst = result[i]
-			if len(inst)<size:
-				finalreuslt.append(placeholder)
-			else:
-				finalresult.append(inst)
-		return finalresult
+		return result
 	
 	def translationProbabilityFeature(self, data, args):
 		probabilities = self.resources[args[0]]
@@ -423,7 +413,7 @@ class FeatureEstimator:
 			if model not in self.resources.keys():
 				m = gensim.models.word2vec.Word2Vec.load_word2vec_format(model, binary=True)
 				self.resources[model] = m
-			self.features.append((self.wordVectorValuesFeature, [model]))
+			self.features.append((self.wordVectorValuesFeature, [model, size]))
 			for i in range(0, size):
 				self.identifiers.append(('Word Vector Value '+str(i)+' (Model: '+model+')', orientation))
 	
