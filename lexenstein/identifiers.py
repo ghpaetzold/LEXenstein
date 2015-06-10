@@ -220,7 +220,7 @@ class ThresholdIdentifier:
 		#Find best threshold:
 		best = -1
 		bestIndex = None
-		i = step
+		i = min+step
 		while i<max:
 			score = self.getScore(i)
 			if score>best:
