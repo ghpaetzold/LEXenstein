@@ -1,22 +1,34 @@
-import re, collections
+import re, collections, pickle
 
 class NorvigCorrector:
 
-	def __init__(self, text_file):
+	def __init__(self, model_file, format='text'):
 		"""
 		Creates an instance of the NorvigCorrector class.
 	
-		@param text_file: Path to a file containing raw, untokenized text.
+		@param model_file: Path to a file containing either raw, untokenized text, or a binary spelling correction model.
+		If "model_file" is the path to a text file, then the value of "format" must be "text".
+		If "model_file" is the path to a binary spelling correction model, then the value of "format" must be "bin".
+		@param format: Indicator of the type of input provided.
+		Possible values: "text", "bin".
 		"""
 		
-		#Read text file:
-		file = open(text_file)
-		text = file.read()
-		file.close()
-		
-		#Create model:
-		self.model = self.getSpellingModel(re.findall('[a-z]+', text))
-
+		#If input is text, then train a model:
+		if format=='text':
+			#Read text file:
+			file = open(text_file)
+			text = file.read()
+			file.close()
+			
+			#Create model:
+			self.model = self.getSpellingModel(re.findall('[a-z]+', text))
+		#If input is binary, then load the model:
+		elif format=='bin':
+			self.model = pickle.load(open(model_file, 'rb'))
+		else:
+			self.model = None
+			print('Input format \"' + format + '\" no supported, see documentation for available formats.')
+			
 		#Create alphabet:
 		self.alphabet = 'abcdefghijklmnopqrstuvwxyz'
 	
@@ -30,9 +42,19 @@ class NorvigCorrector:
 		
 		candidates = self.getKnown([word]) or self.getKnown(self.getEdits(word)) or self.getKnownEdits(word) or [word]
 		return max(candidates, key=self.model.get)
+		
+	def saveBinaryModel(self, model_path):
+		"""
+		Saves the spelling correction model in binary format.
+		The saved model can then be loaded with the "bin" format during the creation of a NorvigCorrector.
+	
+		@param model_path: Path in which to save the model.
+		"""
+		
+		pickle.dump(self.model, open(model_path, 'wb'))
 	
 	def getSpellingModel(self, words):
-		model = collections.defaultdict(lambda: 1)
+		model = collections.defaultdict(int)
 		for f in words:
 			model[f] += 1
 		return model
