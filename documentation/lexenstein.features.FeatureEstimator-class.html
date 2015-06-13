@@ -85,7 +85,9 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="__init__"></a><span class="summary-sig-name">__init__</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td><span class="summary-sig"><a href="lexenstein.features.FeatureEstimator-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">norm</span>=<span class="summary-sig-default">False</span>)</span><br />
+      Creates an instance of the FeatureEstimator class.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.__init__">source&nbsp;code</a></span>
             
@@ -231,6 +233,27 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
+          <td><span class="summary-sig"><a href="lexenstein.features.FeatureEstimator-class.html#addNGramFrequencyFeature" class="summary-sig-name">addNGramFrequencyFeature</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">language_model</span>,
+        <span class="summary-sig-arg">leftw</span>,
+        <span class="summary-sig-arg">rightw</span>,
+        <span class="summary-sig-arg">orientation</span>)</span><br />
+      Adds a n-gram frequency feature to the estimator.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.addNGramFrequencyFeature">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
           <td><span class="summary-sig"><a href="lexenstein.features.FeatureEstimator-class.html#addSenseCountFeature" class="summary-sig-name">addSenseCountFeature</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">orientation</span>)</span><br />
       Adds a sense count feature to the estimator.</td>
@@ -352,6 +375,26 @@
       Adds a word vector similarity feature to the estimator.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.addWordVectorSimilarityFeature">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="lexenstein.features.FeatureEstimator-class.html#addWordVectorValues" class="summary-sig-name">addWordVectorValues</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">model</span>,
+        <span class="summary-sig-arg">size</span>,
+        <span class="summary-sig-arg">orientation</span>)</span><br />
+      Adds all the word vector values of a model to the estimator.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.addWordVectorValues">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -571,6 +614,24 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
+          <td><span class="summary-sig"><a name="ngramFrequencyFeature"></a><span class="summary-sig-name">ngramFrequencyFeature</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">data</span>,
+        <span class="summary-sig-arg">args</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.ngramFrequencyFeature">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
           <td><span class="summary-sig"><a name="senseCount"></a><span class="summary-sig-name">senseCount</span>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">data</span>,
         <span class="summary-sig-arg">args</span>)</span></td>
@@ -691,6 +752,24 @@
       
     </td>
   </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="wordVectorValuesFeature"></a><span class="summary-sig-name">wordVectorValuesFeature</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">data</span>,
+        <span class="summary-sig-arg">args</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.wordVectorValuesFeature">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
 </table>
 <!-- ==================== METHOD DETAILS ==================== -->
 <a name="section-MethodDetails"></a>
@@ -710,6 +789,32 @@
   </td>
 </tr>
 </table>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">norm</span>=<span class="sig-default">False</span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Creates an instance of the FeatureEstimator class.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>norm</code></strong> - Boolean variable that determines whether or not feature values 
+          should be normalized.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
 <a name="addCollocationalFeature"></a>
 <div>
 <table class="details" border="1" cellpadding="3"
@@ -732,7 +837,7 @@
   be the language model probabilities of all collocational features 
   selected. Each feature is the probability of an n-gram with 
   0&lt;=l&lt;=leftw tokens to the left and 0&lt;=r&lt;=rightw tokens to the
-  right. This method creates leftw*rightw+1 features.</p>
+  right. This method creates (leftw+1)*(rightw+1) features.</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
@@ -898,6 +1003,39 @@
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>orientation</code></strong> - Whether the feature is a simplicity of complexity measure. 
+          Possible values: Complexity, Simplicity.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="addNGramFrequencyFeature"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">addNGramFrequencyFeature</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">language_model</span>,
+        <span class="sig-arg">leftw</span>,
+        <span class="sig-arg">rightw</span>,
+        <span class="sig-arg">orientation</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.addNGramFrequencyFeature">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Adds a n-gram frequency feature to the estimator. The value is the 
+  probability of the n-gram with leftw tokens to the left and rightw tokens
+  to the right.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>language_model</code></strong> - Path to the language model from which to extract probabilities.</li>
+        <li><strong class="pname"><code>leftw</code></strong> - Number of tokens to the left.</li>
+        <li><strong class="pname"><code>rightw</code></strong> - Number of tokens to the right.</li>
         <li><strong class="pname"><code>orientation</code></strong> - Whether the feature is a simplicity of complexity measure. 
           Possible values: Complexity, Simplicity.</li>
     </ul></dd>
@@ -1119,6 +1257,36 @@
   </dl>
 </td></tr></table>
 </div>
+<a name="addWordVectorValues"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">addWordVectorValues</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">model</span>,
+        <span class="sig-arg">size</span>,
+        <span class="sig-arg">orientation</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.addWordVectorValues">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Adds all the word vector values of a model to the estimator.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>model</code></strong> - Path to a binary word vector model. For instructions on how to 
+          create the model, please refer to the LEXenstein Manual.</li>
+        <li><strong class="pname"><code>size</code></strong> - Number of feature values that represent a word in the model.</li>
+        <li><strong class="pname"><code>orientation</code></strong> - Whether the feature is a simplicity of complexity measure. 
+          Possible values: Complexity, Simplicity.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
 <a name="calculateFeatures"></a>
 <div>
 <table class="details" border="1" cellpadding="3"
@@ -1218,7 +1386,7 @@
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Mon May  4 20:09:34 2015
+    Generated by Epydoc 3.0.1 on Sat Jun 13 14:46:19 2015
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

@@ -16,7 +16,7 @@ class NorvigCorrector:
 		#If input is text, then train a model:
 		if format=='text':
 			#Read text file:
-			file = open(text_file)
+			file = open(model_file)
 			text = file.read()
 			file.close()
 			
