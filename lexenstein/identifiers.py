@@ -94,7 +94,7 @@ class MachineLearningIdentifier:
 		self.classifier = AdaBoostClassifier(n_estimators=n_estimators, learning_rate=learning_rate, algorithm=algorithm)
 		self.classifier.fit(self.Xtr, self.Ytr)
 		
-	def trainGradientBoostingClassifier(self, loss='deviance', n_estimators=50, learning_rate=1, max_features=None):
+	def trainGradientBoostClassifier(self, loss='deviance', n_estimators=50, learning_rate=1, max_features=None):
 		"""
 		Trains an Gradient Boost Classifier. To know more about the meaning of each parameter,
 		please refer to http://scikit-learn.org/stable/modules/generated/sklearn.ensemble.GradientBoostingClassifier.html
