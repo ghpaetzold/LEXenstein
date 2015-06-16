@@ -102,20 +102,20 @@ class MachineLearningIdentifier:
 		self.classifier = GradientBoostingClassifier(loss=loss, n_estimators=n_estimators, learning_rate=learning_rate, max_features=max_features)
 		self.classifier.fit(self.Xtr, self.Ytr)
 		
-	def trainExtraTreesClassifier(self, n_estimators=50, criterion='gini', max_features=None, class_weight='auto'):
+	def trainExtraTreesClassifier(self, n_estimators=50, criterion='gini', max_features=None):
 		"""
 		Trains an Extra Trees Classifier. To know more about the meaning of each parameter,
 		please refer to http://scikit-learn.org/stable/modules/generated/sklearn.ensemble.ExtraTreesClassifier.html
 		"""
-		self.classifier = ExtraTreesClassifier(n_estimators=n_estimators, criterion=criterion, max_features=max_features, class_weight=class_weight)
+		self.classifier = ExtraTreesClassifier(n_estimators=n_estimators, criterion=criterion, max_features=max_features)
 		self.classifier.fit(self.Xtr, self.Ytr)
 		
-	def trainRandomForestClassifier(self, n_estimators=50, criterion='gini', max_features=None, class_weight='auto'):
+	def trainRandomForestClassifier(self, n_estimators=50, criterion='gini', max_features=None):
 		"""
 		Trains an Random Trees Classifier. To know more about the meaning of each parameter,
 		please refer to http://scikit-learn.org/stable/modules/generated/sklearn.ensemble.ExtraTreesClassifier.html
 		"""
-		self.classifier = RandomForestClassifier(n_estimators=n_estimators, criterion=criterion, max_features=max_features, class_weight=class_weight)
+		self.classifier = RandomForestClassifier(n_estimators=n_estimators, criterion=criterion, max_features=max_features)
 		self.classifier.fit(self.Xtr, self.Ytr)
 		
 	def identifyComplexWords(self):
