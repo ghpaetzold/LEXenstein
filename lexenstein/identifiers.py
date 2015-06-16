@@ -2,6 +2,7 @@ import numpy as np
 from sklearn import svm
 from sklearn.linear_model import *
 from sklearn.tree import *
+from sklearn.ensemble import *
 from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import f_classif
 from sklearn.preprocessing import normalize
@@ -83,6 +84,38 @@ class MachineLearningIdentifier:
 		please refer to http://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeClassifier.html
 		"""
 		self.classifier = DecisionTreeClassifier(criterion=criterion, splitter=splitter, max_features=max_features, max_depth=max_depth)
+		self.classifier.fit(self.Xtr, self.Ytr)
+	
+	def trainAdaBoostClassifier(self, n_estimators=50, learning_rate=1, algorithm='SAMME.R'):
+		"""
+		Trains an Ada Boost Classifier. To know more about the meaning of each parameter,
+		please refer to http://scikit-learn.org/stable/modules/generated/sklearn.ensemble.AdaBoostClassifier.html
+		"""
+		self.classifier = AdaBoostClassifier(n_estimators=n_estimators, learning_rate=learning_rate, algorithm=algorithm)
+		self.classifier.fit(self.Xtr, self.Ytr)
+		
+	def trainGradientBoostingClassifier(self, loss='deviance', n_estimators=50, learning_rate=1, max_features=None):
+		"""
+		Trains an Gradient Boost Classifier. To know more about the meaning of each parameter,
+		please refer to http://scikit-learn.org/stable/modules/generated/sklearn.ensemble.GradientBoostingClassifier.html
+		"""
+		self.classifier = GradientBoostingClassifier(loss=loss, n_estimators=n_estimators, learning_rate=learning_rate, max_features=max_features)
+		self.classifier.fit(self.Xtr, self.Ytr)
+		
+	def trainExtraTreesClassifier(self, n_estimators=50, criterion='gini', max_features=None, class_weight='auto'):
+		"""
+		Trains an Extra Trees Classifier. To know more about the meaning of each parameter,
+		please refer to http://scikit-learn.org/stable/modules/generated/sklearn.ensemble.ExtraTreesClassifier.html
+		"""
+		self.classifier = ExtraTreesClassifier(n_estimators=n_estimators, criterion=criterion, max_features=max_features, class_weight=class_weight)
+		self.classifier.fit(self.Xtr, self.Ytr)
+		
+	def trainRandomForestClassifier(self, n_estimators=50, criterion='gini', max_features=None, class_weight='auto'):
+		"""
+		Trains an Random Trees Classifier. To know more about the meaning of each parameter,
+		please refer to http://scikit-learn.org/stable/modules/generated/sklearn.ensemble.ExtraTreesClassifier.html
+		"""
+		self.classifier = RandomForestClassifier(n_estimators=n_estimators, criterion=criterion, max_features=max_features, class_weight=class_weight)
 		self.classifier.fit(self.Xtr, self.Ytr)
 		
 	def identifyComplexWords(self):
