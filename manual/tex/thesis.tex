@@ -1,0 +1,58 @@
+\documentclass[a4paper,12pt,times,numbered,print,index]{Classes/PhDThesisPSnPDF}
+\usepackage{qtree}
+\input{Preamble/preamble}
+\input{thesis-info}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{amsmath}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=Python,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+
+\begin{document}
+
+\frontmatter
+
+\begin{titlepage}
+  \maketitle
+\end{titlepage}
+
+
+%\include{Dedication/dedication}
+%\include{Declaration/declaration}
+%\include{Acknowledgement/acknowledgement}
+
+\tableofcontents
+
+\mainmatter
+
+\include{Chapter1/chapter1}
+\include{Chapter2/chapter2}
+\include{Chapter3/chapter3}
+\include{Chapter4/chapter4}
+
+\begin{spacing}{0.9}
+\bibliographystyle{apalike}
+\cleardoublepage
+\bibliography{References/references}
+\end{spacing}
+
+\end{document}

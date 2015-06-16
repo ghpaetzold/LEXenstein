@@ -1,0 +1,29 @@
+\chapter{The VICTOR and CWICTOR Formats}
+\label{victor}
+
+In order to standardize input and output within the LEXenstein framework, we have conceived the VICTOR and CWICTOR formats: an elegant way of representing data for both the training and testing of Lexical Simplification models and systems. It is a reference to Victor Frankenstein, the main character in the Frankenstein novel \cite{frankenstein}, and creator of the ever so popular Frankenstein's Monster.
+
+\section{The VICTOR Format}
+
+The VICTOR format was conceived to represent datasets for the tasks of Substitution Generation, Selection and Ranking. Each line of a file in VICTOR format is structured as illustrated in Example~\ref{victor}, where $S_{i}$ is the $i$th sentence in the dataset, $w_{i}$ a target complex word in the $h_{i}$th position of $S_{i}$, $c_{i}^{j}$ a substitution candidate and $r_{i}^{j}$ its simplicity ranking.
+
+\begin{equation}
+\label{victor}
+\left \langle \textup{S}_{i} \right \rangle\; \left \langle \textup{w}_{i} \right \rangle\; \left \langle \textup{h}_{i} \right \rangle\; \left \langle \textup{r}_{i}^{1}\textup{:c}_{i}^{1} \right \rangle\, \left \langle \textup{r}_{i}^{2}\textup{:c}_{i}^{2} \right \rangle\!  \cdots \!  \left \langle \textup{r}_{i}^{n-1}\textup{:c}_{i}^{n-1} \right \rangle, \left \langle \textup{r}_{i}^{n}\textup{:c}_{i}^{n} \right \rangle
+\end{equation}
+
+Each bracketed component in the example above is separated by a tabulation marker. Examples of files with such notation can be found in ``\url{resources/victor_datasets}''.
+
+
+
+
+\section{The CWICTOR Format}
+
+The CWICTOR format was conceived to represent datasets for the task of Complex Word Identification. Each line of a file in CWICTOR format is structured as illustrated in Example~\ref{cwictor}, where $S_{i}$ is the $i$th sentence in the dataset, $\textup{w}_{i}$ a the word in the $\textup{h}_{i}$th position of $\textup{S}_{i}$, and $\textup{l}_{i}$ a binary label, which must have value $1$ if $\textup{w}_{i}$ is complex, and value $0$ otherwise.
+
+\begin{equation}
+\label{cwictor}
+\left \langle \textup{S}_{i} \right \rangle\; \left \langle \textup{w}_{i} \right \rangle\; \left \langle \textup{h}_{i} \right \rangle\; \left \langle \textup{l}_{i} \right \rangle 
+\end{equation}
+
+Each bracketed component in the example above is separated by a tabulation marker. Examples of files with such notation can be found in ``\url{resources/cwictor_datasets}''.

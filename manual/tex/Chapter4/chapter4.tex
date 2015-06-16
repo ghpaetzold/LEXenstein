@@ -1,0 +1,1461 @@
+\chapter{Modules}
+\label{modules}
+
+
+\section{Spelling Correction}
+\label{spelling}
+
+LEXenstein's Spelling Correction module allows for one to correct misspelled words. The module is used by all generators in order to ensure that words and lemmas don't have their grammaticality compromised during inflection. It includes the NorvigCorrector class, which employs the spelling correction algorithm of Norvig\footnote{http://norvig.com/spell-correct.html}.
+
+\begin{lstlisting}
+from lexenstein.spelling import *
+
+nc = NorvigCorrector('corpus.txt', format='text')
+nc.saveBinaryModel('model.bin')
+nc = NorvigCorrector('model.bin', format='bin')
+print(nc.correct('mystake'))
+print(nc.correct('speling'))
+print(nc.correct('beatiful'))
+
+\end{lstlisting}
+
+The output produced by the script above will be:
+
+\begin{lstlisting}
+mistake
+spelling
+beautiful
+\end{lstlisting}
+
+
+
+
+
+
+
+
+\section{Text Adorning}
+\label{adorning}
+
+LEXenstein's Text Adorning module provides a Python interface to the Morph Adorner Toolkit \cite{Paetzold15mat}, a set of Java tools that facilitates the access to Morph Adorner's functionalities. The class MorphAdornerToolkit provides easy access to word lemmatization, word stemming, syllable splitting, noun inflection, verb tensing, verb conjugation and adjective/adverb inflection. Below is an example of how to create and use a MorphAdornerToolkit object:
+
+\begin{lstlisting}
+from lexenstein.morphadorner import MorphAdornerToolkit
+
+m = MorphAdornerToolkit('./morph/')
+
+lemmas = m.lemmatizeWords(['doing', 'geese'])
+print('Lemmas:')
+print(str(lemmas)+'\n')
+
+stems = m.stemWords(['doing', 'geese'])
+print('Stems:')
+print(str(stems)+'\n')
+
+tenses = m.tenseVerbs(['do'], ['doing'])
+print('Tenses:')
+print(str(tenses)+'\n')
+
+verbs = m.conjugateVerbs(['do', 'sit'], 'PRESENT_PARTICIPLE')
+print('Verbs:')
+print(str(verbs)+'\n')
+
+nouns = m.inflectNouns(['goose', 'chair'], 'plural')
+print('Nouns:')
+print(str(nouns)+'\n')
+
+syllables = m.splitSyllables(['persevere', 'sitting'])
+print('Syllables:')
+print(str(syllables)+'\n')
+
+adjectives = m.inflectAdjectives(['nice', 'pretty'], 'comparative')
+print('Adjectives:')
+print(str(adjectives)+'\n')
+\end{lstlisting}
+
+The output produced by the script above will be:
+
+\begin{lstlisting}
+Lemmas:
+['do', 'goose']
+
+Stems:
+['do', 'gees']
+
+Tenses:
+['PRESENT_PARTICIPLE']
+
+Verbs:
+['doing', 'sitting']
+
+Nouns:
+['geese', 'chairs']
+
+Syllables:
+['per-se-vere', 'sit-ting']
+
+Adjectives:
+['nicer', 'prettier']
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Feature Estimation}
+\label{features}
+
+LEXenstein's Feature Estimation module allows the calculation of several features for LS related tasks. Its class FeatureEstimator allows the user to select and configure many types of features commonly used by LS approaches.
+
+The FeatureEstimator object can be used either for the creation of LEXenstein's rankers, or in stand-alone setups. For the latter, the class provides a function called \textit{calculateFeatures}, which takes as input a dataset in the VICTOR/CWICTOR format (that can be built from generated/selected substitutions). If the dataset is in VICTOR format, it returns as output a matrix $M$x$N$ containing $M$ feature values for each of the $N$ substitution candidates listed in the dataset. If the dataset is in CWICTOR format, it returns as output a matrix $M$x$N$ containing $M$ feature values for the target word of each of the $N$ instances of the dataset. Each of the $14$ features supported must be configured individually. They can be grouped in five categories:
+
+\paragraph{Lexicon-oriented:} Binary features which receive value $1$ if a candidate appears in a given vocabulary, and $0$ otherwise.
+
+\paragraph{Morphological:} Exploit morphological characteristics of substitutions, such as word length and number of syllables.
+
+\paragraph{Collocational:} Estimate n-gram probabilities of form $P\left ( S_{h-1}^{h-l} \: c \: S_{h+1}^{h+r} \right )$, where $c$ is a candidate substitution in the $h$th position in sentence $S$, and $S_{h-1}^{h-l}$ and $S_{h+1}^{h+r}$ are n-grams of size $l$ and $r$, respectively.
+
+\paragraph{Sense-oriented:} Include several features which relate to the meaning of a candidate substitution, such as: number of word embedding values, senses, lemmas, synonyms, hypernyms, hyponyms and maximum and minimum distance between all of its senses.
+
+\paragraph{Target-dependent:} Features that calculate values that represent the relation between a candidate substitution and a target word to be simplified. Includes the similarity between the word vectors that represent the target word and the candidate substitution, the probability of the target word being translated into the candidate substitution, and the probability of a candidate substitution of assuming the same tag of the target word in a given sentence. Note that these features \textbf{cannot} be calculated for target words of datasets in CWICTOR format, since it does not include candidate substitutions.
+
+The code snippet below shows an example of how to configure and use a FeatureEstimator object:
+
+\begin{lstlisting}
+from lexenstein.morphadorner import MorphAdornerToolkit
+from lexenstein.features import *
+
+m = MorphAdornerToolkit('./morph/')
+fe = FeatureEstimator(norm=False)
+fe.addLexiconFeature('lexicon.txt', 'Simplicity')
+fe.addWordVectorValues('model.bin', 300, 'Simplicity')
+fe.addLengthFeature('Complexity')
+fe.addSyllableFeature(m, 'Complexity')
+fe.addCollocationalFeature('lm.bin', 2, 2, 'Simplicity')
+fe.addNGramFrequencyFeature('lm.bin', 3, 0, 'Simplicity')
+fe.addSentenceProbabilityFeature('lm.bin', 'Simplicity')
+fe.addSenseCountFeature('Simplicity')
+fe.addSynonymCountFeature('Simplicity')
+fe.addHypernymCountFeature('Simplicity')
+fe.addHyponymCountFeature('Simplicity')
+fe.addMinDepthFeature('Complexity')
+fe.addMaxDepthFeature('Complexity')
+fe.addTranslationProbabilityFeature('translation_probs.txt', 'Simplicity')
+fe.addWordVectorSimilarityFeature('word_vectors.bin', 'Simplicity')
+fe.addTargetPOSTagProbability('cond_prob.bin', 'pos_model.bin', 'stanford-postagger.jar', '/usr/bin/java', 'Simplicity')
+feats = fe.calculateFeatures('lexmturk.txt', format='victor')
+\end{lstlisting}
+
+The output produced by the script above will be:
+
+\begin{lstlisting}
+[[1.0, 7, 2, 4.470454216003418, 6.206913948059082, 7.3130669593811035, 10.297701835632324, 12.034161567687988, 13.140314102172852, 11.422476768493652, 13.158936500549316, 14.26508903503418, 51.03892517089844, 12, 51, 12, 83, 3, 8, 0.0167457456, 0.234516], [0.0, 6, 3, 4.487872123718262, 7.389286041259766, 8.941888809204102, 10.315119743347168, 13.216533660888672, 14.769136428833008, 11.439894676208496, 14.34130859375, 15.893911361694336, 52.66774368286, 2, 6, 0, 0, 0, 0, 0.0134387482374, 0.234833]
+...
+[0.0, 7, 2, 4.950876235961914, 8.496809005737305, 9.830375671386719, 10.77812385559082, 14.324056625366211, 15.657623291015625, 11.902898788452148, 15.448831558227539, 16.782398223876953, 53.556236267089844, 6, 13, 1, 0, 0, 8, 0.0023717232, 0.43812894]]
+\end{lstlisting}
+
+The lexicon file ``lexicon.txt'' used by a feature in the example above must be a plain text file with one word per line. The language model ``lm.bin'' used by some features in the example above must be binary, and must be produced by KenLM with the following command lines:
+
+\begin{lstlisting}
+lmplz -o [order] <[corpus_of_text] >[language_model_name]
+\end{lstlisting}
+\begin{lstlisting}
+build_binary [language_model_name] [binary_language_model_name]
+\end{lstlisting}
+
+The translation probabilities file ``translation\_probs.txt'' must be created through the use of fast\_align, and estimated over a parallel corpus of sentences. To produce it use the following command line:
+
+\begin{lstlisting}
+fast_align -i <parallel_data> -v -d -o <translation_probabilities_file>
+\end{lstlisting}
+
+The fast\_align tool can be downloaded from \url{https://github.com/clab/fast_align}.
+
+The binary word vector model ``word\_vectors.bin'' must be created through the use of Word$2$Vec. For more information on how to create word vector models, please follow the instructions on the website of the application at \url{https://code.google.com/p/word2vec/}.
+
+The conditional probability model ``cond\_prob.bin'' must be created by the ``createConditionalProbabilityModel'' function from LEXenstein's Utilities module (lexenstein.utilities). For more information about other parameters, please refer to LEXenstein's documentation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Complex Word Identification}
+\label{cwi}
+
+We define Complex Word Identification (CWI) as the task of deciding which words can be considered complex by a certain target audience. There are not many examples in literature of approaches for the task. In \cite{Shardlow2013cwi} the performance of three approaches are compared over the dataset introduced by \cite{cwcorpus}. The LS strategy of \cite{Horn2014} provides an implicit approach for the task.
+
+In the Complex Word Identification module of LEXenstein, one has access to several Complex Word Identification methods. The module contains a series of classes, each representing a distinct method. Currently, it offers support for $5$ distinct approaches. The following Sections describe each one individually.
+
+\subsection{MachineLearningIdentifier}
+
+Uses Machine Learning techniques to train classifiers that distinguish between complex and simple words. The class allows for the user to train models with $4$ Machine Learning techniques: Support Vector Machines, Decision Trees and linear models estimated with Stochastic Gradient Descent and Passive Aggressive Learning. As input, it requires for a FeatureEstimator object. As output, it produces a vector containing a binary label for the target word of each of the $N$ instances in a dataset in VICTOR or CWICTOR format. The label will have value $1$ if the target word was predicted as complex, and $0$ otherwise.
+
+\subsubsection{Parameters}
+
+During instantiation, the MachineLearningIdentifier requires only for a FeatureEstimator object. The user can then use the ``calculateTrainingFeatures'' and ``calculateTestingFeatures'' functions to estimate features of training and testing datasets in VICTOR or CWICTOR formats, the ``selectKBestFeatures'' function to apply feature selection over the features estimated, the ``trainSVM'', ``trainDecisionTreeClassifier'', ``trainSGDClassifier'' and ``trainPassiveAggressiveClassifier'' functions to train CWI models, and finally the ``identifyComplexWords'' function to produce output labels. To know more about the parameters and recommended values of the aforementioned functions, please refer to LEXenstein's documentation.
+
+\subsubsection{Example}
+
+The code snippet below shows the MachineLearningIdentifier class being used:
+
+\begin{lstlisting}
+from lexenstein.identifiers import *
+from lexenstein.features import *
+
+fe = FeatureEstimator()
+fe.addLexiconFeature('lexicon.txt', 'Simplicity')
+fe.addLengthFeature('Complexity')
+fe.addSenseCountFeature('Simplicity')
+
+mli = MachineLearningIdentifier(fe)
+mli.calculateTrainingFeatures('train_cwictor_corpus.txt')
+mli.calculateTestingFeatures('test_victor_corpus.txt')
+mli.selectKBestFeatures(k=5)
+mli.trainDecisionTreeClassifier()
+
+labels = mli.identifyComplexWords()
+\end{lstlisting}
+
+
+
+
+
+\subsection{LexiconIdentifier}
+
+Uses a lexicon of complex/simple words in order to judge the complexity of a word: if it appears in the lexicon, then it is complex/simple. As input, it requires for a lexicon file of complex or simple words and expressions. As output, it produces a vector containing a binary label for the target word of each of the $N$ instances in a dataset in VICTOR or CWICTOR format. The label will have value $1$ if the lexicon classifies the word as complex, and $0$ otherwise.
+
+\subsubsection{Parameters}
+
+During instantiation, the LexiconIdentifier requires for a lexicon file and an indicator label. The lexicon file must be in plain text and contain one word/expression per line, and the value of the label must be either ``complex'' or ``simple''. If the label's value is ``complex'', then the lexicon will be interpreted as a vocabulary of complex words and expressions, otherwise it will be interpreted as a vocabulary of simple words.
+
+\subsubsection{Example}
+
+The code snippet below shows the LexiconIdentifier class being used:
+
+\begin{lstlisting}
+from lexenstein.identifiers import *
+
+li = LexiconIdentifier('lexicon.txt', 'simple')
+
+labels = li.identifyComplexWords('test_victor_corpus.txt')
+\end{lstlisting}
+
+
+
+\subsection{ThresholdIdentifier}
+
+Estimates the threshold $t$ over a given feature value that best separates complex and simple words. As input, it requires for a FeatureEstimator object. As output, it produces a vector containing a binary label for the target word of each of the $N$ instances in a dataset in VICTOR or CWICTOR format. The label will have value $1$ if the lexicon classifies the word as complex, and $0$ otherwise.
+
+\subsubsection{Parameters}
+
+During instantiation, the ThresholdIdentifier requires for a FeatureEstimator object. The user can then use the ``calculateTrainingFeatures'' and ``calculateTestingFeatures'' functions to estimate features of training and testing datasets in VICTOR or CWICTOR formats, the ``trainIdentifierBruteForce'' and ``trainIdentifierBinarySearch'' functions to train CWI models, and finally the ``identifyComplexWords'' function to produce output labels.
+
+The ``trainIdentifierBruteForce'' and ``trainIdentifierBinarySearch'' functions require for a feature index as input. It will determine over which feature of the ones included in the FeatureEstimator object the threshold $t$ will be estimated. To know more about the parameters and recommended values of the aforementioned functions, please refer to LEXenstein's documentation.
+
+\subsubsection{Example}
+
+The code snippet below shows the ThresholdIdentifier class being used:
+
+\begin{lstlisting}
+from lexenstein.identifiers import *
+from lexenstein.features import *
+
+fe = FeatureEstimator()
+fe.addLengthFeature('Complexity')
+fe.addSenseCountFeature('Simplicity')
+
+ti = ThresholdIdentifier(fe)
+ti.calculateTrainingFeatures('train_cwictor_corpus.txt')
+ti.calculateTestingFeatures('test_victor_corpus.txt')
+ti.trainIdentifierBruteForce(1)
+
+labels = ti.identifyComplexWords()
+\end{lstlisting}
+
+
+
+
+
+
+
+
+\section{Substitution Generation}
+\label{sg}
+
+We define Substitution Generation (SG) as the task of producing candidate substitutions for complex words. Authors commonly address this task by querying WordNet \cite{wordnet} and UMLS\cite{Bodenreider04}. Some examples of authors who resort to this strategy are \cite{Devlin1998} and \cite{Carroll99}. Recently however, learning substitutions from aligned corpora have become a more popular strategy \cite{Paetzold2013} and \cite{Horn2014}.
+
+In the Substitution Generation module of LEXenstein, one has access to several Substitution Generation methods available in literature. The module contains a series of classes, each representing a distinct approach in literature. Currently, it offers support for $5$ distinct approaches. All approaches use LEXenstein's Text Adorning module, described in Section~\ref{adorning}, to create substitutions for all possible inflections of verbs and nouns. The following Sections describe each one individually.
+
+
+
+
+
+\subsection{KauchakGenerator}
+
+Employs the strategy described in \cite{Horn2014}, in which substitutions are automatically extracted from parallel corpora. To be instantiated, this class requires as input an object of the MorphAdornerToolkit class, a parsed document of parallel sentences, the word alignments between them in Pharaoh format, a list of stop words and a NorvigCorrector object. As output, its \textit{getSubstitutions} function produces a dictionary of complex-to-simple substitutions filtered by the criteria described in \cite{Horn2014}.
+
+\subsubsection{Parameters}
+
+The parsed parallel document, the alignments file, and the stop words list required by the KauchakGenerator class must be in a specific format. Each line of the parsed parallel document must be in the format described in Example~\ref{parsedparallel}, where $w_{i}^{s}$ is a word in position $i$ of a source sentence $s$, $p_{i}^{s}$ its POS tag, $w_{j}^{t}$ is a word in position $j$ of a target sentence $t$, and $p_{j}^{t}$ its POS tag.
+
+\begin{equation}
+\label{parsedparallel}
+\left \langle w_{0}^{s} \right \rangle\! |||\! \left \langle p_{0}^{s} \right \rangle\cdots\left \langle w_{n}^{s} \right \rangle\!|||\!\left \langle p_{n}^{s} \right \rangle \;\; \left \langle w_{0}^{t} \right \rangle\! |||\! \left \langle p_{0}^{t} \right \rangle\cdots\left \langle w_{n}^{t} \right \rangle\!|||\!\left \langle p_{n}^{t} \right \rangle
+\end{equation}
+
+All tokens of form $\left \langle w_{i}^{s} \right \rangle\! |||\! \left \langle p_{i}^{s} \right \rangle$ are separated by a blank space, and the two set of source and target tokens $\left \langle w_{0}^{s} \right \rangle\! |||\! \left \langle p_{0}^{s} \right \rangle\cdots\left \langle w_{n}^{s} \right \rangle\!|||\!\left \langle p_{n}^{s} \right \rangle$ are separated by a tabulation marker. An example of file with such notation can be found in ``\url{resources/parallel_data/alignment_pos_file.txt}''.
+
+The alignments file must be in Pharaoh format. Each line of the alignments file must be structured as illustrated in Example~\ref{pharaoh}, where $\left \langle i_{h}^{s} \right \rangle$ is an index $i$ in source sentence $s$, and $\left \langle j_{h}^{t} \right \rangle$ is the index $j$ in source sentence $t$ aligned to it.
+
+\begin{equation}
+\label{pharaoh}
+\left \langle i_{0}^{s} \right \rangle\! -\! \left \langle j_{0}^{t} \right \rangle\; \left \langle i_{1}^{s} \right \rangle\! -\! \left \langle j_{1}^{t} \right \rangle\cdots\left \langle i_{n-1}^{s} \right \rangle\! -\! \left \langle j_{n-1}^{t} \right \rangle\; \left \langle i_{n}^{s} \right \rangle\! -\! \left \langle j_{n}^{t} \right \rangle
+\end{equation}
+
+All tokens of form $\left \langle i_{h}^{s} \right \rangle\! -\! \left \langle j_{h}^{t} \right \rangle$ are separated by a blank space. An example of file with such notation can be found in ``\url{resources/parallel_data/alignments.txt}''.
+
+\subsubsection{Example}
+
+The code snippet below shows the KauchakGenerator class being used:
+
+\begin{lstlisting}
+from lexenstein.morphadorner import MorphAdornerToolkit
+from lexenstein.generators import *
+from lexenstein.spelling import *
+
+nc = NorvigCorrector('corpus.txt')
+
+m = MorphAdornerToolkit('./morph/')
+
+kg = KauchakGenerator(m, 'parallel.txt', 'alignments.txt', 'stop_words.txt', nc)
+subs = kg.getSubstitutions('lexmturk.txt')
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{YamamotoGenerator}
+
+Employs the strategy described in \cite{Yamamoto2013}, in which substitutions are extracted from dictionary definitions of complex words. This approach requires as input an API key for the Merriam Dictionary\footnote{http://www.dictionaryapi.com/}, which can be obtained for free, and a NorvigCorrector object. As output, it produces a dictionary linking words in the Merriam Dictionary and WordNet to words with the same Part-of-Speech (POS) tag in its entries' definitions and usage examples.
+
+\subsubsection{Parameters}
+
+The YamamotoGenerator class requires a free Dictionary key to the Merriam Dictionary. To get the key, follow the steps below:
+
+\begin{enumerate}
+\item Visit the page \url{http://www.dictionaryapi.com/register/index.htm}.
+\item Fill in your personal information.
+\item In "Request API Key \#1:" and "Request API Key \#2:", select "Collegiate Dictionary" and "Collegiate Thesaurus".
+\item Login in \url{http://www.dictionaryapi.com}.
+\item Visit your "My Keys" page.
+\item Use the "Dictionary" key to create a YamamotoGenerator object.
+\end{enumerate}
+
+\subsubsection{Example}
+
+The code snippet below shows the YamamotoGenerator class being used:
+
+\begin{lstlisting}
+from lexenstein.morphadorner import MorphAdornerToolkit
+from lexenstein.generators import *
+from lexenstein.spelling import *
+
+nc = NorvigCorrector('corpus.txt')
+
+m = MorphAdornerToolkit('./morph/')
+
+yg = YamamotoGenerator(m, '0000-0000-0000-0000', nc)
+subs = yg.getSubstitutions('lexmturk.txt')
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{MerriamGenerator}
+
+Extracts a dictionary linking words to their synonyms, as listed in the Merriam Thesaurus. This approach requires as input an API key for the Merriam Thesaurus\footnote{http://www.dictionaryapi.com/}, which can be obtained for free, and a NorvigCorrector object.
+
+\subsubsection{Parameters}
+
+The MerriamGenerator class requires a free Thesaurus key to the Merriam Dictionary. To get the key, follow the steps below:
+
+\begin{enumerate}
+\item Visit the page \url{http://www.dictionaryapi.com/register/index.htm}.
+\item Fill in your personal information.
+\item In "Request API Key \#1:" and "Request API Key \#2:", select "Collegiate Dictionary" and "Collegiate Thesaurus".
+\item Login in \url{http://www.dictionaryapi.com}.
+\item Visit your "My Keys" page.
+\item Use the "Thesaurus" key to create a MerriamGenerator object.
+\end{enumerate}
+
+\subsubsection{Example}
+
+The code snippet below shows the MerriamGenerator class being used:
+
+\begin{lstlisting}
+from lexenstein.morphadorner import MorphAdornerToolkit
+from lexenstein.generators import *
+from lexenstein.spelling import *
+
+nc = NorvigCorrector('corpus.txt')
+
+m = MorphAdornerToolkit('./morph/')
+
+mg = MerriamGenerator(m, '0000-0000-0000-0000', nc)
+subs = mg.getSubstitutions('lexmturk.txt')
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{WordnetGenerator}
+
+Extracts a dictionary linking words to their synonyms, as listed in WordNet. It requires for a NorvigCorrector object, the path to a POS tagging model, and the path to the Stanford Tagger \cite{Klein1965}.
+
+\subsubsection{Parameters}
+
+In order to obtain the model and tagger required by the WordnetGenerator class, download the full version of the Stanford Tagger package from the link: \url{http://nlp.stanford.edu/software/tagger.shtml}. Inside the package's ``models'' folder you will find tagging models for various languages. In the package's root folder, you will find the ``stanford-postagger.jar'' application, which is the one required by the WordnetGenerator.
+
+\subsubsection{Example}
+
+The code snippet below shows the WordnetGenerator class being used:
+
+\begin{lstlisting}
+from lexenstein.morphadorner import MorphAdornerToolkit
+from lexenstein.generators import *
+from lexenstein.spelling import *
+
+nc = NorvigCorrector('corpus.txt')
+
+m = MorphAdornerToolkit('./morph/')
+
+wg = WordnetGenerator(m, nc, 'english-left3words-distsim.tagger', 'stanford-postagger.jar', '/usr/bin/java')
+subs = wg.getSubstitutions('lexmturk.txt')
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+\subsection{BiranGenerator}
+
+Employs the strategy described in \cite{Biran2011}, in which substitutions are filtered from the Cartesian product between vocabularies of complex and simple words. This approach requires as input vocabularies of complex and simple words, as well as two Language Models trained over complex and simple corpora, a NorvigCorrector object, the path to a POS tagging model, and the path to the Stanford Tagger \cite{Klein1965}. As output, it produces a dictionary linking words to a set of synonyms and hypernyms filtered by the criteria described in \cite{Biran2011}.
+
+\subsubsection{Parameters}
+
+The vocabularies of complex and simple words and Language Models trained over complex and simple corpora required by the BiranGenerator class must be in a specific format. The vocabularies must contain one word per line, and can be produced over large corpora with SRILM by running the following command line:
+
+\begin{lstlisting}
+ngram-count -text [corpus_of_text] -write-vocab [vocabulary_name]
+\end{lstlisting}
+
+The Language Models must be binary, and must be produced by KenLM with the following command lines:
+
+\begin{lstlisting}
+lmplz -o [order] <[corpus_of_text] >[language_model_name]
+\end{lstlisting}
+\begin{lstlisting}
+build_binary [language_model_name] [binary_language_model_name]
+\end{lstlisting}
+
+Complex and simple data can be downloaded fro David Kauchak's page\footnote{http://www.cs.pomona.edu/~dkauchak/simplification/}, or extracted from other sources. In order to obtain the model and tagger required by the BiranGenerator class, download the full version of the Stanford Tagger package from the link: \url{http://nlp.stanford.edu/software/tagger.shtml}. Inside the package's ``models'' folder you will find tagging models for various languages. In the package's root folder, you will find the ``stanford-postagger.jar'' application, which is the one required by the BiranGenerator.
+
+\subsubsection{Example}
+
+The code snippet below shows the BiranGenerator class being used:
+
+\begin{lstlisting}
+from lexenstein.morphadorner import MorphAdornerToolkit
+from lexenstein.generators import *
+from lexenstein.spelling import *
+
+nc = NorvigCorrector('corpus.txt')
+
+m = MorphAdornerToolkit('./morph/')
+
+bg = BiranGenerator(m, 'vocabc.txt', 'vocabs.txt', 'lmc.bin', 'lms.bin', nc, 'english-left3words-distsim.tagger', 'stanford-postagger.jar', '/usr/bin/java')
+subs = bg.getSubstitutions('lexmturk.txt')
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+\section{Substitution Selection}
+\label{selectors}
+
+Substitution Selection (SS) is the task of selecting which substitutions from a given list can replace a complex word in a given sentence without altering its meaning. Most work addresses this task referring to the context of the complex word by employing Word Sense Disambiguation (WSD) approaches \cite{Sedding04,Nunes2013}, or by discarding substitutions which do not share the same POS tag of the target complex word \cite{Yamamoto2013,Paetzold2013}.
+
+LEXenstein's SS module provides access to $8$ approaches, each represented by a Python class. All classes have a ``selectCandidates'' function, which receives as input a set of candidate substitutions and a corpus in the VICTOR format. The candidate substitutions can be either a dictionary produced by a Substitution Generation approach, or a list of candidates that have been already selected by another Substitution Selection approach. This feature allows for multiple selectors to be used in sequence. The following Sections describe each of the classes in the LEXenstein SS module individually.
+
+
+
+
+
+
+
+\subsection{WordVectorSelector}
+
+Employs a novel strategy, in which a word vector model is used to determine which substitutions have the closest meaning to that of the sentence being simplified. It retrieves a user-defined percentage of the substitutions, which are ranked with respect to the cosine distance between its word vector and the sum of some, or all of the sentences' words, depending on the settings defined by the user.
+
+
+\subsubsection{Parameters}
+
+To create a WordVectorSelector object, you must provide a binary word vector model created with Word$2$Vec. To create the word vector, follow the steps below:
+
+\begin{enumerate}
+\item Download and install Word$2$Vec in your machine from \url{https://code.google.com/p/word2vec/}.
+\item Gather large amounts of corpora (>10 billion words). You can find some sources of data in \url{https://code.google.com/p/word2vec/}.
+\item With Word$2$Vec installed, run it with the following command line:
+
+\begin{lstlisting}
+./word2vec -train <corpus> -output <binary_model_path> -cbow 1 -size 300 -window 5 -negative 3 -hs 0 -sample 1e-5 -threads 12 -binary 1 -min-count 10
+\end{lstlisting}
+\end{enumerate}
+
+The command line above creates word vectors with $300$ dimensions and considers only a window of $5$ tokens around each word. You can customize those parameters if you wish. For more information on how to use other class functions, please refer to LEXenstein's documentation.
+
+\subsubsection{Example}
+
+The code snippet below shows the WordVectorSelector class being used:
+
+\begin{lstlisting}
+from lexenstein.morphadorner import MorphAdornerToolkit
+from lexenstein.generators import *
+from lexenstein.selectors import *
+
+m = MorphAdornerToolkit('./morph/')
+
+kg = KauchakGenerator(m, 'parallel.txt', 'alignments.txt', 'stop_words.txt')
+subs = kg.getSubstitutions('lexmturk.txt')
+
+wordvecselector = WordVectorSelector('word_vector_model.bin')
+selected = wordvecselector.selectCandidates(subs, 'lexmturk.txt', proportion=0.75, stop_words_file='stop_words.txt', onlyInformative=True, keepTarget=True, onePerWord=True)
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+\subsection{BiranSelector}
+
+Employs the strategy described in \cite{Biran2011}, in which a word co-occurrence model is used to determine which substitutions have meaning similar to that of a target complex word. It filters all substitutions which are estimated to be more complex than the target word, and also all those for which the distance between its co-occurrence vector and the target sentence's vector is higher than a threshold set by the user.
+
+
+\subsubsection{Parameters}
+
+To create a BiranSelector object, you must provide a word co-occurrence model. The model must be in plain text format, and each line must follow the format illustrated in Example~\ref{cooc}, where $\left\langle w_{i} \right\rangle$ is a word, $\left\langle c_{i}^{j} \right\rangle$ a co-occurring word and $\left\langle f_{i}^{j} \right\rangle$ its frequency of appearance.
+
+\begin{equation}
+\label{cooc}
+\left\langle w_{i} \right\rangle\; \left\langle c_{i}^{0} \right\rangle\!:\!\left\langle f_{i}^{0} \right\rangle\;\left\langle c_{i}^{1} \right\rangle\!:\!\left\langle f_{i}^{1} \right\rangle\cdots\left\langle c_{i}^{n-1} \right\rangle\!:\!\left\langle f_{i}^{n-1} \right\rangle \; \left\langle c_{i}^{n} \right\rangle\!:\!\left\langle f_{i}^{n} \right\rangle
+\end{equation}
+
+Each component in the format above must be separated by a tabulation marker. To create a co-occurrence model, either create a script that does so, or follow the steps below:
+
+\begin{enumerate}
+\item Gather a corpus of text composed of one tokenized and truecased sentence per line.
+\item Run the script \url{resources/scripts/Produce_Co-occurrence_Model.py} with the following command line:
+
+\begin{lstlisting}
+python Produce_Co-occurrence_Model.py <corpus> <window> <model_path>
+\end{lstlisting}
+
+Where ``<window>'' is the number of tokens to the left and right of a word to be included as a co-occurring word.
+
+\end{enumerate}
+
+To produce models faster, you can split your corpus in various small portions, run parallel processes to produce various small models, and then join them.  For more information on how to use other class functions, please refer to LEXenstein's documentation.
+
+\subsubsection{Example}
+
+The code snippet below shows the BiranSelector class being used:
+
+\begin{lstlisting}
+from lexenstein.morphadorner import MorphAdornerToolkit
+from lexenstein.generators import *
+from lexenstein.selectors import *
+
+m = MorphAdornerToolkit('./morph/')
+
+kg = KauchakGenerator(m, 'parallel.txt', 'alignments.txt', 'stop_words.txt')
+subs = kg.getSubstitutions('lexmturk.txt')
+
+biranselector = BiranSelector('cooc_model.txt')
+selected = biranselector.selectCandidates(subs, 'lexmturk.txt', 0.01, 0.75)
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{WSDSelector}
+
+Allows for the user to use many distinct classic WSD approaches in SS. It requires for the PyWSD \cite{pywsd} module to be installed, which includes the approaches presented by \cite{lesk} and \cite{wupalmer}, as well as baselines such as random and first senses. The user can use any of the aforementioned approaches through the WSDSelector class by changing instantiation parameters.
+
+\subsubsection{Parameters}
+
+During instantiation, the WSDSelector class requires only for you to provide an id for the WSD method that you desire to use for Substitution Selection. For the options available, please refer to LEXenstein's documentation.
+
+\subsubsection{Example}
+
+The code snippet below shows the WSDSelector class being used:
+
+\begin{lstlisting}
+from lexenstein.morphadorner import MorphAdornerToolkit
+from lexenstein.generators import *
+from lexenstein.selectors import *
+
+m = MorphAdornerToolkit('./morph/')
+
+kg = KauchakGenerator(m, 'parallel.txt', 'alignments.txt', 'stop_words.txt')
+subs = kg.getSubstitutions('lexmturk.txt')
+
+wsdselector = WSDSelector('lesk')
+selected = wsdselector.selectCandidates(subs, 'lexmturk.txt')
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{POSTagSelector}
+
+Selects only those candidates which share the same POS tag of a given target word in a sentence. The selector initially parses a given sentence, and retrieves the POS tag of the target word. It then replaces the target word in the sentence with each candidate substitution, parses the resulting sentence, and filters any candidates which have a POS tag that is not equal to the one of the target word.
+
+\subsubsection{Parameters}
+
+During instantiation, the POSTagSelector class requires no parameters.
+
+\subsubsection{Example}
+
+The code snippet below shows the POSTagSelector class being used:
+
+\begin{lstlisting}
+from lexenstein.morphadorner import MorphAdornerToolkit
+from lexenstein.generators import *
+from lexenstein.selectors import *
+
+m = MorphAdornerToolkit('./morph/')
+
+kg = KauchakGenerator(m, 'parallel.txt', 'alignments.txt', 'stop_words.txt')
+subs = kg.getSubstitutions('lexmturk.txt')
+
+posselector = POSTagSelector()
+selected = posselector.selectCandidates(subs, 'lexmturk.txt')
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{ClusterSelector}
+
+Selects only those candidates which appear in the same word clusters in which a given target word is present. This strategy is inspired by the work of \cite{Belder2010}, in which synonyms are automatically extracted from a latent variable language model.
+
+\subsubsection{Parameters}
+
+During instantiation, the ClusterSelector class requires for a file with clusters of words. The file must be in plain text format, and each line must follow the format illustrated in Example~\ref{clusterfile}, which is the one adopted by Brown Clusters \cite{brownclusters} implementation of \cite{brownsoftware}. In the Example~\ref{clusterfile}, $c_{i}$ is a class identifier, $w_{i}$ a word, and $f_{i}$ an optional frequency of occurrence of word $w_{i}$ in the corpus over which the word classes were estimated.
+
+\begin{equation}
+\label{clusterfile}
+\left\langle c_{i} \right\rangle\; \left\langle w_{i} \right\rangle \left\langle f_{i} \right\rangle
+\end{equation}
+
+Each component in the format above must be separated by a tabulation marker. To create the file, one can use the Brown Clusters implementation of \cite{brownsoftware}. Once the tool is installed, run the following command line:
+
+\begin{lstlisting}
+./wcluster --text <corpus_of_sentences> --c <number_of_clusters>
+\end{lstlisting}
+
+The clusters file will be placed at \textbf{input-c50-p1.out/paths}.
+
+\subsubsection{Example}
+
+The code snippet below shows the ClusterSelector class being used:
+
+\begin{lstlisting}
+from lexenstein.morphadorner import MorphAdornerToolkit
+from lexenstein.generators import *
+from lexenstein.selectors import *
+
+m = MorphAdornerToolkit('./morph/')
+
+kg = KauchakGenerator(m, 'parallel.txt', 'alignments.txt', 'stop_words.txt')
+subs = kg.getSubstitutions('lexmturk.txt')
+
+clusterselector = ClusterSelector('clusters.txt')
+selected = clusterselector.selectCandidates(subs, 'lexmturk.txt')
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+\subsection{BoundarySelector}
+
+Employs a novel strategy, in which a Boundary Ranker is trained over a given set of features and then used to rank candidate substitutions according to how likely they are of being able to replace a target word without compromising the sentence's grammaticality or coherence. It retrieves a user-defined percentage of a set of substitutions.
+
+\subsubsection{Parameters}
+
+During instantiation, the BoundarySelector class requires for a BoundaryRanker object, which must be configured according to which features and resources the user intends to use to rank substitution candidates. The user can then use the ``trainSelector'' function to train the selector given a set of parameters, or the ``trainSelectorWithCrossValidation'' function to train it with cross-validation. Finally, the user can then retrieve a proportion of the candidate substitutions by using the ``selectCandidates'' function. For more information about the parameters of each function, please refer to LEXenstein's documentation.
+
+\subsubsection{Example}
+
+The code snippet below shows the BoundarySelector class being used:
+
+\begin{lstlisting}
+from lexenstein.morphadorner import MorphAdornerToolkit
+from lexenstein.generators import *
+from lexenstein.selectors import *
+from lexenstein.features import *
+from lexenstein.rankers import *
+
+fe = FeatureEstimator()
+fe.addCollocationalFeature('lm.txt', 0, 0, 'Complexity')
+fe.addSenseCountFeature('Simplicity')
+
+m = MorphAdornerToolkit('./morph/')
+
+kg = KauchakGenerator(m, 'parallel.txt', 'alignments.txt', 'stop_words.txt')
+subs = kg.getSubstitutions('lexmturk.txt')
+
+br = BoundaryRanker(fe)
+bs = BoundarySelector(br)
+bs.trainSelectorWithCrossValidation('lexmturk.txt', 1, 5, 0.25)
+selected = bs.selectCandidates(subs, 'lexmturk.txt', 'temp.txt', 0.25)
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+\subsection{SVMBoundarySelector}
+
+Employs the same strategy used by the BoundaryRankerSelector, but instead of learning a linear model estimated over Stochastic Gradient Descent, it learns an either linear or non-linear model through Support Vector Machines. It retrieves a user-defined percentage of a set of substitutions.
+
+\subsubsection{Parameters}
+
+During instantiation, the SVMBoundarySelector class requires for a SVMBoundaryRanker object, which must be configured according to which features and resources the user intends to use to rank substitution candidates. The user can then use the ``trainSelector'' function to train the selector given a set of parameters, or the ``trainSelectorWithCrossValidation'' function to train it with cross-validation. Finally, the user can then retrieve a proportion of the candidate substitutions by using the ``selectCandidates'' function. For more information about the parameters of each function, please refer to LEXenstein's documentation.
+
+\subsubsection{Example}
+
+The code snippet below shows the SVMBoundarySelector class being used:
+
+\begin{lstlisting}
+from lexenstein.morphadorner import MorphAdornerToolkit
+from lexenstein.generators import *
+from lexenstein.selectors import *
+from lexenstein.features import *
+from lexenstein.rankers import *
+
+fe = FeatureEstimator()
+fe.addCollocationalFeature('lm.txt', 0, 0, 'Complexity')
+fe.addSenseCountFeature('Simplicity')
+
+m = MorphAdornerToolkit('./morph/')
+
+kg = KauchakGenerator(m, 'parallel.txt', 'alignments.txt', 'stop_words.txt')
+subs = kg.getSubstitutions('lexmturk.txt')
+
+br = SVMBoundaryRanker(fe)
+sbs = SVMBoundarySelector(br)
+sbs.trainSelectorWithCrossValidation('lexmturk.txt', 1, 5, 0.25)
+selected = sbs.selectCandidates(subs, 'lexmturk.txt', 'temp.txt', 0.25)
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+\subsection{SVMRankSelector}
+
+Employs a novel strategy, in which a SVM Ranker is trained over a given set of features and then used to rank candidate substitutions according to how likely they are of being able to replace a target word without compromising the sentence's grammaticality or coherence. It retrieves a user-defined percentage of a set of substitutions.
+
+\subsubsection{Parameters}
+
+During instantiation, the SVMRankSelector class requires for a SVMRanker object, which must be configured according to which features and resources the user intends to use to rank substitution candidates. The user can then use the ``trainSelector'' function to train the selector given a set of parameters, or the ``trainSelectorWithCrossValidation'' function to train it with cross-validation. Finally, the user can then retrieve a proportion of the candidate substitutions by using the ``selectCandidates'' function. For more information about the parameters of each function, please refer to LEXenstein's documentation.
+
+\subsubsection{Example}
+
+The code snippet below shows the SVMRankSelector class being used:
+
+\begin{lstlisting}
+from lexenstein.morphadorner import MorphAdornerToolkit
+from lexenstein.generators import *
+from lexenstein.selectors import *
+from lexenstein.features import *
+from lexenstein.rankers import *
+
+fe = FeatureEstimator()
+fe.addCollocationalFeature('lm.txt', 0, 0, 'Complexity')
+fe.addSenseCountFeature('Simplicity')
+
+m = MorphAdornerToolkit('./morph/')
+
+kg = KauchakGenerator(m, 'parallel.txt', 'alignments.txt', 'stop_words.txt')
+subs = kg.getSubstitutions('lexmturk.txt')
+
+sr = SVMRanker(fe, './svm-rank/'
+ss = SVMRankSelector(br)
+ss.trainSelectorWithCrossValidation('lexmturk.txt', 'f1.txt', 'm.txt', 5, 0.25, './temp/', 0)
+selected = bs.selectCandidates(subs, 'lexmturk.txt', 'f2.txt', 's1.txt', 'temp.txt', 0.25)
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+\subsection{VoidSelector}
+
+Does not perform any type of explicit substitution selection, and selects all possible substitutions generated for a given target word.
+
+\subsubsection{Parameters}
+
+During instantiation, the VoidSelector class requires no parameters.
+
+\subsubsection{Example}
+
+The code snippet below shows the VoidSelector class being used:
+
+\begin{lstlisting}
+from lexenstein.generators import *
+from lexenstein.selectors import *
+
+m = MorphAdornerToolkit('./morph/')
+
+kg = KauchakGenerator(m, 'parallel.txt', 'alignments.txt', 'stop_words.txt')
+subs = kg.getSubstitutions('lexmturk.txt')
+
+voidselector = VoidSelector()
+selected = voidselector.selectCandidates(subs, 'lexmturk.txt')
+\end{lstlisting}
+
+
+
+
+
+
+
+
+\section{Substitution Ranking}
+\label{rankers}
+
+Substitution Ranking (SR) is the task of ranking a set of selected substitutions for a target complex word with respect to its simplicity. Approaches vary from simple word length and frequency-based measures \cite{Devlin1998,Carroll98,Carroll99,Biran2011} to more sophisticated linear combination as scoring functions \cite{uowshef} and Machine Learning approaches \cite{Horn2014}.
+
+LEXenstein's SR module provides access to $6$ approaches, each represented by a Python class. The following Sections describe each one individually.
+
+\subsection{MetricRanker}
+
+Employs a simple ranking strategy based on the values of a single feature provided by the user. By configuring the input FeatureEstimator object, the user can calculate values of several features for the candidates in a given dataset, and easily rank the candidates according to each of these features.
+
+\subsubsection{Parameters}
+
+During instantiation, the MetricRanker requires only a configured FeatureEstimator object, which must contain at least one feature that can be used as a metric for ranking. Once created, the user can retrieve rankings by using MetricRanker's ``getRankings'' function, which requires a VICTOR corpus and the index of a feature to be used as a ranking metric.
+
+\subsubsection{Example}
+
+The code snippet below shows the WSDSelector class being used:
+
+\begin{lstlisting}
+from lexenstein.features import *
+from lexenstein.rankers import *
+
+fe = FeatureEstimator()
+fe.addCollocationalFeature('lm.txt', 0, 0, 'Complexity')
+fe.addLengthFeature('Complexity')
+fe.addSenseCountFeature('Simplicity')
+
+mr = MetricRanker(fe)
+frequency_ranks = mr.getRankings('lexmturk.txt', 0)
+length_ranks = mr.getRankings('lexmturk.txt', 1)
+sense_ranks = mr.getRankings('lexmturk.txt', 2)
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+\subsection{SVMRanker}
+
+Use Support Vector Machines in a setup that minimizes a loss function with respect to a ranking model. In LS, this strategy is the one employed in the experiments of \cite{Horn2014}, yielding promising results.
+
+\subsubsection{Parameters}
+
+During instantiation, the SVMRanker requires for a FeatureEstimator object and a path to the root installation folder of SVM-Rank \cite{svmrank}. The user can then use the ``getFeaturesFile'', ``getTrainingModel'', ``getScoresFile'' and ``getRankings'' to train SVM ranking models and rank candidate substitutions. For more information on these functions' parameters, please refer to LEXenstein's documentation and the example in the following Section.
+
+\subsubsection{Example}
+
+The code snippet below shows the SVMRanker class being used:
+
+\begin{lstlisting}
+from lexenstein.features import *
+from lexenstein.rankers import *
+
+fe = FeatureEstimator()
+fe.addCollocationalFeature('lm.txt', 0, 0, 'Complexity')
+fe.addLengthFeature('Complexity')
+fe.addSenseCountFeature('Simplicity')
+
+svmr = SVMRanker(fe, '/svm-rank/')
+svmr.getFeaturesFile('lexmturk.txt', 'features.txt')
+svmr.getTrainingModel('features.txt', 0.1, 0.1, 0, 'model.txt')
+svmr.getScoresFile('features.txt', 'model.txt', 'scores.txt')
+rankings = svmr.getRankings('features.txt', 'scores.txt')
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{BoundaryRanker}
+
+Employs a novel strategy, in which ranking is framed as a binary classification task. During training, this approach assigns the label $1$ to all candidates of rank $1\geq r \geq p$, where $p$ is a range set by the user, and $0$ to the remaining candidates. It then trains a stochastic descent linear classifier based on the features specified in the FeatureEstimator object. During testing, candidate substitutions are ranked based on how far from $0$ they are.
+
+\subsubsection{Parameters}
+
+During instantiation, the BoundaryRanker requires only for a FeatureEstimator object. The user can then use the ``trainRanker'' function to train a ranking model, and the ``getRankings'' to rank the candidates of a VICTOR corpus. For more information on the training parameters supported by the ``trainRanker'' function, please refer to LEXenstein's documentation.
+
+\subsubsection{Example}
+
+The code snippet below shows the BoundaryRanker class being used:
+
+\begin{lstlisting}
+from lexenstein.features import *
+from lexenstein.rankers import *
+
+fe = FeatureEstimator()
+fe.addCollocationalFeature('lm.txt', 0, 0, 'Complexity')
+fe.addLengthFeature('Complexity')
+fe.addSenseCountFeature('Simplicity')
+
+br = BoundaryRanker(fe)
+br.trainRanker('lexmturk.txt', 1, 'modified_huber', 'l1', 0.1, 0.1, 0.001)
+rankings = br.getRankings('lexmturk.txt')
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{SVMBoundaryRanker}
+
+Employs the same strategy used by the BoundaryRanker class, but instead of learning a linear ranking model through Stochastic Gradient Descent, it learns a linear or non-linear model by using Support Vector Machines.
+
+\subsubsection{Parameters}
+
+During instantiation, the SVMBoundaryRanker requires only for a FeatureEstimator object. The user can then use the ``trainRanker'' function to train a ranking model, and the ``getRankings'' to rank the candidates of a VICTOR corpus. For more information on the training parameters supported by the ``trainRanker'' function, please refer to LEXenstein's documentation.
+
+\subsubsection{Example}
+
+The code snippet below shows the SVMBoundaryRanker class being used:
+
+\begin{lstlisting}
+from lexenstein.features import *
+from lexenstein.rankers import *
+
+fe = FeatureEstimator()
+fe.addCollocationalFeature('lm.txt', 0, 0, 'Complexity')
+fe.addLengthFeature('Complexity')
+fe.addSenseCountFeature('Simplicity')
+
+sbr = SVMBoundaryRanker(fe)
+sbr.trainRanker('lexmturk.txt', 1, 10, 'poly', 2, 0.1, 1)
+rankings = sbr.getRankings('lexmturk.txt')
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
+\subsection{BiranRanker}
+
+Employs the strategy of \cite{Biran2011}, which models complexity as a function of a word's length and frequency in corpora of complex and simple content. As input, it requires for a language model trained over complex data, and a language model trained over simple data.
+
+\subsubsection{Parameters}
+
+The language models required by the BiranRanker must be binary, and must be produced by KenLM with the following command lines:
+
+\begin{lstlisting}
+lmplz -o [order] <[corpus_of_text] >[language_model_name]
+\end{lstlisting}
+\begin{lstlisting}
+build_binary [language_model_name] [binary_language_model_name]
+\end{lstlisting}
+
+Complex and simple data can be downloaded fro David Kauchak's page\footnote{http://www.cs.pomona.edu/~dkauchak/simplification/}, or extracted from other sources.
+
+\subsubsection{Example}
+
+The code snippet below shows the BiranRanker class being used:
+
+\begin{lstlisting}
+from lexenstein.features import *
+from lexenstein.rankers import *
+
+br = BiranRanker('lmc.bin', 'lms.bin')
+rankings = br.getRankings('lexmturk.txt')
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{YamamotoRanker}
+
+Employs the strategy of \cite{Yamamoto2013}, which ranks words according to a weighted function that considers their frequency in a corpus of simple content, co-occurrence frequency with a target complex word, sense distance, point-wise mutual information and trigram frequencies. As input, it requires for a language model trained over a corpus of simple data and a co-occurrence model.
+
+\subsubsection{Parameters}
+
+The language model required by the YamamotoRanker must be binary, and must be produced by KenLM with the following command lines:
+
+\begin{lstlisting}
+lmplz -o [order] <[corpus_of_text] >[language_model_name]
+\end{lstlisting}
+\begin{lstlisting}
+build_binary [language_model_name] [binary_language_model_name]
+\end{lstlisting}
+
+Complex and simple data can be downloaded fro David Kauchak's page\footnote{http://www.cs.pomona.edu/~dkauchak/simplification/}, or extracted from other sources. The co-occurrence model must be in plain text format, and each line must follow the format illustrated in Example~\ref{cooc}, where $\left\langle w_{i} \right\rangle$ is a word, $\left\langle c_{i}^{j} \right\rangle$ a co-occurring word and $\left\langle f_{i}^{j} \right\rangle$ its frequency of appearance.
+
+\begin{equation}
+\label{cooc}
+\left\langle w_{i} \right\rangle\; \left\langle c_{i}^{0} \right\rangle\!:\!\left\langle f_{i}^{0} \right\rangle\;\left\langle c_{i}^{1} \right\rangle\!:\!\left\langle f_{i}^{1} \right\rangle\cdots\left\langle c_{i}^{n-1} \right\rangle\!:\!\left\langle f_{i}^{n-1} \right\rangle \; \left\langle c_{i}^{n} \right\rangle\!:\!\left\langle f_{i}^{n} \right\rangle
+\end{equation}
+
+Each component in the format above must be separated by a tabulation marker. To create a co-occurrence model, either create a script that does so, or follow the steps below:
+
+\begin{enumerate}
+\item Gather a corpus of text composed of one tokenized and truecased sentence per line.
+\item Run the script \url{resources/scripts/Produce_Co-occurrence_Model.py} with the following command line:
+
+\begin{lstlisting}
+python Produce_Co-occurrence_Model.py <corpus> <window> <model_path>
+\end{lstlisting}
+
+Where ``<window>'' is the number of tokens to the left and right of a word to be included as a co-occurring word.
+
+\end{enumerate}
+
+To produce models faster, you can split your corpus in various small portions, run parallel processes to produce various small models, and then join them. For more information on the parameters of each function of the YamamotoRanker class, please refer to the LEXenstein documentation.
+
+\subsubsection{Example}
+
+The code snippet below shows the YamamotoRanker class being used:
+
+\begin{lstlisting}
+from lexenstein.features import *
+from lexenstein.rankers import *
+
+yr = YamamotoRanker('lms.bin', 'cooc_model.txt')
+rankings = yr.getRankings('lexmturk.txt')
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{BottRanker}
+
+Employs the strategy of \cite{Bott2012}, which ranks words according to a weighted function that considers their length and frequency in a corpus of simple content. As input, it requires for a language model trained over a corpus of simple data.
+
+\subsubsection{Parameters}
+
+The language model required by the BottRanker must be binary, and must be produced by KenLM with the following command lines:
+
+\begin{lstlisting}
+lmplz -o [order] <[corpus_of_text] >[language_model_name]
+\end{lstlisting}
+\begin{lstlisting}
+build_binary [language_model_name] [binary_language_model_name]
+\end{lstlisting}
+
+Complex and simple data can be downloaded fro David Kauchak's page\footnote{http://www.cs.pomona.edu/~dkauchak/simplification/}, or extracted from other sources.
+
+\subsubsection{Example}
+
+The code snippet below shows the BottRanker class being used:
+
+\begin{lstlisting}
+from lexenstein.features import *
+from lexenstein.rankers import *
+
+br = BottRanker('lms.bin')
+rankings = br.getRankings('lexmturk.txt')
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Evaluation}
+
+Since one of the goals of LEXenstein is to facilitate the benchmarking LS approaches, it is crucial that it provides evaluation methods. This module includes functions for the evaluation of all sub-tasks, both individually and in combination. It contains $5$ classes, each designed for one form of evaluation. We discuss them in more detail in the following Sections.
+
+
+
+
+
+
+
+
+
+\subsection{IdentifierEvaluator}
+
+Provides evaluation metrics for CWI methods. It requires a gold-standard in the CWICTOR format and a set of binary word complexity labels. The labels must have value $1$ for complex words, and $0$ otherwise. It returns the Precision, Recall and F-measure, where Precision is the proportion of correctly labeled words, Recall the proportion of complex words identified, and F-measure their harmonic mean.
+
+The code snippet below shows the IdentifierEvaluator class being used:
+
+\begin{lstlisting}
+from lexenstein.identifiers import *
+from lexenstein.evaluators import *
+
+li = LexiconIdentifier('lexicon.txt', 'simple')
+labels = li.identifyComplexWords('cwictor_gold.txt')
+
+ie = IdentifierEvaluator()
+precision, recall, fmeasure = ie.evaluateIdentifier('cwictor_gold.txt', labels)
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{GeneratorEvaluator}
+
+Provides evaluation metrics for SG methods. It requires a gold-standard in the VICTOR format and a set of generated substitutions. It returns the Potential, Precision, Recall and F-measure, where Potential is the proportion of instances in which at least one of the substitutions generated is present in the gold-standard, Precision the proportion of generated instances which are present in the gold-standard, Recall the proportion of gold-standard candidates that were generated, and F-measure the harmonic mean between Precision and Recall.
+
+The code snippet below shows the GeneratorEvaluator class being used:
+
+\begin{lstlisting}
+from lexenstein.generators import *
+from lexenstein.evaluators import *
+from lexenstein.morphadorner import *
+
+m = MorphAdornerToolkit('./morph/')
+
+kg = WordnetGenerator(m)
+subs = kg.getSubstitutions('lexmturk.txt')
+
+ge = GeneratorEvaluator()
+potential, precision, recall, fmeasure = ge.evaluateGenerator('lexmturk.txt', subs)
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{SelectorEvaluator}
+
+Provides evaluation metrics for SS methods. It requires a gold-standard in the VICTOR format and a set of selected substitutions. It returns the Potential, Precision and F-measure of the SS approach, where Potential is the proportion of instances in which at least one of the substitutions selected is present in the gold-standard, Precision the proportion of selected candidates which are present in the gold-standard, Recall the proportion of gold-standard candidates that were selected, and F-measure the harmonic mean between Precision and Recall.
+
+The code snippet below shows the SelectorEvaluator class being used:
+
+\begin{lstlisting}
+from lexenstein.generators import *
+from lexenstein.selectors import *
+from lexenstein.evaluators import *
+from lexenstein.morphadorner import *
+
+m = MorphAdornerToolkit('./morph/')
+
+kg = WordnetGenerator(m)
+subs = kg.getSubstitutions('lexmturk.txt')
+
+biranselector = BiranSelector('cooc_model.txt')
+selected = biranselector.selectCandidates(subs, 'lexmturk.txt', 0.01, 0.75)
+
+se = SelectorEvaluator()
+potential, precision, recall, fmeasure = se.evaluateSelector('lexmturk.txt', selected)
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+\subsection{RankerEvaluator}
+
+Provides evaluation metrics for SR methods. It requires a gold-standard in the VICTOR format and a set of ranked substitutions. It returns the TRank-at-$1:3$ and Recall-at-$1:3$ metrics \cite{semeval}, where Trank-at-$i$ is the proportion of instances in which a candidate of gold-rank $r\leq i$ was ranked first, and Recall-at-$i$ the proportion of candidates of gold-rank $r\leq i$ that are ranked in positions $p\leq i$.
+
+The code snippet below shows the RankerEvaluator class being used:
+
+\begin{lstlisting}
+from lexenstein.rankers import *
+from lexenstein.features import *
+
+fe = FeatureEstimator()
+fe.addCollocationalFeature('lm.txt', 0, 0, 'Complexity')
+
+mr = MetricRanker(fe)
+rankings = mr.getRankings('lexmturk.txt', 0)
+
+re = RankerEvaluator()
+t1, t2, t3, r1, r2, r3 = re.evaluateRanker('lexmturk.txt', rankings)
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{PipelineEvaluator}
+
+Provides evaluation metrics for the entire LS pipeline. It requires as input a gold-standard in VICTOR format and a set of ranked substitutions which have been generated and selected by a given set of approaches. It returns the approaches' Precision, Accuracy and Change Proportion, where Precision is the proportion of instances in which the highest ranking substitution is not the target complex word itself and is in the gold-standard, Accuracy is the proportion of instances in which the highest ranking substitution is in the gold-standard, and Change Proportion is the proportion of instances in which the highest ranking substitution is not the target complex word itself.
+
+The code snippet below shows the PipelineEvaluator class being used:
+
+\begin{lstlisting}
+from lexenstein.generators import *
+from lexenstein.selectors import *
+from lexenstein.evaluators import *
+from lexenstein.rankers import *
+from lexenstein.features import *
+from lexenstein.morphadorner import *
+
+m = MorphAdornerToolkit('./morph/')
+
+kg = WordnetGenerator(m)
+subs = kg.getSubstitutions('lexmturk.txt')
+
+bs = BiranSelector('cooc_model.txt')
+selected = bs.selectCandidates(subs, 'lexmturk.txt', 0.01, 0.75)
+bs.toVictorFormat('lexmturk.txt', selected, 'victor.txt', addTargetAsCandidate=True)
+
+fe = FeatureEstimator()
+fe.addCollocationalFeature('lm.txt', 0, 0, 'Complexity')
+
+mr = MetricRanker(fe)
+rankings = mr.getRankings('victor.txt', 0)
+
+pe = PipelineEvaluator()
+precision, accuracy, changed = pe.evaluatePipeline('lexmturk.txt', rankings)
+\end{lstlisting}

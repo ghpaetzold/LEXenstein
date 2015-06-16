@@ -1,0 +1,133 @@
+\chapter{Installation}
+\label{install}
+
+LEXenstein is a library written entirely in Python. It hence requires for Python $2$.$7$.* to be installed in the user's machine. We have not yet tried to run LEXenstein over Python $3$.*. To install LEXenstein, please follow the steps below:
+
+\begin{enumerate}
+	\item Download the tool from \textbf{omitted for review}.
+	\item Copy the ``lexenstein'' folder included in the package into the folder of your project.
+	\item Access LEXenstein by importing its modules in the following fashion:
+	\begin{lstlisting}
+from lexenstein.morphadorner import *
+from lexenstein.spelling import *
+from lexenstein.features import *
+from lexenstein.identifiers import *
+from lexenstein.generators import *
+from lexenstein.selectors import *
+from lexenstein.rankers import *
+from lexenstein.evaluators import *
+from lexenstein.util import *
+\end{lstlisting}
+\end{enumerate}
+
+In the near future, we will allow for one to install LEXenstein by using standard installation routines, such as through a ``setup.py'' file, or pip. LEXenstein requires for several libraries and toolkits to be included in the user's Python $2$.$7$.* installation. The following Sections explain which libraries and toolkits are required, where to get them and how to install them.
+
+
+
+
+
+
+\section{Required Libraries}
+
+\subsection{Morph Adorner Toolkit}
+
+The Morph Adorner Toolkit \cite{Paetzold15mat} is a set of Java applications that facilitate the access to Morph Adorner's functionalities \cite{morphadorner}. This tool is used by LEXenstein's Substitution Generation module to create inflections for generated substitutions. To install it, follow the steps below:
+
+\begin{enumerate}
+	\item Download the tool from \url{http://ghpaetzold.github.io/MorphAdornerToolkit/}
+	\item Place it in a folder of your choice
+\end{enumerate}
+
+Since the tool does not require any compilation, all you need to do is use the path in which you installed it to create instances of the \textbf{MorphAdornerToolkit} class, which can be found in LEXenstein's Morph Adorning module.
+
+
+
+
+
+
+
+
+\subsection{NLTK}
+
+NLTK \cite{nltk} is a set of resources and algorithms for tasks related, but not restricted to, Natural Language Processing. To install it, please follow the steps provided in: \url{http://www.nltk.org/install.html}. Once you have NLTK installed in your Python distribution, please download all additional resources available by following this tutorial: \url{http://www.nltk.org/data.html}.
+
+
+
+
+
+
+\subsection{KenLM}
+
+KenLM \cite{kenlm} is a tool for fast language model creation and querying. LEXenstein's modules use KenLM to access the data in binary language models for various tasks, such as feature calculation and substitution filtering. To install it, please follow the steps below:
+
+\begin{enumerate}
+	\item Download or clone KenLM from \url{https://github.com/kpu/kenlm}
+	\item Place it in a folder of your choice
+	\item Navigate to the installation folder in a terminal and run: \textbf{python setup.py install}
+\end{enumerate}
+
+If no problems occur, KenLM should now be installed in your Python distribution. To verify whether or not the installation was successful, open Python and try importing the library with the following line of code: \textbf{import kenlm}. If no errors occur, then the installation was successful.
+
+
+
+
+
+
+
+\subsection{Scipy and Numpy}
+
+Scipy and Numpy \cite{scipy} are tools that offer great utility for projects and applications in the fields of mathematics, science, and engineering. To install them, please follow the instructions in: \url{http://www.scipy.org/install.html}.
+
+
+
+
+
+
+
+\subsection{Gensim}
+
+Gensim \cite{gensim} is a set of algorithms for unsupervised semantic modeling. LEXenstein uses Gensim to read word vector models. To install it, follow the instructions in: \url{https://radimrehurek.com/gensim/install.html}.
+
+
+
+
+
+
+
+\subsection{PyWSD}
+
+PyWSD \cite{pywsd} is a library that offers access to several Word Sense Disambiguation algorithms. LEXenstein's uses this library to filter substitutions. To install it, follow the steps below:
+
+\begin{enumerate}
+	\item Download or clone PyWSD from \url{https://github.com/alvations/pywsd}
+	\item Place it in a folder of your choice
+	\item Navigate to the installation folder in a terminal and run: \textbf{python setup.py install}
+\end{enumerate}
+
+If no problems occur, PyWSD should now be installed in your Python distribution. To verify whether or not the installation was successful, open Python and try importing the library with the following line of code: \textbf{import pywsd}. If no errors occur, then the installation was successful.
+
+
+
+
+
+
+\subsection{Scikit-Learn}
+
+Scikit-Learn \cite{scikit-learn} is a set of tools for data mining, data analysis and machine learning. LEXenstein uses this library to learn ranking models. To install it, follow the instructions in: \url{http://scikit-learn.org/stable/install.html}.
+
+
+
+\subsection{SVM-Rank}
+
+SVM-Rank \cite{svmrank} is a tool that allows for one to use Support Vector Machines in ranking setups. LEXenstein uses this library to learn ranking models. To install it, follow the instructions in: \url{http://www.cs.cornell.edu/people/tj/svm_light/svm_rank.html}.
+
+
+\subsection{Stanford Tagger}
+
+The Stanford Tagger \cite{Klein1965} is a tool that allows for one to annotate sentences with Part-of-Speech (POS) tags. LEXenstein uses this library to find the POS tag of a target word in a sentence. To install it, download the application's latest version from \url{http://nlp.stanford.edu/software/tagger.shtml}. Inside the package, you will be able to find the \textbf{stanford-tagger.jar} executable and pre-trained tagging models inside the \textbf{/models/} folder required by some of LEXenstein's substitution generators.
+
+
+
+\subsection{Other Libraries}
+
+LEXenstein also uses various other well-known Python modules, they are: xml, re, urllib$2$, subprocess, codecs and os.
