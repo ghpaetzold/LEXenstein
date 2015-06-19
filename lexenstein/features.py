@@ -243,6 +243,33 @@ class FeatureEstimator:
 				result.append(values)
 		return result
 		
+	def popCollocationalFeature(self, data, args):
+		lm = args[0]
+		spanl = args[1]
+		spanr = args[2]
+		result = []
+		model = self.resources[lm]
+		for line in data:
+			sent = line[0]
+			target = line[1]
+			head = int(line[2])
+			spanlv = range(0, spanl+1)
+			spanrv = range(0, spanr+1)
+			for subst in line[3:len(line)]:
+				word = subst.split(':')[1].strip()
+				values = []
+				for span1 in spanlv:
+					for span2 in spanrv:
+						ngrams = self.getPopNgrams(word, sent, head, span1, span2)
+						maxscore = -999999
+						for ngram in ngrams:
+							aux = model.score(ngram[0], bos=ngram[1], eos=ngram[2])
+							if aux>maxscore:
+								maxscore = aux
+						values.append(maxscore)
+				result.append(values)
+		return result
+		
 	def ngramFrequencyFeature(self, data, args):
 		lm = args[0]
 		spanl = args[1]
@@ -262,7 +289,13 @@ class FeatureEstimator:
 	
 	def getNgram(self, cand, sent, head, configl, configr):
 		if configl==0 and configr==0:
-			return cand, False, False
+			bos = False
+			eos = False
+			if head==0:
+				bos = True
+			if head==len(sent.split(' '))-1:
+				eos = True
+			return cand, bos, eos
 		else:
 			result = ''
 			tokens = sent.strip().split(' ')
@@ -278,6 +311,57 @@ class FeatureEstimator:
 			for i in range(head+1, min(len(tokens), head+configr+1)):
 				result += tokens[i] + ' '
 			return result.strip(), bosv, eosv
+	
+	def getPopNgrams(self, cand, sent, head, configl, configr):
+		if configl==0 and configr==0:
+			bos = False
+			eos = False
+			if head==0:
+				bos = True
+			if head==len(sent.split(' '))-1:
+				eos = True
+			return [cand, bos, eos]
+		else:
+			result = set([])
+			contexts = self.getPopContexts(sent, head)
+			for context in contexts:
+				ctokens = context[0]
+				chead = context[1]
+				bosv = False
+				if max(0, chead-configl)==0:
+					bosv = True
+				eosv = False
+				ngram = ''
+				if min(len(ctokens), chead+configr+1)==len(ctokens):
+					eosv = True
+				for i in range(max(0, chead-configl), chead):
+					ngram += ctokens[i] + ' '
+				ngram += cand + ' '
+				for i in range(chead+1, min(len(ctokens), chead+configr+1)):
+					ngram += ctokens[i] + ' '
+				result.add((ngram, bosv, eosv))
+			return result
+			
+	def getPopContexts(self, sent, head):
+		tokens = sent.strip().split(' ')
+		result = set([])
+		check = 0
+		if head>0:
+			check += 1
+			tokens1 = tokens
+			tokens1.pop[head-1]
+			result.add((tokens1, head-1))
+		if head<len(tokens)-1:
+			check += 1
+			tokens2 = tokens
+			tokens2.pop[head+1]
+			result.add((tokens2, head))
+		if check==2:
+			tokens3 = tokens
+			tokens3.pop[head-1]
+			tokens3.pop[head+1]
+			result.add((tokens3, head-1))
+		return result
 			
 	def sentenceProbabilityFeature(self, data, args):
 		lm = args[0]
@@ -579,6 +663,31 @@ class FeatureEstimator:
 			for i in range(0, leftw+1):
 				for j in range(0, rightw+1):
 					self.identifiers.append(('Collocational Feature ['+str(i)+', '+str(j)+'] (LM: '+language_model+')', orientation))
+					
+	def addPopCollocationalFeature(self, language_model, leftw, rightw, orientation):
+		"""
+		Adds a set of "pop" collocational features to the estimator.
+		Each feature is the probability of an n-gram with 0<=l<=leftw tokens to the left and 0<=r<=rightw tokens to the right.
+		The value of each feature will be the highest frequency between all "popping" combinations of one token to the left and right.
+		This method creates (leftw+1)*(rightw+1) features.
+	
+		@param language_model: Path to the language model from which to extract probabilities.
+		@param leftw: Maximum number of tokens to the left.
+		@param rightw: Maximum number of tokens to the right.
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Possible values: Complexity, Simplicity.
+		"""
+		
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:
+			if language_model not in self.resources.keys():
+				model = kenlm.LanguageModel(language_model)
+				self.resources[language_model] = model
+			self.features.append((self.popCollocationalFeature, [language_model, leftw, rightw]))
+			for i in range(0, leftw+1):
+				for j in range(0, rightw+1):
+					self.identifiers.append(('Pop Collocational Feature ['+str(i)+', '+str(j)+'] (LM: '+language_model+')', orientation))
 					
 	def addNGramFrequencyFeature(self, language_model, leftw, rightw, orientation):
 		"""
