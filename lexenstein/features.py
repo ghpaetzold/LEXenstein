@@ -286,6 +286,27 @@ class FeatureEstimator:
 				prob = model.score(ngram, bos=bosv, eos=eosv)
 				result.append(prob)
 		return result
+		
+	def popNgramFrequencyFeature(self, data, args):
+		lm = args[0]
+		spanl = args[1]
+		spanr = args[2]
+		result = []
+		model = self.resources[lm]
+		for line in data:
+			sent = line[0]
+			target = line[1]
+			head = int(line[2])
+			for subst in line[3:len(line)]:
+				word = subst.split(':')[1].strip()
+				ngrams = self.getPopNgrams(word, sent, head, spanl, spanl)
+				maxscore = -999999
+				for ngram in ngrams:
+					aux = model.score(ngram[0], bos=ngram[1], eos=ngram[2])
+					if aux>maxscore:
+						maxscore = aux
+				result.append(maxscore)
+		return result
 	
 	def getNgram(self, cand, sent, head, configl, configr):
 		if configl==0 and configr==0:
