@@ -314,7 +314,7 @@ class FeatureEstimator:
 				bos = True
 			if head==len(sent.split(' '))-1:
 				eos = True
-			return [cand, bos, eos]
+			return [(cand, bos, eos)]
 		else:
 			result = set([])
 			contexts = self.getPopContexts(sent, head)
@@ -338,23 +338,23 @@ class FeatureEstimator:
 			
 	def getPopContexts(self, sent, head):
 		tokens = sent.strip().split(' ')
-		result = set([])
+		result = []
 		check = 0
 		if head>0:
 			check += 1
-			tokens1 = tokens
-			tokens1.pop[head-1]
-			result.add((tokens1, head-1))
+			tokens1 = list(tokens)
+			tokens1.pop(head-1)
+			result.append((tokens1, head-1))
 		if head<len(tokens)-1:
 			check += 1
-			tokens2 = tokens
-			tokens2.pop[head+1]
-			result.add((tokens2, head))
+			tokens2 = list(tokens)
+			tokens2.pop(head+1)
+			result.append((tokens2, head))
 		if check==2:
-			tokens3 = tokens
-			tokens3.pop[head-1]
-			tokens3.pop[head+1]
-			result.add((tokens3, head-1))
+			tokens3 = list(tokens)
+			tokens3.pop(head+1)
+			tokens3.pop(head-1)
+			result.append((tokens3, head-1))
 		return result
 			
 	def sentenceProbabilityFeature(self, data, args):
