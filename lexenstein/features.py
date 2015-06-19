@@ -289,13 +289,7 @@ class FeatureEstimator:
 	
 	def getNgram(self, cand, sent, head, configl, configr):
 		if configl==0 and configr==0:
-			bos = False
-			eos = False
-			if head==0:
-				bos = True
-			if head==len(sent.split(' '))-1:
-				eos = True
-			return cand, bos, eos
+			return cand, False, False
 		else:
 			result = ''
 			tokens = sent.strip().split(' ')
