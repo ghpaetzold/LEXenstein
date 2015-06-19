@@ -683,7 +683,7 @@ class FeatureEstimator:
 		"""
 		Adds a set of "pop" collocational features to the estimator.
 		Each feature is the probability of an n-gram with 0<=l<=leftw tokens to the left and 0<=r<=rightw tokens to the right.
-		The value of each feature will be the highest frequency between all "popping" combinations of one token to the left and right.
+		The value of each feature will be the highest frequency between all "popping" n-gram combinations of one token to the left and right.
 		This method creates (leftw+1)*(rightw+1) features.
 	
 		@param language_model: Path to the language model from which to extract probabilities.
@@ -707,7 +707,7 @@ class FeatureEstimator:
 	def addNGramFrequencyFeature(self, language_model, leftw, rightw, orientation):
 		"""
 		Adds a n-gram frequency feature to the estimator.
-		The value is the probability of the n-gram with leftw tokens to the left and rightw tokens to the right.
+		The value will be the highest frequency between all "popping" n-gram combinations of one token to the left and right.
 	
 		@param language_model: Path to the language model from which to extract probabilities.
 		@param leftw: Number of tokens to the left.
@@ -724,6 +724,27 @@ class FeatureEstimator:
 				self.resources[language_model] = model
 			self.features.append((self.ngramFrequencyFeature, [language_model, leftw, rightw]))
 			self.identifiers.append(('N-Gram Frequency Feature ['+str(leftw)+', '+str(rightw)+'] (LM: '+language_model+')', orientation))
+			
+	def addPopNGramFrequencyFeature(self, language_model, leftw, rightw, orientation):
+		"""
+		Adds a pop n-gram frequency feature to the estimator.
+		The value is the probability of the n-gram with leftw tokens to the left and rightw tokens to the right.
+	
+		@param language_model: Path to the language model from which to extract probabilities.
+		@param leftw: Number of tokens to the left.
+		@param rightw: Number of tokens to the right.
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Possible values: Complexity, Simplicity.
+		"""
+		
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:
+			if language_model not in self.resources.keys():
+				model = kenlm.LanguageModel(language_model)
+				self.resources[language_model] = model
+			self.features.append((self.popNgramFrequencyFeature, [language_model, leftw, rightw]))
+			self.identifiers.append(('Pop N-Gram Frequency Feature ['+str(leftw)+', '+str(rightw)+'] (LM: '+language_model+')', orientation))
 		
 	def addSentenceProbabilityFeature(self, language_model, orientation):
 		"""
