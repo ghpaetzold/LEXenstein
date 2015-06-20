@@ -8,10 +8,11 @@ from nltk.tag.stanford import POSTagger
 import kenlm
 import codecs
 import os
+import gensim
 
 class PaetzoldGenerator:
 
-	def __init__(self, mat, posw2vmodel, nc pos_model, stanford_tagger, java_path):
+	def __init__(self, mat, posw2vmodel, nc, pos_model, stanford_tagger, java_path):
 		"""
 		Creates a PaetzoldGenerator instance.
 	
@@ -32,7 +33,7 @@ class PaetzoldGenerator:
 		os.environ['JAVAHOME'] = java_path
 		self.tagger = POSTagger(pos_model, stanford_tagger)
 
-	def getSubstitutions(self, victor_corpus):
+	def getSubstitutions(self, victor_corpus, amount):
 		"""
 		Generates substitutions for the target words of a corpus in VICTOR format.
 	
@@ -42,13 +43,13 @@ class PaetzoldGenerator:
 		Example: substitutions['perched'] = {'sat', 'roosted'}
 		"""
 		#Get candidate->pos map:
-		print('Getting parsed sentences...')
 		tagged_sents = self.getParsedSentences(victor_corpus)
 
 		#Get initial set of substitutions:
+		substitutions = self.getInitialSet(victor_corpus, tagged_sents, amount)
 		return substitutions
 		
-	def getParsedSentences(self, path):
+	def getParsedSentences(self, victor_corpus):
 		lexf = open(victor_corpus)
 		sents = []
 		for line in lexf:
@@ -60,13 +61,13 @@ class PaetzoldGenerator:
 		tagged_sents = self.tagger.tag_sents(sents)
 		return tagged_sents
 
-	def getInitialSet(self, victor_corpus, tsents):
+	def getInitialSet(self, victor_corpus, tsents, amount):
 		lexf = open(victor_corpus)
 		data = []
 		for line in lexf:
 			d = line.strip().split('\t')
 			data.append(d)
-		f.close()
+		lexf.close()
 		
 		trgs = []
 		trgsc = []
@@ -79,19 +80,19 @@ class PaetzoldGenerator:
 			tags = tsents[i]
 			target = d[1].strip().lower()
 			head = int(d[2].strip())
-			tag = getClass(tags[head][1])
-			targetc = nc.correct(target)
+			tag = self.getClass(tags[head][1])
+			targetc = self.nc.correct(target)
 			trgs.append(target)
 			trgsc.append(targetc)
-		trgslemmas = mat.lemmatizeWords(trgs)
-		trgsclemmas = mat.lemmatizeWords(trgsc)
-		trgsstems = mat.stemWords(trgs)
-		trgscstems = mat.stemWords(trgsc)
+		trgslemmas = self.mat.lemmatizeWords(trgs)
+		trgsclemmas = self.mat.lemmatizeWords(trgsc)
+		trgsstems = self.mat.stemWords(trgs)
+		trgscstems = self.mat.stemWords(trgsc)
 		trgmap = {}
 		for i in range(0, len(trgslemmas)):
 			target = data[i][1].strip().lower()
 			head = int(data[i][2].strip())
-			tag = getClass(tsents[i][head][1])
+			tag = self.getClass(tsents[i][head][1])
 			lemma = trgslemmas[i]
 			stem = trgsstems[i]
 			trgmap[target] = (lemma, stem)
@@ -103,7 +104,7 @@ class PaetzoldGenerator:
 
 			t = trgs[i]
 			tstem = trgsstems[i]
-			tlemma = trgscstems[i] 
+			tlemma = trgslemmas[i] 
 			tc = trgsc[i]
 			tcstem = trgscstems[i]
 			tclemma = trgsclemmas[i]
@@ -112,15 +113,15 @@ class PaetzoldGenerator:
 			head = int(d[2].strip())
 			tag = tags[head][1]
 
-			word = t+'|||'+getClass(tag)
-			wordc = tc+'|||'+getClass(tag)
+			word = t+'|||'+self.getClass(tag)
+			wordc = tc+'|||'+self.getClass(tag)
 
 			most_sim = []
 			try:
-				most_sim = m.most_similar(positive=[word], topn=50)
+				most_sim = self.model.most_similar(positive=[word], topn=50)
 			except KeyError:
 				try:
-					most_sim = m.most_similar(positive=[wordc], topn=50)
+					most_sim = self.model.most_similar(positive=[wordc], topn=50)
 				except KeyError:
 					most_sim = []
 
@@ -143,17 +144,16 @@ class PaetzoldGenerator:
 			subs.append(lr)
 			
 		cands = list(cands)
-		candslemmas = mat.lemmatizeWords(cands)
-		candsstems = mat.stemWords(cands)
+		candslemmas = self.mat.lemmatizeWords(cands)
+		candsstems = self.mat.stemWords(cands)
 		candmap = {}
 		for i in range(0, len(cands)):
 			cand = cands[i]
 			lemma = candslemmas[i]
 			stem = candsstems[i]
 			candmap[cand] = (lemma, stem)
-		print('Got candidate data!')
 		
-		subs_filtered = self.filterSubs(data, tsents, subs, candmap)
+		subs_filtered = self.filterSubs(data, tsents, subs, candmap, trgs, trgsc, trgsstems, trgscstems, trgslemmas, trgsclemmas)
 		
 		final_cands = {}
 		for i in range(0, len(data)):
@@ -166,24 +166,24 @@ class PaetzoldGenerator:
 		
 		return final_cands
 	
-	def filterSubs(self, data, tsents, subs, candmap):
+	def filterSubs(self, data, tsents, subs, candmap, trgs, trgsc, trgsstems, trgscstems, trgslemmas, trgsclemmas):
 		result = []
 		for i in range(0, len(data)):
 			d = data[i]
 
 			t = trgs[i]
 			tstem = trgsstems[i]
-			tlemma = trgscstems[i]
+			tlemma = trgslemmas[i]
 			tc = trgsc[i]
 			tcstem = trgscstems[i]
 			tclemma = trgsclemmas[i]
 
 			tags = tsents[i]
 			head = int(d[2].strip())
-			tag = getClass(tags[head][1])
+			tag = self.getClass(tags[head][1])
 
-			word = t+'|||'+getClass(tag)
-			wordc = tc+'|||'+getClass(tag)
+			word = t+'|||'+self.getClass(tag)
+			wordc = tc+'|||'+self.getClass(tag)
 
 			most_sim = subs[i]
 			most_simf = []
@@ -195,11 +195,8 @@ class PaetzoldGenerator:
 				clemma = candmap[cword][0]
 				cstem = candmap[cword][1]
 
-				#Filter by tag:
 				if ctag==tag:
-					#Filter by stem and lemma:
 					if clemma!=tlemma and clemma!=tclemma and cstem!=tstem and cstem!=tcstem:
-						#Filter by inclusion:
 						if cword not in t and cword not in tc and t not in cword and tc not in cword:
 							most_simf.append(cand)
 			
