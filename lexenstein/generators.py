@@ -9,6 +9,238 @@ import kenlm
 import codecs
 import os
 
+class PaetzoldGenerator:
+
+	def __init__(self, mat, posw2vmodel, nc pos_model, stanford_tagger, java_path):
+		"""
+		Creates a PaetzoldGenerator instance.
+	
+		@param mat: MorphAdornerToolkit object.
+		@param posw2vmodel: Binary parsed word vector model.
+		For more information on how to produce the model, please refer to the LEXenstein Manual.
+		@param nc: NorvigCorrector object.
+		@param pos_model: Path to a POS tagging model for the Stanford POS Tagger.
+		The models can be downloaded from the following link: http://nlp.stanford.edu/software/tagger.shtml
+		@param stanford_tagger: Path to the "stanford-postagger.jar" file.
+		The tagger can be downloaded from the following link: http://nlp.stanford.edu/software/tagger.shtml
+		@param java_path: Path to the system's "java" executable.
+		Can be commonly found in "/usr/bin/java" in Unix/Linux systems, or in "C:/Program Files/Java/jdk_version/java.exe" in Windows systems.
+		"""
+		self.mat = mat
+		self.model = gensim.models.word2vec.Word2Vec.load_word2vec_format(posw2vmodel, binary=True)
+		self.nc = nc
+		os.environ['JAVAHOME'] = java_path
+		self.tagger = POSTagger(pos_model, stanford_tagger)
+
+	def getSubstitutions(self, victor_corpus):
+		"""
+		Generates substitutions for the target words of a corpus in VICTOR format.
+	
+		@param victor_corpus: Path to a corpus in the VICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@return: A dictionary that assigns target complex words to sets of candidate substitutions.
+		Example: substitutions['perched'] = {'sat', 'roosted'}
+		"""
+		#Get candidate->pos map:
+		print('Getting parsed sentences...')
+		tagged_sents = self.getParsedSentences(victor_corpus)
+
+		#Get initial set of substitutions:
+		return substitutions
+		
+	def getParsedSentences(self, path):
+		lexf = open(victor_corpus)
+		sents = []
+		for line in lexf:
+			data = line.strip().split('\t')
+			sent = data[0].strip().split(' ')
+			sents.append(sent)
+		lexf.close()
+		
+		tagged_sents = self.tagger.tag_sents(sents)
+		return tagged_sents
+
+	def getInitialSet(self, victor_corpus, tsents):
+		lexf = open(victor_corpus)
+		data = []
+		for line in lexf:
+			d = line.strip().split('\t')
+			data.append(d)
+		f.close()
+		
+		trgs = []
+		trgsc = []
+		trgsstems = []
+		trgslemmas = []
+		trgscstems = []
+		trgsclemmas = []
+		for i in range(0, len(data)):
+			d = data[i]
+			tags = tsents[i]
+			target = d[1].strip().lower()
+			head = int(d[2].strip())
+			tag = getClass(tags[head][1])
+			targetc = nc.correct(target)
+			trgs.append(target)
+			trgsc.append(targetc)
+		trgslemmas = mat.lemmatizeWords(trgs)
+		trgsclemmas = mat.lemmatizeWords(trgsc)
+		trgsstems = mat.stemWords(trgs)
+		trgscstems = mat.stemWords(trgsc)
+		trgmap = {}
+		for i in range(0, len(trgslemmas)):
+			target = data[i][1].strip().lower()
+			head = int(data[i][2].strip())
+			tag = getClass(tsents[i][head][1])
+			lemma = trgslemmas[i]
+			stem = trgsstems[i]
+			trgmap[target] = (lemma, stem)
+	
+		subs = []
+		cands = set([])
+		for i in range(0, len(data)):
+			d = data[i]
+
+			t = trgs[i]
+			tstem = trgsstems[i]
+			tlemma = trgscstems[i] 
+			tc = trgsc[i]
+			tcstem = trgscstems[i]
+			tclemma = trgsclemmas[i]
+
+			tags = tsents[i]
+			head = int(d[2].strip())
+			tag = tags[head][1]
+
+			word = t+'|||'+getClass(tag)
+			wordc = tc+'|||'+getClass(tag)
+
+			most_sim = []
+			try:
+				most_sim = m.most_similar(positive=[word], topn=50)
+			except KeyError:
+				try:
+					most_sim = m.most_similar(positive=[wordc], topn=50)
+				except KeyError:
+					most_sim = []
+
+			subs.append([word[0] for word in most_sim])
+			
+		subsr = subs
+		subs = []
+		for l in subsr:
+			lr = []
+			for inst in l:
+				cand = inst.split('|||')[0].strip()
+				encc = None
+				try:
+					encc = cand.encode('ascii')
+				except Exception:
+					encc = None
+				if encc:
+					cands.add(cand)
+					lr.append(inst)
+			subs.append(lr)
+			
+		cands = list(cands)
+		candslemmas = mat.lemmatizeWords(cands)
+		candsstems = mat.stemWords(cands)
+		candmap = {}
+		for i in range(0, len(cands)):
+			cand = cands[i]
+			lemma = candslemmas[i]
+			stem = candsstems[i]
+			candmap[cand] = (lemma, stem)
+		print('Got candidate data!')
+		
+		subs_filtered = self.filterSubs(data, tsents, subs, candmap)
+		
+		final_cands = {}
+		for i in range(0, len(data)):
+			target = data[i][1]
+			cands = subs_filtered[i][0:min(amount, subs_filtered[i])]
+			cands = [str(word.split('|||')[0].strip()) for word in cands]
+			if target not in final_cands.keys():
+				final_cands[target] = set([])
+			final_cands[target].update(set(cands))
+		
+		return final_cands
+	
+	def filterSubs(self, data, tsents, subs, candmap):
+		result = []
+		for i in range(0, len(data)):
+			d = data[i]
+
+			t = trgs[i]
+			tstem = trgsstems[i]
+			tlemma = trgscstems[i]
+			tc = trgsc[i]
+			tcstem = trgscstems[i]
+			tclemma = trgsclemmas[i]
+
+			tags = tsents[i]
+			head = int(d[2].strip())
+			tag = getClass(tags[head][1])
+
+			word = t+'|||'+getClass(tag)
+			wordc = tc+'|||'+getClass(tag)
+
+			most_sim = subs[i]
+			most_simf = []
+
+			for cand in most_sim:
+				candd = cand.split('|||')
+				cword = candd[0].strip()
+				ctag = candd[1].strip()
+				clemma = candmap[cword][0]
+				cstem = candmap[cword][1]
+
+				#Filter by tag:
+				if ctag==tag:
+					#Filter by stem and lemma:
+					if clemma!=tlemma and clemma!=tclemma and cstem!=tstem and cstem!=tcstem:
+						#Filter by inclusion:
+						if cword not in t and cword not in tc and t not in cword and tc not in cword:
+							most_simf.append(cand)
+			
+			class_filtered = []
+			for cand in most_simf:
+				candd = cand.split('|||')
+				cword = candd[0].strip()
+				ctag = candd[1].strip()
+				clemma = candmap[cword][0]
+				cstem = candmap[cword][1]
+
+				if tag=='V':
+					if (t.endswith('ing') or tc.endswith('ing')) and cword.endswith('ing'):
+						class_filtered.append(cand)
+					elif (t.endswith('d') or tc.endswith('d')) and cword.endswith('d'):
+						class_filtered.append(cand)
+				else:
+					class_filtered.append(cand)
+
+			result.append(most_simf)
+		return result
+		
+	def getClass(self, tag):
+		result = None
+		if tag.startswith('N'):
+			result = 'N'
+		elif tag.startswith('V'):
+			result = 'V'
+		elif tag.startswith('RB'):
+			result = 'A'
+		elif tag.startswith('J'):
+			result = 'J'
+		elif tag.startswith('W'):
+			result = 'W'
+		elif tag.startswith('PRP'):
+			result = 'P'
+		else:
+			result = tag.strip()
+		return result
+		
+
 class KauchakGenerator:
 
 	def __init__(self, mat, parallel_pos_file, alignments_file, stop_words, nc):
