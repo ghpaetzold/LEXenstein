@@ -9,14 +9,15 @@ import kenlm
 import codecs
 import os
 import gensim
+from nltk.stem.wordnet import WordNetLemmatizer
+from nltk.stem.porter import PorterStemmer
 
 class PaetzoldGenerator:
 
-	def __init__(self, mat, posw2vmodel, nc, pos_model, stanford_tagger, java_path):
+	def __init__(self, posw2vmodel, nc, pos_model, stanford_tagger, java_path):
 		"""
 		Creates a PaetzoldGenerator instance.
 	
-		@param mat: MorphAdornerToolkit object.
 		@param posw2vmodel: Binary parsed word vector model.
 		For more information on how to produce the model, please refer to the LEXenstein Manual.
 		@param nc: NorvigCorrector object.
@@ -27,7 +28,8 @@ class PaetzoldGenerator:
 		@param java_path: Path to the system's "java" executable.
 		Can be commonly found in "/usr/bin/java" in Unix/Linux systems, or in "C:/Program Files/Java/jdk_version/java.exe" in Windows systems.
 		"""
-		self.mat = mat
+		self.lemmatizer = WordNetLemmatizer()
+		self.stemmer = PorterStemmer()
 		self.model = gensim.models.word2vec.Word2Vec.load_word2vec_format(posw2vmodel, binary=True)
 		self.nc = nc
 		os.environ['JAVAHOME'] = java_path
@@ -84,10 +86,10 @@ class PaetzoldGenerator:
 			targetc = self.nc.correct(target)
 			trgs.append(target)
 			trgsc.append(targetc)
-		trgslemmas = self.mat.lemmatizeWords(trgs)
-		trgsclemmas = self.mat.lemmatizeWords(trgsc)
-		trgsstems = self.mat.stemWords(trgs)
-		trgscstems = self.mat.stemWords(trgsc)
+		trgslemmas = self.lemmatizeWords(trgs)
+		trgsclemmas = self.lemmatizeWords(trgsc)
+		trgsstems = self.stemWords(trgs)
+		trgscstems = self.stemWords(trgsc)
 		trgmap = {}
 		for i in range(0, len(trgslemmas)):
 			target = data[i][1].strip().lower()
@@ -144,8 +146,8 @@ class PaetzoldGenerator:
 			subs.append(lr)
 			
 		cands = list(cands)
-		candslemmas = self.mat.lemmatizeWords(cands)
-		candsstems = self.mat.stemWords(cands)
+		candslemmas = self.lemmatizeWords(cands)
+		candsstems = self.stemWords(cands)
 		candmap = {}
 		for i in range(0, len(cands)):
 			cand = cands[i]
@@ -165,6 +167,18 @@ class PaetzoldGenerator:
 			final_cands[target].update(set(cands))
 		
 		return final_cands
+		
+	def lemmatizeWords(self, words):
+		result = []
+		for word in words:
+			result.append(self.lemmatizer.lemmatize(word))
+		return result
+		
+	def stemWords(self, words):
+		result = []
+		for word in words:
+			result.append(self.stemmer.stem(word))
+		return result
 	
 	def filterSubs(self, data, tsents, subs, candmap, trgs, trgsc, trgsstems, trgscstems, trgslemmas, trgsclemmas):
 		result = []
