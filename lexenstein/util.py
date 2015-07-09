@@ -2,6 +2,39 @@ import nltk
 import pickle
 import shelve
 
+def getVocabularyFromDataset(dataset, vocab_file, format='victor'):
+	"""
+	Extracts the vocabulary from a dataset in VICTOR or CWICTOR format.
+	
+	@param dataset: Dataset from which to extract the vocabulary.
+	@param vocab_file: File in which to save the vocabulary.
+	@param format: Format of the dataset.
+	Values accepted: victor, cwictor
+	"""
+	vocab = set([])
+	if format=='victor':
+		f = open(dataset)
+		for line in f:
+			data = line.strip().split('\t')
+			sent = set(data[0].strip().split(' '))
+			target = data[1].strip()
+			vocab.update(sent)
+			vocab.add(target)
+			for sub in data[3:len(data)]:
+				word = sub.strip().split(':')[1].strip()
+				vocab.add(word)
+		f.close()
+	elif format=='cwictor':
+		f = open(dataset)
+		for line in f:
+			data = line.strip().split('\t')
+			sent = set(data[0].strip().split(' '))
+			target = data[1].strip()
+			vocab.update(sent)
+			vocab.add(target)
+		f.close()
+	return vocab
+
 def createBinaryNgramCountsModel(ngrams_file, model_file):
 	"""
 	Creates a binary n-gram counts dictionary from an n-gram frequency file.
