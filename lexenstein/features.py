@@ -328,9 +328,9 @@ class FeatureEstimator:
 				ngram, bosv, eosv = self.getNgram(word, sent, head, spanl, spanr)
 				try:
 					count = counts[ngram]
-					values.append(1)
+					result.append(1)
 				except KeyError:
-					values.append(0)
+					result.append(0)
 		return result
 		
 	def popNgramProbabilityFeature(self, data, args):

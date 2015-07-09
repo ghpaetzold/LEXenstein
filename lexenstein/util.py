@@ -12,7 +12,7 @@ def createBinaryNgramCountsModel(ngrams_file, model_file):
 	print('Reading n-grams file...')
 	counts = {}
 	c = 0
-	f = open(ngram_file)
+	f = open(ngrams_file)
 	for line in f:
 		c += 1
 		if c % 1000000 == 0:
