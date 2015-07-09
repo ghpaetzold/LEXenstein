@@ -261,11 +261,10 @@ class FeatureEstimator:
 				for span1 in spanlv:
 					for span2 in spanrv:
 						ngram, bosv, eosv = self.getNgram(word, sent, head, span1, span2)
-						try:
-							count = counts[ngram]
-							values.append(1)
-						except KeyError:
-							values.append(0)
+						if ngram in counts:
+							values.append(1.0)
+						else:
+							values.append(0.0)
 				result.append(values)
 		return result
 		
@@ -326,11 +325,10 @@ class FeatureEstimator:
 			for subst in line[3:len(line)]:
 				word = subst.split(':')[1].strip()
 				ngram, bosv, eosv = self.getNgram(word, sent, head, spanl, spanr)
-				try:
-					count = counts[ngram]
-					result.append(1)
-				except KeyError:
-					result.append(0)
+				if ngram in counts:
+					result.append(1.0)
+				else:
+					result.append(0.0)
 		return result
 		
 	def popNgramProbabilityFeature(self, data, args):
