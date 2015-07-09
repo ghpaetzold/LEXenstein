@@ -23,7 +23,7 @@ def createBinaryNgramCountsModel(ngrams_file, model_file):
 	print('N-grams file read!')
 	
 	print('Saving model...')
-	pickle.dump(counts, open(model_file, "wb"))
+	pickle.dump(counts, open(model_file, "wb"), protocol=pickle.HIGHEST_PROTOCOL)
 	print('Finished!')
 
 def createConditionalProbabilityModel(folder, fileids, model, sep='/', encoding='utf8'):
