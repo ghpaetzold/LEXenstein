@@ -3,17 +3,28 @@ import pickle
 
 def createBinaryNgramCountsModel(ngrams_file, model_file):
 	"""
-	Creates an tagging probability model to be used along with the FeatureEstimator object.
-	Files of tagged data must contain one sentence per line, and each line must follow the following format:
-	<word_1><separator><tag_1> <word_2><separator><tag_2> ... <word_n-1><separator><tag_n-1> <word_n><separator><tag_n>
+	Creates a binary n-gram counts dictionary from an n-gram frequency file.
+	The file must be in the format produced by the "-write" option of SRILM.
 	
-	@param folder: Folder containing files of tagged sentences.
-	@param fileids: A list or regular expressions specifying the file names with tagged data in "folder".
-	@param model: File in which to save the trained model.
-	@param sep: Separator between words and tags in the files with tagged data.
-	@param encoding: Encoding of the files with tagged data.
+	@param ngrams_file: File containing n-gram counts.
+	@param model_file: File in which to save the frequency model.
 	"""
-	print('')
+	print('Reading n-grams file...')
+	counts = {}
+	c = 0
+	f = open(ngram_file)
+	for line in f:
+		c += 1
+		if c % 1000000 == 0:
+			print(str(c) + ' n-grams read.')
+		data = line.strip().split('\t')
+		counts[data[0]] = int(data[1])
+	f.close()
+	print('N-grams file read!')
+	
+	print('Saving model...')
+	pickle.dump(counts, open(model_file, "wb"))
+	print('Finished!')
 
 def createConditionalProbabilityModel(folder, fileids, model, sep='/', encoding='utf8'):
 	"""
