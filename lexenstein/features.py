@@ -882,7 +882,7 @@ class FeatureEstimator:
 			if ngram_file not in self.resources.keys():
 				counts = self.readNgramFile(ngram_file)
 				self.resources[ngram_file] = counts
-			self.features.append((self.ngramProbabilityFeature, [ngram_file, leftw, rightw]))
+			self.features.append((self.ngramFrequencyFeature, [ngram_file, leftw, rightw]))
 			self.identifiers.append(('N-Gram Frequency Feature ['+str(leftw)+', '+str(rightw)+'] (N-grams File: '+ngram_file+')', orientation))
 			
 	def addBinaryNGramFrequencyFeature(self, ngram_file, leftw, rightw, orientation):
