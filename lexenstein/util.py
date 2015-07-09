@@ -11,6 +11,7 @@ def getVocabularyFromDataset(dataset, vocab_file, format='victor'):
 	@param format: Format of the dataset.
 	Values accepted: victor, cwictor
 	"""
+	#Obtain vocabulary:
 	vocab = set([])
 	if format=='victor':
 		f = open(dataset)
@@ -33,7 +34,12 @@ def getVocabularyFromDataset(dataset, vocab_file, format='victor'):
 			vocab.update(sent)
 			vocab.add(target)
 		f.close()
-	return vocab
+	
+	#Save vocabulary:
+	f = open(vocab_file, 'w')
+	for word in vocab:
+		f.write(word.strip() + '\n')
+	f.close()
 
 def createBinaryNgramCountsModel(ngrams_file, model_file):
 	"""
