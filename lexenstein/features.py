@@ -243,6 +243,31 @@ class FeatureEstimator:
 				result.append(values)
 		return result
 		
+	def frequencyCollocationalFeature(self, data, args):
+		ngrams = args[0]
+		spanl = args[1]
+		spanr = args[2]
+		result = []
+		counts = self.resources[ngrams]
+		for line in data:
+			sent = line[0]
+			target = line[1]
+			head = int(line[2])
+			spanlv = range(0, spanl+1)
+			spanrv = range(0, spanr+1)
+			for subst in line[3:len(line)]:
+				word = subst.split(':')[1].strip()
+				values = []
+				for span1 in spanlv:
+					for span2 in spanrv:
+						ngram, bosv, eosv = self.getNgram(word, sent, head, span1, span2)
+						if ngram in counts:
+							values.append(counts[ngram])
+						else:
+							values.append(0.0)
+				result.append(values)
+		return result
+		
 	def binaryCollocationalFeature(self, data, args):
 		ngrams = args[0]
 		spanl = args[1]
@@ -313,7 +338,26 @@ class FeatureEstimator:
 				result.append(prob)
 		return result
 		
-	def binaryNgramProbabilityFeature(self, data, args):
+	def ngramFrequencyFeature(self, data, args):
+		ngrams = args[0]
+		spanl = args[1]
+		spanr = args[2]
+		result = []
+		counts = self.resources[ngrams]
+		for line in data:
+			sent = line[0]
+			target = line[1]
+			head = int(line[2])
+			for subst in line[3:len(line)]:
+				word = subst.split(':')[1].strip()
+				ngram, bosv, eosv = self.getNgram(word, sent, head, spanl, spanr)
+				if ngram in counts:
+					result.append(counts[ngram])
+				else:
+					result.append(0.0)
+		return result
+		
+	def binaryNgramFrequencyFeature(self, data, args):
 		ngrams = args[0]
 		spanl = args[1]
 		spanr = args[2]
@@ -724,6 +768,31 @@ class FeatureEstimator:
 				for j in range(0, rightw+1):
 					self.identifiers.append(('Collocational Feature ['+str(i)+', '+str(j)+'] (LM: '+language_model+')', orientation))
 					
+	def addFrequencyCollocationalFeature(self, ngram_file, leftw, rightw, orientation):
+		"""
+		Adds a set of frequency collocational features to the estimator.
+		The values will be the n-gram frequencies of all collocational features selected.
+		Each feature is the frequency of an n-gram with 0<=l<=leftw tokens to the left and 0<=r<=rightw tokens to the right.
+		This method creates (leftw+1)*(rightw+1) features.
+	
+		@param language_model: Path to the language model from which to extract probabilities.
+		@param leftw: Maximum number of tokens to the left.
+		@param rightw: Maximum number of tokens to the right.
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Possible values: Complexity, Simplicity.
+		"""
+		
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:
+			if ngram_file not in self.resources.keys():
+				counts = self.readNgramFile(ngram_file)
+				self.resources[ngram_file] = counts
+			self.features.append((self.frequencyCollocationalFeature, [ngram_file, leftw, rightw]))
+			for i in range(0, leftw+1):
+				for j in range(0, rightw+1):
+					self.identifiers.append(('Frequency Collocational Feature ['+str(i)+', '+str(j)+'] (N-Grams File: '+ngram_file+')', orientation))
+					
 	def addBinaryCollocationalFeature(self, ngram_file, leftw, rightw, orientation):
 		"""
 		Adds a set of binary collocational features to the estimator.
@@ -795,9 +864,30 @@ class FeatureEstimator:
 			self.features.append((self.ngramProbabilityFeature, [language_model, leftw, rightw]))
 			self.identifiers.append(('N-Gram Probability Feature ['+str(leftw)+', '+str(rightw)+'] (LM: '+language_model+')', orientation))
 			
-	def addBinaryNGramProbabilityFeature(self, ngram_file, leftw, rightw, orientation):
+	def addNGramFrequencyFeature(self, ngram_file, leftw, rightw, orientation):
 		"""
-		Adds a n-gram probability feature to the estimator.
+		Adds a n-gram frequency feature to the estimator.
+		The value will be the the frequency of the n-gram composed by leftw tokens to the left and rightw tokens to the right of a given word.
+	
+		@param ngram_file: Path to a file with n-gram frequencies.
+		@param leftw: Number of tokens to the left.
+		@param rightw: Number of tokens to the right.
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Possible values: Complexity, Simplicity.
+		"""
+		
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:
+			if ngram_file not in self.resources.keys():
+				counts = self.readNgramFile(ngram_file)
+				self.resources[ngram_file] = counts
+			self.features.append((self.ngramProbabilityFeature, [ngram_file, leftw, rightw]))
+			self.identifiers.append(('N-Gram Frequency Feature ['+str(leftw)+', '+str(rightw)+'] (N-grams File: '+ngram_file+')', orientation))
+			
+	def addBinaryNGramFrequencyFeature(self, ngram_file, leftw, rightw, orientation):
+		"""
+		Adds a binary n-gram frequency feature to the estimator.
 		The value will be 1 if the n-gram composed by leftw tokens to the left and rightw tokens to the right of a given word are in the n-grams file, and 0 otherwise.
 	
 		@param ngram_file: Path to a file with n-gram frequencies.
@@ -813,7 +903,7 @@ class FeatureEstimator:
 			if ngram_file not in self.resources.keys():
 				counts = self.readNgramFile(ngram_file)
 				self.resources[ngram_file] = counts
-			self.features.append((self.binaryNgramProbabilityFeature, [ngram_file, leftw, rightw]))
+			self.features.append((self.binaryNgramFrequencyFeature, [ngram_file, leftw, rightw]))
 			self.identifiers.append(('Binary N-Gram Probability Feature ['+str(leftw)+', '+str(rightw)+'] (N-grams File: '+ngram_file+')', orientation))
 			
 	def addPopNGramProbabilityFeature(self, language_model, leftw, rightw, orientation):
@@ -950,7 +1040,7 @@ class FeatureEstimator:
 		f = open(ngram_file)
 		for line in f:
 			data = line.strip().split('\t')
-			counts[data[0]] = int(data[1])
+			counts[data[0]] = float(data[1])
 		f.close()
 		return counts
 		
