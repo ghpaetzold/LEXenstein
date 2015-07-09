@@ -266,6 +266,7 @@ class FeatureEstimator:
 						else:
 							values.append(0.0)
 				result.append(values)
+				print('Values: ' + str(values))
 		return result
 		
 	def popCollocationalFeature(self, data, args):
