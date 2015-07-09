@@ -1,5 +1,6 @@
 import nltk
 import pickle
+import shelve
 
 def createBinaryNgramCountsModel(ngrams_file, model_file):
 	"""
@@ -9,8 +10,11 @@ def createBinaryNgramCountsModel(ngrams_file, model_file):
 	@param ngrams_file: File containing n-gram counts.
 	@param model_file: File in which to save the frequency model.
 	"""
+	print('Opening shelve file...')
+	d = shelve.open(model_file, protocol=pickle.HIGHEST_PROTOCOL)
+	print('Shelve file open!')
+	
 	print('Reading n-grams file...')
-	counts = {}
 	c = 0
 	f = open(ngrams_file)
 	for line in f:
@@ -18,12 +22,12 @@ def createBinaryNgramCountsModel(ngrams_file, model_file):
 		if c % 1000000 == 0:
 			print(str(c) + ' n-grams read.')
 		data = line.strip().split('\t')
-		counts[data[0]] = int(data[1])
+		d[data[0]] = int(data[1])
 	f.close()
 	print('N-grams file read!')
 	
 	print('Saving model...')
-	pickle.dump(counts, open(model_file, "wb"), protocol=pickle.HIGHEST_PROTOCOL)
+	d.close()
 	print('Finished!')
 
 def createConditionalProbabilityModel(folder, fileids, model, sep='/', encoding='utf8'):

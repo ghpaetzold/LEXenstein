@@ -947,12 +947,8 @@ class FeatureEstimator:
 			
 	def readNgramFile(self, ngram_file):
 		counts = {}
-		c = 0
 		f = open(ngram_file)
 		for line in f:
-			c += 1
-			if c % 1000000 == 0:
-				print(str(c))
 			data = line.strip().split('\t')
 			counts[data[0]] = int(data[1])
 		f.close()
