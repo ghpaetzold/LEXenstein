@@ -2,6 +2,25 @@ import nltk
 import pickle
 import shelve
 
+def removeUnkFromNgramsFile(ngrams_file, output):
+	"""
+	Removes n-grams with "<unk>" tokens from an SRILM n-grams file.
+	
+	@param ngrams_file: Input n-grams file.
+	@param output: Filtered n-grams file.
+	"""
+	f = open(ngrams_file)
+	o = open(output, 'w')
+	c = 0
+	for line in f:
+		c += 1
+		if c % 1000000==0:
+			print(str(c) + ' tokens filtered.')
+		if '<unk>' not in line:
+			o.write(line)
+	f.close()
+	o.close()
+
 def getVocabularyFromDataset(dataset, vocab_file, leftw, rightw, format='victor'):
 	"""
 	Extracts the vocabulary from a dataset in VICTOR or CWICTOR format.
