@@ -2,12 +2,15 @@ import nltk
 import pickle
 import shelve
 
-def getVocabularyFromDataset(dataset, vocab_file, format='victor'):
+def getVocabularyFromDataset(dataset, vocab_file, leftw, rightw, format='victor'):
 	"""
 	Extracts the vocabulary from a dataset in VICTOR or CWICTOR format.
+	This vocabularies can be used along with SRILM in order for smaller n-gram count files to be produced.
 	
 	@param dataset: Dataset from which to extract the vocabulary.
 	@param vocab_file: File in which to save the vocabulary.
+	@param leftw: Window to consider from the left of the target word.
+	@param rightw: Window to consider from the right of the target word.
 	@param format: Format of the dataset.
 	Values accepted: victor, cwictor
 	"""
@@ -17,9 +20,13 @@ def getVocabularyFromDataset(dataset, vocab_file, format='victor'):
 		f = open(dataset)
 		for line in f:
 			data = line.strip().split('\t')
-			sent = set(data[0].strip().split(' '))
+			sent = data[0].strip().split(' ')
+			head = int(data[2].strip())
+			for i in range(max(0, head-leftw), head):
+				vocab.add(sent[i])
+			for i in range(head, min(len(sent), head+rightw+1)):
+				vocab.add(sent[i])
 			target = data[1].strip()
-			vocab.update(sent)
 			vocab.add(target)
 			for sub in data[3:len(data)]:
 				words = sub.strip().split(':')[1].strip().split(' ')
@@ -30,7 +37,12 @@ def getVocabularyFromDataset(dataset, vocab_file, format='victor'):
 		f = open(dataset)
 		for line in f:
 			data = line.strip().split('\t')
-			sent = set(data[0].strip().split(' '))
+			sent = data[0].strip().split(' ')
+			head = int(data[2].strip())
+			for i in range(max(0, head-leftw), head):
+				vocab.add(sent[i])
+			for i in range(head, min(len(sent), head+rightw+1)):
+				vocab.add(sent[i])
 			target = data[1].strip()
 			vocab.update(sent)
 			vocab.add(target)
