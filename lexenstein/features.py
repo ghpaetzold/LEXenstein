@@ -586,6 +586,10 @@ class FeatureEstimator:
 							maxdepth = auxmax
 				resultma.append(maxdepth)
 		return resultma
+		
+	def readNgramFile(self, ngram_file):
+		counts = shelve.open(ngram_file, protocol=pickle.HIGHEST_PROTOCOL)
+		return counts
 	
 	def addWordVectorValues(self, model, size, orientation):
 		"""
@@ -775,7 +779,8 @@ class FeatureEstimator:
 		Each feature is the frequency of an n-gram with 0<=l<=leftw tokens to the left and 0<=r<=rightw tokens to the right.
 		This method creates (leftw+1)*(rightw+1) features.
 	
-		@param language_model: Path to the language model from which to extract probabilities.
+		@param ngram_file: Path to a shelve file containing n-gram frequency counts.
+		To produce this file, use the "addNgramCountsFileToShelve" function from the "util" module.
 		@param leftw: Maximum number of tokens to the left.
 		@param rightw: Maximum number of tokens to the right.
 		@param orientation: Whether the feature is a simplicity of complexity measure.
@@ -1034,14 +1039,3 @@ class FeatureEstimator:
 		else:
 			self.features.append((self.maxDepth ,[]))
 			self.identifiers.append(('Maximal Sense Depth', orientation))
-			
-	def readNgramFile(self, ngram_file):
-		counts = {}
-		f = open(ngram_file)
-		for line in f:
-			data = line.strip().split('\t')
-			counts[data[0]] = float(data[1])
-		f.close()
-		return counts
-		
-	

@@ -74,9 +74,10 @@ def getVocabularyFromDataset(dataset, vocab_file, leftw, rightw, format='victor'
 			f.write(word.strip() + '\n')
 	f.close()
 
-def createBinaryNgramCountsModel(ngrams_file, model_file):
+def addNgramCountsFileToShelve(ngrams_file, model_file):
 	"""
-	Creates a binary n-gram counts dictionary from an n-gram frequency file.
+	Adds a n-gram counts file to an either new, or existing shelve dictionary.
+	The shelve file can then be used for the calculation of several features.
 	The file must be in the format produced by the "-write" option of SRILM.
 	
 	@param ngrams_file: File containing n-gram counts.
