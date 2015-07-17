@@ -8,6 +8,7 @@ import os
 import pickle
 from sklearn.preprocessing import normalize
 import numpy
+import shelve
 
 class FeatureEstimator:
 
