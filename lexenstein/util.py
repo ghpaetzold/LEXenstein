@@ -95,7 +95,10 @@ def addNgramCountsFileToShelve(ngrams_file, model_file):
 		if c % 1000000 == 0:
 			print(str(c) + ' n-grams read.')
 		data = line.strip().split('\t')
-		d[data[0]] = int(data[1])
+		if data[0] not in d:
+			d[data[0]] = int(data[1])
+		else:
+			d[data[0]] += int(data[1])
 	f.close()
 	print('N-grams file read!')
 	
