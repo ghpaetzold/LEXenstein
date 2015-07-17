@@ -24,7 +24,7 @@ def createTaggedNgramsFile(ngrams_file, tagged_ngrams_file):
 		tokens = [t.split('|||') for t in data[0].split(' ')]
 		if len(tokens)==2:
 			o.write(tokens[0][0] + ' ' + tokens[1][min(1, len(tokens[1])-1)] + '\t' + data[1] + '\n')
-			o.write(tokens[0][min(1, len(tokens[0])-1)] + ' ' tokens[1][0] + '\t' + data[1] + '\n')
+			o.write(tokens[0][min(1, len(tokens[0])-1)] + ' ' + tokens[1][0] + '\t' + data[1] + '\n')
 		elif len(tokens)==3:
 			o.write(tokens[0][0] + ' ' + tokens[1][min(1, len(tokens[1])-1)] + ' ' + tokens[2][min(1, len(tokens[2])-1)] + '\t' + data[1] + '\n')
 			o.write(tokens[0][min(1, len(tokens[0])-1)] + ' ' + tokens[1][0] + ' ' + tokens[2][min(1, len(tokens[2])-1)] + '\t' + data[1] + '\n')
