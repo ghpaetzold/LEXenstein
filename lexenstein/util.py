@@ -32,6 +32,8 @@ def createTaggedNgramsFile(ngrams_file, tagged_ngrams_file):
 		elif len(tokens)==4:
 			o.write(tokens[0][min(1, len(tokens[0])-1)] + ' ' + tokens[1][min(1, len(tokens[1])-1)] + ' ' + tokens[2][0] + ' ' + tokens[3][min(1, len(tokens[3])-1)] + '\t' + data[1] + '\n')
 			o.write(tokens[0][min(1, len(tokens[0])-1)] + ' ' + tokens[1][0] + ' ' + tokens[2][min(1, len(tokens[2])-1)] + ' ' + tokens[3][min(1, len(tokens[3])-1)] + '\t' + data[1] + '\n')
+		elif len(tokens)==5:
+			o.write(tokens[0][min(1, len(tokens[0])-1)] + ' ' + tokens[1][min(1, len(tokens[1])-1)] + ' ' + tokens[2][0] + ' ' + tokens[3][min(1, len(tokens[3])-1)] + ' ' + tokens[4][min(1, len(tokens[4])-1)] + '\t' + data[1] + '\n')
 	f.close()
 	print('N-grams file read!')
 	
