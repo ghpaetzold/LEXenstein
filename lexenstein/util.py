@@ -2,6 +2,34 @@ import nltk
 import pickle
 import shelve
 
+def createTaggedNgramsFile(ngrams_file, tagged_ngrams_file):
+	"""
+	Creates a tagged version of an annotated n-gram counts file.
+	
+	@param ngrams_file: File containing n-gram counts.
+	The file must be in the format produced by the "-write" option of SRILM.
+	Each word in the corpus used must be in the following format: <word>|||<tag>
+	@param tagged_ngrams_file: File with tagged n-gram counts.
+	"""
+	o = open(tagged_ngrams_file, 'w')
+	
+	print('Opening input n-gram counts file...')
+	c = 0
+	f = open(ngrams_file)
+	for line in f:
+		c += 1
+		if c % 1000000 == 0:
+			print(str(c) + ' n-grams processed.')
+		data = line.strip().split('\t')
+		tokens = [t.split('|||') for t in data[0].split(' ')]
+		print(str(tokens))
+	f.close()
+	print('N-grams file read!')
+	
+	print('Saving model...')
+	d.close()
+	print('Finished!')
+
 def removeUnkFromNgramsFile(ngrams_file, output):
 	"""
 	Removes n-grams with "<unk>" tokens from an SRILM n-grams file.
