@@ -22,12 +22,14 @@ def createTaggedNgramsFile(ngrams_file, tagged_ngrams_file):
 			print(str(c) + ' n-grams processed.')
 		data = line.strip().split('\t')
 		tokens = [t.split('|||') for t in data[0].split(' ')]
-		print(str(tokens))
+		if len(tokens)==2:
+			o.write(tokens[0][0] + ' ' tokens[1][min(1, len(tokens[1])-1)] + '\t' + data[1] + '\n')
+			o.write(tokens[0][min(1, len(tokens[0])-1)] + ' ' tokens[1][0] + '\t' + data[1] + '\n')
 	f.close()
 	print('N-grams file read!')
 	
 	print('Saving model...')
-	d.close()
+	o.close()
 	print('Finished!')
 
 def removeUnkFromNgramsFile(ngrams_file, output):
