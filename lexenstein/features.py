@@ -1,9 +1,10 @@
+from lexenstein.util import getGeneralisedPOS
 from nltk.stem.porter import *
 from nltk.corpus import wordnet as wn
 import kenlm
 import math
 import gensim
-from nltk.tag.stanford import POSTagger
+from nltk.tag.stanford import StanfordPOSTagger
 import os
 import pickle
 from sklearn.preprocessing import normalize
@@ -242,7 +243,7 @@ class FeatureEstimator:
 		result = []
 		model = self.resources[lm]
 		for line in data:
-			sent = line[0]
+			sent = line[0].strip().split(' ')
 			target = line[1]
 			head = int(line[2])
 			spanlv = range(0, spanl+1)
@@ -265,7 +266,55 @@ class FeatureEstimator:
 		result = []
 		counts = self.resources[ngrams]
 		for line in data:
-			sent = line[0]
+			sent = line[0].strip().split(' ')
+			target = line[1]
+			head = int(line[2])
+			spanlv = range(0, spanl+1)
+			spanrv = range(0, spanr+1)
+			for subst in line[3:len(line)]:
+				word = subst.split(':')[1].strip()
+				values = []
+				for span1 in spanlv:
+					for span2 in spanrv:
+						ngram, bosv, eosv = self.getNgram(word, sent, head, span1, span2)
+						if ngram in counts:
+							values.append(counts[ngram])
+						else:
+							values.append(0.0)
+				result.append(values)
+		return result
+		
+	def taggedFrequencyCollocationalFeature(self, data, args):
+		counts = self.resources[args[0]]
+		spanl = args[1]
+		spanr = args[2]
+		tagger = self.resources[args[1]]
+		pos_type = args[4]
+		
+		#Get tagged sentences:
+		tagged_sents = None
+		if 'tagged_sents' in self.temp_resources:
+			tagged_sents = self.temp_resources['tagged_sents']
+		else:
+			sentences = [l[0].strip().split(' ') for l in data]
+			tagged_sents = tagger.tag_sents(sentences)
+			self.temp_resources['tagged_sents'] = tagged_sents
+			
+		#Transform them to the right format:
+		if pos_type=='paetzold':
+			transformed = []
+			for sent in tagged_sents:
+				tokens = []
+				for token in sent:
+					tokens.append((token[0], getGeneralisedPOS(token[1])))
+				transformed.append(tokens)
+			tagged_sents = transformed
+		
+		result = []
+		counts = self.resources[ngrams]
+		for i in range(0, len(data)):
+			line = data[i]
+			sent = [tokendata[1] for tokendata in tagged_sents[i]]
 			target = line[1]
 			head = int(line[2])
 			spanlv = range(0, spanl+1)
@@ -290,7 +339,7 @@ class FeatureEstimator:
 		result = []
 		counts = self.resources[ngrams]
 		for line in data:
-			sent = line[0]
+			sent = line[0].strip().split(' ')
 			target = line[1]
 			head = int(line[2])
 			spanlv = range(0, spanl+1)
@@ -343,7 +392,7 @@ class FeatureEstimator:
 		result = []
 		model = self.resources[lm]
 		for line in data:
-			sent = line[0]
+			sent = line[0].strip().split(' ')
 			target = line[1]
 			head = int(line[2])
 			for subst in line[3:len(line)]:
@@ -360,7 +409,7 @@ class FeatureEstimator:
 		result = []
 		counts = self.resources[ngrams]
 		for line in data:
-			sent = line[0]
+			sent = line[0].strip().split(' ')
 			target = line[1]
 			head = int(line[2])
 			for subst in line[3:len(line)]:
@@ -379,7 +428,7 @@ class FeatureEstimator:
 		result = []
 		counts = self.resources[ngrams]
 		for line in data:
-			sent = line[0]
+			sent = line[0].strip().split(' ')
 			target = line[1]
 			head = int(line[2])
 			for subst in line[3:len(line)]:
@@ -412,12 +461,11 @@ class FeatureEstimator:
 				result.append(maxscore)
 		return result
 	
-	def getNgram(self, cand, sent, head, configl, configr):
+	def getNgram(self, cand, tokens, head, configl, configr):
 		if configl==0 and configr==0:
 			return cand, False, False
 		else:
 			result = ''
-			tokens = sent.strip().split(' ')
 			bosv = False
 			if max(0, head-configl)==0:
 				bosv = True
@@ -487,7 +535,7 @@ class FeatureEstimator:
 		result = []
 		model = self.resources[lm]
 		for line in data:
-			sent = line[0]
+			sent = line[0].strip().split(' ')
 			target = line[1]
 			head = int(line[2])
 			for subst in line[3:len(line)]:
@@ -649,7 +697,7 @@ class FeatureEstimator:
 		else:
 			os.environ['JAVAHOME'] = java_path
 			if pos_model not in self.resources.keys():
-				tagger = POSTagger(pos_model, stanford_tagger)
+				tagger = StanfordPOSTagger(pos_model, stanford_tagger)
 				self.resources[pos_model] = tagger
 			if condprob_model not in self.resources.keys():
 				m = pickle.load(open(condprob_model, 'rb'))
@@ -812,6 +860,46 @@ class FeatureEstimator:
 			for i in range(0, leftw+1):
 				for j in range(0, rightw+1):
 					self.identifiers.append(('Frequency Collocational Feature ['+str(i)+', '+str(j)+'] (N-Grams File: '+ngram_file+')', orientation))
+					
+	def addTaggedFrequencyCollocationalFeature(self, ngram_file, leftw, rightw, pos_model, stanford_tagger, java_path, pos_type, orientation):
+		"""
+		Adds a set of frequency collocational features to the estimator.
+		The values will be the n-gram frequencies of all collocational features selected.
+		Each feature is the frequency of an n-gram with 0<=l<=leftw tokens to the left and 0<=r<=rightw tokens to the right.
+		This method creates (leftw+1)*(rightw+1) features.
+	
+		@param ngram_file: Path to a shelve file containing n-gram frequency counts.
+		This function requires for a special type of ngram_file.
+		Each n-gram in the file must be composed of n-1 tags, and exactly 1 word.
+		To produce this file, parse a corpus, extract n-grams in the aforementioned above, and use the "addNgramCountsFileToShelve" function from the "util" module.
+		@param leftw: Maximum number of tokens to the left.
+		@param rightw: Maximum number of tokens to the right.
+		@param pos_model: Path to a POS tagging model for the Stanford POS Tagger.
+		The models can be downloaded from the following link: http://nlp.stanford.edu/software/tagger.shtml
+		@param stanford_tagger: Path to the "stanford-postagger.jar" file.
+		The tagger can be downloaded from the following link: http://nlp.stanford.edu/software/tagger.shtml
+		@param java_path: Path to the system's "java" executable.
+		Can be commonly found in "/usr/bin/java" in Unix/Linux systems, or in "C:/Program Files/Java/jdk_version/java.exe" in Windows systems.
+		@param pos_type: The type of POS tags to be used.
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Currently supported types: treebank, paetzold.
+		Possible values: Complexity, Simplicity.
+		"""
+		
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:
+			if ngram_file not in self.resources.keys():
+				counts = self.readNgramFile(ngram_file)
+				self.resources[ngram_file] = counts
+			os.environ['JAVAHOME'] = java_path
+			if pos_model not in self.resources.keys():
+				tagger = StanfordPOSTagger(pos_model, stanford_tagger)
+				self.resources[pos_model] = tagger
+			self.features.append((self.taggedFrequencyCollocationalFeature, [ngram_file, leftw, rightw, pos_model, pos_type]))
+			for i in range(0, leftw+1):
+				for j in range(0, rightw+1):
+					self.identifiers.append(('Tagged Frequency Collocational Feature ['+str(i)+', '+str(j)+'] (N-Grams File: '+ngram_file+') (POS type: '+pos_type+')', orientation))
 					
 	def addBinaryCollocationalFeature(self, ngram_file, leftw, rightw, orientation):
 		"""

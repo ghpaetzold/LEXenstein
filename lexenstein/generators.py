@@ -4,7 +4,7 @@ import urllib2 as urllib
 from nltk.corpus import wordnet as wn
 import subprocess
 import nltk
-from nltk.tag.stanford import POSTagger
+from nltk.tag.stanford import StanfordPOSTagger
 import kenlm
 import codecs
 import os
@@ -33,7 +33,7 @@ class PaetzoldGenerator:
 		self.model = gensim.models.word2vec.Word2Vec.load_word2vec_format(posw2vmodel, binary=True)
 		self.nc = nc
 		os.environ['JAVAHOME'] = java_path
-		self.tagger = POSTagger(pos_model, stanford_tagger)
+		self.tagger = StanfordPOSTagger(pos_model, stanford_tagger)
 
 	def getSubstitutions(self, victor_corpus, amount):
 		"""
@@ -1151,7 +1151,7 @@ class WordnetGenerator:
 		self.mat = mat
 		self.nc = nc
 		os.environ['JAVAHOME'] = java_path
-		self.tagger = POSTagger(pos_model, stanford_tagger)
+		self.tagger = StanfordPOSTagger(pos_model, stanford_tagger)
 
 	def getSubstitutions(self, victor_corpus):
 		"""
@@ -1643,7 +1643,7 @@ class BiranGenerator:
 		self.mat = mat
 		self.nc = nc
 		os.environ['JAVAHOME'] = java_path
-		self.tagger = POSTagger(pos_model, stanford_tagger)
+		self.tagger = StanfordPOSTagger(pos_model, stanford_tagger)
 
 	def getSubstitutions(self, victor_corpus):
 		"""

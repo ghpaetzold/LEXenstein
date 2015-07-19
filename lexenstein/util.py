@@ -41,6 +41,30 @@ def dependencyParseSentences(parser, sentences):
 			cur_lines.append(depdata[0])
 	return res
 
+def getGeneralisedPOS(self, tag):
+	"""
+	Returns a generalised version of a POS tag in Treebank format.
+
+	@param tag: POS tag in Treebank format.
+	@return A generalised POS tag.
+	"""
+	result = None
+	if tag.startswith('N'):
+		result = 'N'
+	elif tag.startswith('V'):
+		result = 'V'
+	elif tag.startswith('RB'):
+		result = 'A'
+	elif tag.startswith('J'):
+		result = 'J'
+	elif tag.startswith('W'):
+		result = 'W'
+	elif tag.startswith('PRP'):
+		result = 'P'
+	else:
+		result = tag.strip()
+	return result
+	
 def createTaggedNgramsFile(ngrams_file, tagged_ngrams_file):
 	"""
 	Creates a tagged version of an annotated n-gram counts file.

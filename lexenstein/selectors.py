@@ -2,7 +2,7 @@ import pywsd
 import gensim
 from scipy.spatial.distance import cosine
 import nltk
-from nltk.tag.stanford import POSTagger
+from nltk.tag.stanford import StanfordPOSTagger
 import numpy as np
 import os
 
@@ -543,7 +543,7 @@ class POSTagSelector:
 		Can be commonly found in "/usr/bin/java" in Unix/Linux systems, or in "C:/Program Files/Java/jdk_version/java.exe" in Windows systems.
 		"""
 		os.environ['JAVAHOME'] = java_path
-		self.tagger = POSTagger(pos_model, stanford_tagger)
+		self.tagger = StanfordPOSTagger(pos_model, stanford_tagger)
 
 	def selectCandidates(self, substitutions, victor_corpus):
 		"""
