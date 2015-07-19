@@ -1,8 +1,9 @@
 import nltk
 import pickle
 import shelve
+import re
 
-def dependencyParseSentences(parser, sentences)
+def dependencyParseSentences(parser, sentences):
 	"""
 	Use StanfordParser to parse multiple sentences.
 	Takes multiple sentences as a list where each sentence is a list of words.
@@ -24,7 +25,9 @@ def dependencyParseSentences(parser, sentences)
 	    '-escaper', 'edu.stanford.nlp.process.PTBEscapingProcessor',
 	]
 
-	output=parser._execute(cmd, '\n'.join(' '.join(sentence) for sentence in sentences), verbose)
+	output=parser._execute(cmd, '\n'.join(' '.join(sentence) for sentence in sentences), False)
+
+	depexp = re.compile("([^\\(]+)\\(([^\\-]+)\\-([^\\,]+)\\,\s([^\\-]+)\\-([^\\)]+)\\)")
 
 	res = []
 	cur_lines = []
@@ -33,7 +36,9 @@ def dependencyParseSentences(parser, sentences)
 		res.append(cur_lines)
 		cur_lines = []
 	    else:
-		cur_lines.append(line)
+		depdata = re.findall(depexp, line)
+		if len(depdata)>0:
+			cur_lines.append(depdata[0])
 	return res
 
 def createTaggedNgramsFile(ngrams_file, tagged_ngrams_file):
