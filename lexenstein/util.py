@@ -2,6 +2,40 @@ import nltk
 import pickle
 import shelve
 
+def dependencyParseSentences(parser, sentences)
+	"""
+	Use StanfordParser to parse multiple sentences.
+	Takes multiple sentences as a list where each sentence is a list of words.
+	Each sentence will be automatically tagged with this StanfordParser instance's tagger.
+	If whitespaces exists inside a token, then the token will be treated as separate tokens.
+	This method is an adaptation of the code provided by NLTK.
+
+	@param sentences: Input sentences to parse.
+	Each sentence must be a list of tokens.
+	@return A list of the dependency links of each sentence.
+	Each dependency link is composed by the relation type, the source word, its position in the sentence, the target word, and its position in the sentence.
+	"""
+	cmd = [
+	    'edu.stanford.nlp.parser.lexparser.LexicalizedParser',
+	    '-model', parser.model_path,
+	    '-sentences', 'newline',
+	    '-outputFormat', 'typedDependencies',
+	    '-tokenized',
+	    '-escaper', 'edu.stanford.nlp.process.PTBEscapingProcessor',
+	]
+
+	output=parser._execute(cmd, '\n'.join(' '.join(sentence) for sentence in sentences), verbose)
+
+	res = []
+	cur_lines = []
+	for line in output.splitlines(False):
+	    if line == '':
+		res.append(cur_lines)
+		cur_lines = []
+	    else:
+		cur_lines.append(line)
+	return res
+
 def createTaggedNgramsFile(ngrams_file, tagged_ngrams_file):
 	"""
 	Creates a tagged version of an annotated n-gram counts file.
