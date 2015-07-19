@@ -18,10 +18,16 @@ class FeatureEstimator:
 	
 		@param norm: Boolean variable that determines whether or not feature values should be normalized.
 		"""
+		#List of features to be calculated:
 		self.features = []
+		#List of identifiers of features to be calculated:
 		self.identifiers = []
+		#Normalization parameter:
 		self.norm = norm
+		#Persistent resource list:
 		self.resources = {}
+		#One-run resource list:
+		self.temp_resources = {}
 		
 	def calculateFeatures(self, corpus, format='victor'):
 		"""
@@ -61,7 +67,10 @@ class FeatureEstimator:
 		#Normalize if required:
 		if self.norm:
 			result = normalize(result, axis=0)
-			
+		
+		#Clear one-run resources:
+		self.temp_resources = {}
+		
 		return result
 		
 	def calculateInstanceFeatures(self, sent, target, head, candidate):
@@ -98,8 +107,13 @@ class FeatureEstimator:
 		result = []
 		
 		#Get tagged sentences:
-		sentences = [l[0].strip().split(' ') for l in data]
-		tagged_sents = tagger.tag_sents(sentences)
+		tagged_sents = None
+		if 'tagged_sents' in self.temp_resources:
+			tagged_sents = self.temp_resources['tagged_sents']
+		else:
+			sentences = [l[0].strip().split(' ') for l in data]
+			tagged_sents = tagger.tag_sents(sentences)
+			self.temp_resources['tagged_sents'] = tagged_sents
 		
 		for i in range(0, len(data)):
 			line = data[i]
