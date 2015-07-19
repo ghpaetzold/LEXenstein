@@ -288,7 +288,7 @@ class FeatureEstimator:
 		counts = self.resources[args[0]]
 		spanl = args[1]
 		spanr = args[2]
-		tagger = self.resources[args[1]]
+		tagger = self.resources[args[3]]
 		pos_type = args[4]
 		
 		#Get tagged sentences:
@@ -311,12 +311,15 @@ class FeatureEstimator:
 			tagged_sents = transformed
 		
 		result = []
-		counts = self.resources[ngrams]
 		for i in range(0, len(data)):
 			line = data[i]
-			sent = [tokendata[1] for tokendata in tagged_sents[i]]
+			sent = ['<s>'] + [tokendata[1] for tokendata in tagged_sents[i]] + ['</s>']
 			target = line[1]
-			head = int(line[2])
+			head = int(line[2])+1
+			print('\nSent: ' + str(line[0].strip()))
+			print('TSent: ' + str(sent))
+			print('Target: ' + str(target))
+			print('Head: ' + str(head))
 			spanlv = range(0, spanl+1)
 			spanrv = range(0, spanr+1)
 			for subst in line[3:len(line)]:
@@ -325,6 +328,7 @@ class FeatureEstimator:
 				for span1 in spanlv:
 					for span2 in spanrv:
 						ngram, bosv, eosv = self.getNgram(word, sent, head, span1, span2)
+						print('\tN-gram: ' + str(ngram))
 						if ngram in counts:
 							values.append(counts[ngram])
 						else:
@@ -477,7 +481,7 @@ class FeatureEstimator:
 			result += cand + ' '
 			for i in range(head+1, min(len(tokens), head+configr+1)):
 				result += tokens[i] + ' '
-			return result.strip(), bosv, eosv
+			return str(result.strip()), bosv, eosv
 	
 	def getPopNgrams(self, cand, sent, head, configl, configr):
 		if configl==0 and configr==0:

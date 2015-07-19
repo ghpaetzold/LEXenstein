@@ -41,7 +41,7 @@ def dependencyParseSentences(parser, sentences):
 			cur_lines.append(depdata[0])
 	return res
 
-def getGeneralisedPOS(self, tag):
+def getGeneralisedPOS(tag):
 	"""
 	Returns a generalised version of a POS tag in Treebank format.
 
