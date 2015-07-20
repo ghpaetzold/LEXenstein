@@ -645,6 +645,29 @@ class FeatureEstimator:
 						syncount += len(sense.lemmas())
 				resultsy.append(syncount)
 		return resultsy
+		
+	def isSynonym(self, data, args):
+		resultsy = []
+		for line in data:
+			target = line[1].strip()
+			tgtsenses = set([])
+			try:
+				tgtsenses = wn.synsets(target)
+			except Exception:
+				tgtsenses = set([])
+			for subst in line[3:len(line)]:
+				words = subst.strip().split(':')[1].strip()
+				senses = set([])
+				for word in words.split(' '):
+					try:
+						senses.update(wn.synsets(word))
+					except UnicodeDecodeError:
+						senses = senses
+				if len(tgtsenses)==0 or len(senses.intersection(tgtsenses))>0:
+					resultsy.append(1.0)
+				else:
+					resultsy.append(0.0)
+		return resultsy
 
 	def hypernymCount(self, data, args):
 		resulthe = []
@@ -1200,6 +1223,21 @@ class FeatureEstimator:
 		else:
 			self.features.append((self.synonymCount ,[]))
 			self.identifiers.append(('Synonym Count', orientation))
+			
+	def addIsSynonymFeature(self, orientation):
+		"""
+		Adds a synonymy relation feature to the estimator.
+		If a candidate substitution is a synonym of the target word, then it returns 1, if not, it returns 0.
+		
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Possible values: Complexity, Simplicity.
+		"""
+		
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:
+			self.features.append((self.isSynonym ,[]))
+			self.identifiers.append(('Is Synonym', orientation))
 		
 	def addHypernymCountFeature(self, orientation):
 		"""
