@@ -685,6 +685,31 @@ class FeatureEstimator:
 						hypernyms.update(sense.hypernyms())
 				resulthe.append(len(hypernyms))
 		return resulthe
+		
+	def isHypernym(self, data, args):
+		resultsy = []
+		for line in data:
+			target = line[1].strip()
+			tgthypernyms = set([])
+			try:
+				tgtsenses = wn.synsets(target)
+				for sense in tgtsenses:
+					tgthypernyms.update(sense.hypernyms())
+			except Exception:
+				tgthypernyms = tgthypernyms
+			for subst in line[3:len(line)]:
+				words = subst.strip().split(':')[1].strip()
+				senses = set([])
+				for word in words.split(' '):
+					try:
+						senses.update(wn.synsets(word))
+					except UnicodeDecodeError:
+						senses = senses
+				if len(tgthypernyms)==0 or len(senses.intersection(tgthypernyms))>0:
+					resultsy.append(1.0)
+				else:
+					resultsy.append(0.0)
+		return resultsy
 	
 	def hyponymCount(self, data, args):
 		resultho = []
@@ -702,6 +727,31 @@ class FeatureEstimator:
 						hyponyms.update(sense.hyponyms())
 				resultho.append(len(hyponyms))
 		return resultho
+		
+	def isHyponym(self, data, args):
+		resultsy = []
+		for line in data:
+			target = line[1].strip()
+			tgthyponyms = set([])
+			try:
+				tgtsenses = wn.synsets(target)
+				for sense in tgtsenses:
+					tgthyponyms.update(sense.hyponyms())
+			except Exception:
+				tgthyponyms = tgthyponyms
+			for subst in line[3:len(line)]:
+				words = subst.strip().split(':')[1].strip()
+				senses = set([])
+				for word in words.split(' '):
+					try:
+						senses.update(wn.synsets(word))
+					except UnicodeDecodeError:
+						senses = senses
+				if len(tgthyponyms)==0 or len(senses.intersection(tgthyponyms))>0:
+					resultsy.append(1.0)
+				else:
+					resultsy.append(0.0)
+		return resultsy
 	
 	def minDepth(self, data, args):
 		resultmi = []
@@ -1253,6 +1303,21 @@ class FeatureEstimator:
 		else:
 			self.features.append((self.hypernymCount ,[]))
 			self.identifiers.append(('Hypernym Count', orientation))
+			
+	def addIsHypernymFeature(self, orientation):
+		"""
+		Adds a hypernymy relation feature to the estimator.
+		If a candidate substitution is a hypernym of the target word, then it returns 1, if not, it returns 0.
+		
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Possible values: Complexity, Simplicity.
+		"""
+		
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:
+			self.features.append((self.isHypernym ,[]))
+			self.identifiers.append(('Is Hypernym', orientation))
 		
 	def addHyponymCountFeature(self, orientation):
 		"""
@@ -1268,6 +1333,21 @@ class FeatureEstimator:
 		else:
 			self.features.append((self.hyponymCount ,[]))
 			self.identifiers.append(('Hyponym Count', orientation))
+			
+	def addIsHyponymFeature(self, orientation):
+		"""
+		Adds a hyponymy relation feature to the estimator.
+		If a candidate substitution is a hyponym of the target word, then it returns 1, if not, it returns 0.
+		
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Possible values: Complexity, Simplicity.
+		"""
+		
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:
+			self.features.append((self.isHyponym ,[]))
+			self.identifiers.append(('Is Hyponym', orientation))
 		
 	def addMinDepthFeature(self, orientation):
 		"""
