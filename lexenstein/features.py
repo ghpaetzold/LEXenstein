@@ -331,16 +331,38 @@ class FeatureEstimator:
 				result.append(values)
 		return result
 		
-	def binaryCollocationalFeature(self, data, args):
-		ngrams = args[0]
+	def binaryTaggedFrequencyCollocationalFeature(self, data, args):
+		counts = self.resources[args[0]]
 		spanl = args[1]
 		spanr = args[2]
+		tagger = self.resources[args[3]]
+		pos_type = args[4]
+		
+		#Get tagged sentences:
+		tagged_sents = None
+		if 'tagged_sents' in self.temp_resources:
+			tagged_sents = self.temp_resources['tagged_sents']
+		else:
+			sentences = [l[0].strip().split(' ') for l in data]
+			tagged_sents = tagger.tag_sents(sentences)
+			self.temp_resources['tagged_sents'] = tagged_sents
+			
+		#Transform them to the right format:
+		if pos_type=='paetzold':
+			transformed = []
+			for sent in tagged_sents:
+				tokens = []
+				for token in sent:
+					tokens.append((token[0], getGeneralisedPOS(token[1])))
+				transformed.append(tokens)
+			tagged_sents = transformed
+		
 		result = []
-		counts = self.resources[ngrams]
-		for line in data:
-			sent = line[0].strip().split(' ')
+		for i in range(0, len(data)):
+			line = data[i]
+			sent = ['<s>'] + [tokendata[1] for tokendata in tagged_sents[i]] + ['</s>']
 			target = line[1]
-			head = int(line[2])
+			head = int(line[2])+1
 			spanlv = range(0, spanl+1)
 			spanrv = range(0, spanr+1)
 			for subst in line[3:len(line)]:
@@ -355,7 +377,7 @@ class FeatureEstimator:
 							values.append(0.0)
 				result.append(values)
 		return result
-		
+	
 	def popCollocationalFeature(self, data, args):
 		lm = args[0]
 		spanl = args[1]
@@ -861,9 +883,9 @@ class FeatureEstimator:
 					
 	def addTaggedFrequencyCollocationalFeature(self, ngram_file, leftw, rightw, pos_model, stanford_tagger, java_path, pos_type, orientation):
 		"""
-		Adds a set of frequency collocational features to the estimator.
-		The values will be the n-gram frequencies of all collocational features selected.
-		Each feature is the frequency of an n-gram with 0<=l<=leftw tokens to the left and 0<=r<=rightw tokens to the right.
+		Adds a set of frequency tagged n-gram frequency features to the estimator.
+		The values will be the n-gram frequencies of all tagged collocational features selected.
+		Each feature is the frequency of an n-gram with 0<=l<=leftw tagged tokens to the left and 0<=r<=rightw tagged tokens to the right.
 		This method creates (leftw+1)*(rightw+1) features.
 	
 		@param ngram_file: Path to a shelve file containing n-gram frequency counts.
@@ -898,18 +920,29 @@ class FeatureEstimator:
 			for i in range(0, leftw+1):
 				for j in range(0, rightw+1):
 					self.identifiers.append(('Tagged Frequency Collocational Feature ['+str(i)+', '+str(j)+'] (N-Grams File: '+ngram_file+') (POS type: '+pos_type+')', orientation))
-					
-	def addBinaryCollocationalFeature(self, ngram_file, leftw, rightw, orientation):
+	
+	def addBinaryTaggedFrequencyCollocationalFeature(self, ngram_file, leftw, rightw, pos_model, stanford_tagger, java_path, pos_type, orientation):
 		"""
-		Adds a set of binary collocational features to the estimator.
-		The values will be 1 if a given n-gram is present in the file provided, and 0 otherwise.
-		Each feature is the binary value for an n-gram with 0<=l<=leftw tokens to the left and 0<=r<=rightw tokens to the right.
+		Adds a set of binary tagged frequency collocational features to the estimator.
+		The values will be the binary n-gram values of all tagged collocational features selected.
+		Each feature is the frequency of an n-gram with 0<=l<=leftw tagged tokens to the left and 0<=r<=rightw tagged tokens to the right.
 		This method creates (leftw+1)*(rightw+1) features.
 	
-		@param ngram_file: Path to a file with n-gram frequencies.
+		@param ngram_file: Path to a shelve file containing n-gram frequency counts.
+		This function requires for a special type of ngram_file.
+		Each n-gram in the file must be composed of n-1 tags, and exactly 1 word.
+		To produce this file, parse a corpus, extract n-grams in the aforementioned above, and use the "addNgramCountsFileToShelve" function from the "util" module.
 		@param leftw: Maximum number of tokens to the left.
 		@param rightw: Maximum number of tokens to the right.
+		@param pos_model: Path to a POS tagging model for the Stanford POS Tagger.
+		The models can be downloaded from the following link: http://nlp.stanford.edu/software/tagger.shtml
+		@param stanford_tagger: Path to the "stanford-postagger.jar" file.
+		The tagger can be downloaded from the following link: http://nlp.stanford.edu/software/tagger.shtml
+		@param java_path: Path to the system's "java" executable.
+		Can be commonly found in "/usr/bin/java" in Unix/Linux systems, or in "C:/Program Files/Java/jdk_version/java.exe" in Windows systems.
+		@param pos_type: The type of POS tags to be used.
 		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Currently supported types: treebank, paetzold.
 		Possible values: Complexity, Simplicity.
 		"""
 		
@@ -919,11 +952,15 @@ class FeatureEstimator:
 			if ngram_file not in self.resources.keys():
 				counts = self.readNgramFile(ngram_file)
 				self.resources[ngram_file] = counts
-			self.features.append((self.binaryCollocationalFeature, [ngram_file, leftw, rightw]))
+			os.environ['JAVAHOME'] = java_path
+			if pos_model not in self.resources.keys():
+				tagger = StanfordPOSTagger(pos_model, stanford_tagger)
+				self.resources[pos_model] = tagger
+			self.features.append((self.binaryTaggedFrequencyCollocationalFeature, [ngram_file, leftw, rightw, pos_model, pos_type]))
 			for i in range(0, leftw+1):
 				for j in range(0, rightw+1):
-					self.identifiers.append(('Binary Collocational Feature ['+str(i)+', '+str(j)+'] (N-Grams File: '+ngram_file+')', orientation))
-					
+					self.identifiers.append(('Binary Tagged Frequency Collocational Feature ['+str(i)+', '+str(j)+'] (N-Grams File: '+ngram_file+') (POS type: '+pos_type+')', orientation))
+	
 	def addPopCollocationalFeature(self, language_model, leftw, rightw, orientation):
 		"""
 		Adds a set of "pop" collocational features to the estimator.
