@@ -149,6 +149,54 @@ class FeatureEstimator:
 				similarity /= cand_size
 				result.append(similarity)
 		return result
+		
+	def taggedWordVectorSimilarityFeature(self, data, args):
+		result = []
+		
+		model = self.resources[args[0]]
+		tagger = self.resources[args[1]]
+		pos_type = args[2]
+		
+		#Get tagged sentences:
+		tagged_sents = None
+		if 'tagged_sents' in self.temp_resources:
+			tagged_sents = self.temp_resources['tagged_sents']
+		else:
+			sentences = [l[0].strip().split(' ') for l in data]
+			tagged_sents = tagger.tag_sents(sentences)
+			self.temp_resources['tagged_sents'] = tagged_sents
+			
+		#Transform them to the right format:
+		if pos_type=='paetzold':
+			transformed = []
+			for sent in tagged_sents:
+				tokens = []
+				for token in sent:
+					tokens.append((token[0], getGeneralisedPOS(token[1])))
+				transformed.append(tokens)
+			tagged_sents = transformed
+
+		for i in range(0, len(data)):
+			line = data[i]
+			target = line[1].strip().lower()
+			head = int(line[2].strip())
+			target_pos = tagged_sents[i][head][1]
+			for subst in line[3:len(line)]:
+				words = subst.strip().split(':')[1].strip()
+				similarity = 0.0
+				cand_size = 0
+				for word in words.split(' '):
+					cand_size += 1
+					try:
+						similarity += model.similarity(target+'|||'+target_pos, word+'|||'+target_pos)
+					except KeyError:
+						try:
+							similarity += model.similarity(target+'|||'+target_pos, word.lower()+'|||'+target_pos)
+						except KeyError:
+							pass
+				similarity /= cand_size
+				result.append(similarity)
+		return result
 	
 	def wordVectorValuesFeature(self, data, args):
 		model = self.resources[args[0]]
@@ -745,6 +793,39 @@ class FeatureEstimator:
 				self.resources[model] = m
 			self.features.append((self.wordVectorSimilarityFeature, [model]))
 			self.identifiers.append(('Word Vector Similarity (Model: '+model+')', orientation))
+			
+	def addTaggedWordVectorSimilarityFeature(self, model, pos_model, stanford_tagger, java_path, pos_type, orientation):
+		"""
+		Adds a tagged word vector similarity feature to the estimator.
+		The value will be the similarity between the word vector of a target complex word and the word vector of a candidate, while accompanied by their POS tags.
+		Each entry in the word vector model must be in the following format: <word>|||<tag>
+		To create a corpus for such model to be trained, one must tag each word in a corpus, and then concatenate words and tags using the aforementioned convention.
+	
+		@param model: Path to a binary word vector model.
+		For instructions on how to create the model, please refer to the LEXenstein Manual.
+		@param pos_model: Path to a POS tagging model for the Stanford POS Tagger.
+		The models can be downloaded from the following link: http://nlp.stanford.edu/software/tagger.shtml
+		@param stanford_tagger: Path to the "stanford-postagger.jar" file.
+		The tagger can be downloaded from the following link: http://nlp.stanford.edu/software/tagger.shtml
+		@param java_path: Path to the system's "java" executable.
+		Can be commonly found in "/usr/bin/java" in Unix/Linux systems, or in "C:/Program Files/Java/jdk_version/java.exe" in Windows systems.
+		@param pos_type: The type of POS tags to be used.
+		Values supported: treebank, paetzold
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Possible values: Complexity, Simplicity.
+		"""
+		
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:
+			if model not in self.resources.keys():
+				m = gensim.models.word2vec.Word2Vec.load_word2vec_format(model, binary=True)
+				self.resources[model] = m
+			if pos_model not in self.resources.keys():
+				tagger = StanfordPOSTagger(pos_model, stanford_tagger)
+				self.resources[pos_model] = tagger
+			self.features.append((self.taggedWordVectorSimilarityFeature, [model, pos_model, pos_type]))
+			self.identifiers.append(('Word Vector Similarity (Model: '+model+') (POS Model: '+pos_model+') (POS Type: '+pos_type+')', orientation))
 	
 	def addTranslationProbabilityFeature(self, translation_probabilities, orientation):
 		"""
@@ -901,6 +982,7 @@ class FeatureEstimator:
 		@param java_path: Path to the system's "java" executable.
 		Can be commonly found in "/usr/bin/java" in Unix/Linux systems, or in "C:/Program Files/Java/jdk_version/java.exe" in Windows systems.
 		@param pos_type: The type of POS tags to be used.
+		Values supported: treebank, paetzold
 		@param orientation: Whether the feature is a simplicity of complexity measure.
 		Currently supported types: treebank, paetzold.
 		Possible values: Complexity, Simplicity.
@@ -941,6 +1023,7 @@ class FeatureEstimator:
 		@param java_path: Path to the system's "java" executable.
 		Can be commonly found in "/usr/bin/java" in Unix/Linux systems, or in "C:/Program Files/Java/jdk_version/java.exe" in Windows systems.
 		@param pos_type: The type of POS tags to be used.
+		Values supported: treebank, paetzold
 		@param orientation: Whether the feature is a simplicity of complexity measure.
 		Currently supported types: treebank, paetzold.
 		Possible values: Complexity, Simplicity.
