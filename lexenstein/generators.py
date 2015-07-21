@@ -162,7 +162,7 @@ class PaetzoldGenerator:
 			target = data[i][1]
 			cands = subs_filtered[i][0:min(amount, subs_filtered[i])]
 			cands = [str(word.split('|||')[0].strip()) for word in cands]
-			if target not in final_cands.keys():
+			if target not in final_cands:
 				final_cands[target] = set([])
 			final_cands[target].update(set(cands))
 		
@@ -325,8 +325,8 @@ class KauchakGenerator:
 				rightw = rightraw.split('|||')[0].strip()
 
 				if len(leftw)>0 and len(rightw)>0 and leftp!='nnp' and rightp!='nnp' and rightp==leftp and leftw not in self.stop_words and rightw not in self.stop_words and leftw!=rightw:
-						if leftw in substitutions_initial.keys():
-							if leftp in substitutions_initial[leftw].keys():
+						if leftw in substitutions_initial:
+							if leftp in substitutions_initial[leftw]:
 								substitutions_initial[leftw][leftp].add(rightw)
 							else:
 								substitutions_initial[leftw][leftp] = set(rightw)
@@ -347,7 +347,7 @@ class KauchakGenerator:
 
 			posd = nltk.pos_tag(sent)
 			postarget = posd[head][1].lower().strip()
-			if target in result.keys():
+			if target in result:
 				result[target].add(postarget)
 			else:
 				result[target] = set([postarget])
@@ -372,7 +372,7 @@ class KauchakGenerator:
 			key = allkeys[i]
 			leftw = key
 
-			for leftp in result[leftw].keys():
+			for leftp in result[leftw]:
 				if leftp.startswith('n'):
 					if leftp=='nns':
 						pluralsk[leftw] = set([])
@@ -467,10 +467,10 @@ class KauchakGenerator:
 		for i in range(0, len(allkeys)):
 			key = allkeys[i]
 			leftw = key
-			for leftp in result[leftw].keys():			
+			for leftp in result[leftw]:			
 
 				#Add final version to candidates:
-				if leftw not in final_substitutions.keys():
+				if leftw not in final_substitutions:
 					final_substitutions[leftw] = result[key][leftp]
 				else:
 					final_substitutions[leftw] = final_substitutions[leftw].union(result[key][leftp])
@@ -483,7 +483,7 @@ class KauchakGenerator:
 						for candidate in result[key][leftp]:
 							candplurl = plurals[candidate]
 							newcands.add(candplurl)
-						if plurl not in final_substitutions.keys():
+						if plurl not in final_substitutions:
 							final_substitutions[plurl] = newcands
 						else:
 							final_substitutions[plurl] = final_substitutions[plurl].union(newcands)
@@ -494,7 +494,7 @@ class KauchakGenerator:
 						for candidate in result[key][leftp]:
 							candsingl = singulars[candidate]
 							newcands.add(candsingl)
-						if singl not in final_substitutions.keys():
+						if singl not in final_substitutions:
 							final_substitutions[singl] = newcands
 						else:
 							final_substitutions[singl] = final_substitutions[singl].union(newcands)
@@ -506,7 +506,7 @@ class KauchakGenerator:
 						for candidate in result[key][leftp]:
 							candtensedl = verbs[candidate][verb_tense]
 							newcands.add(candtensedl)
-						if tensedl not in final_substitutions.keys():
+						if tensedl not in final_substitutions:
 							final_substitutions[tensedl] = newcands
 						else:
 							final_substitutions[tensedl] = final_substitutions[tensedl].union(newcands)
@@ -614,7 +614,7 @@ class YamamotoGenerator:
 			key = allkeys[i]
 			leftw = key
 
-			for leftp in result[leftw].keys():
+			for leftp in result[leftw]:
 				if leftp.startswith('n'):
 					if leftp=='nns':
 						pluralsk[leftw] = set([])
@@ -709,10 +709,10 @@ class YamamotoGenerator:
 		for i in range(0, len(allkeys)):
 			key = allkeys[i]
 			leftw = key
-			for leftp in result[leftw].keys():			
+			for leftp in result[leftw]:			
 
 				#Add final version to candidates:
-				if leftw not in final_substitutions.keys():
+				if leftw not in final_substitutions:
 					final_substitutions[leftw] = result[key][leftp]
 				else:
 					final_substitutions[leftw] = final_substitutions[leftw].union(result[key][leftp])
@@ -725,7 +725,7 @@ class YamamotoGenerator:
 						for candidate in result[key][leftp]:
 							candplurl = plurals[candidate]
 							newcands.add(candplurl)
-						if plurl not in final_substitutions.keys():
+						if plurl not in final_substitutions:
 							final_substitutions[plurl] = newcands
 						else:
 							final_substitutions[plurl] = final_substitutions[plurl].union(newcands)
@@ -736,7 +736,7 @@ class YamamotoGenerator:
 						for candidate in result[key][leftp]:
 							candsingl = singulars[candidate]
 							newcands.add(candsingl)
-						if singl not in final_substitutions.keys():
+						if singl not in final_substitutions:
 							final_substitutions[singl] = newcands
 						else:
 							final_substitutions[singl] = final_substitutions[singl].union(newcands)
@@ -748,7 +748,7 @@ class YamamotoGenerator:
 						for candidate in result[key][leftp]:
 							candtensedl = verbs[candidate][verb_tense]
 							newcands.add(candtensedl)
-						if tensedl not in final_substitutions.keys():
+						if tensedl not in final_substitutions:
 							final_substitutions[tensedl] = newcands
 						else:
 							final_substitutions[tensedl] = final_substitutions[tensedl].union(newcands)
@@ -817,7 +817,7 @@ class YamamotoGenerator:
 				node_pos = entry.find('fl')
 				if node_pos != None:
 					node_pos = node_pos.text.strip()[0].lower()
-					if node_pos not in cands.keys():
+					if node_pos not in cands:
 						cands[node_pos] = set([])
 				for definition in entry.iter('dt'):
 					if definition.text!=None:
@@ -830,7 +830,7 @@ class YamamotoGenerator:
 							cand = p[0].strip()
 							if postag==node_pos:
 								cands[node_pos].add(cand)
-			for pos in cands.keys():
+			for pos in cands:
 				if target in cands[pos]:
 					cands[pos].remove(target)
 			if len(cands.keys())>0:
@@ -898,7 +898,7 @@ class MerriamGenerator:
 			key = allkeys[i]
 			leftw = key
 
-			for leftp in result[leftw].keys():
+			for leftp in result[leftw]:
 				if leftp.startswith('n'):
 					if leftp=='nns':
 						pluralsk[leftw] = set([])
@@ -993,10 +993,10 @@ class MerriamGenerator:
 		for i in range(0, len(allkeys)):
 			key = allkeys[i]
 			leftw = key
-			for leftp in result[leftw].keys():			
+			for leftp in result[leftw]:			
 
 				#Add final version to candidates:
-				if leftw not in final_substitutions.keys():
+				if leftw not in final_substitutions:
 					final_substitutions[leftw] = result[key][leftp]
 				else:
 					final_substitutions[leftw] = final_substitutions[leftw].union(result[key][leftp])
@@ -1009,7 +1009,7 @@ class MerriamGenerator:
 						for candidate in result[key][leftp]:
 							candplurl = plurals[candidate]
 							newcands.add(candplurl)
-						if plurl not in final_substitutions.keys():
+						if plurl not in final_substitutions:
 							final_substitutions[plurl] = newcands
 						else:
 							final_substitutions[plurl] = final_substitutions[plurl].union(newcands)
@@ -1020,7 +1020,7 @@ class MerriamGenerator:
 						for candidate in result[key][leftp]:
 							candsingl = singulars[candidate]
 							newcands.add(candsingl)
-						if singl not in final_substitutions.keys():
+						if singl not in final_substitutions:
 							final_substitutions[singl] = newcands
 						else:
 							final_substitutions[singl] = final_substitutions[singl].union(newcands)
@@ -1032,7 +1032,7 @@ class MerriamGenerator:
 						for candidate in result[key][leftp]:
 							candtensedl = verbs[candidate][verb_tense]
 							newcands.add(candtensedl)
-						if tensedl not in final_substitutions.keys():
+						if tensedl not in final_substitutions:
 							final_substitutions[tensedl] = newcands
 						else:
 							final_substitutions[tensedl] = final_substitutions[tensedl].union(newcands)
@@ -1098,7 +1098,7 @@ class MerriamGenerator:
 					node_pos = root_node.find('fl')
 					if node_pos != None:
 						node_pos = node_pos.text.strip()[0].lower()
-						if node_pos not in cands.keys():
+						if node_pos not in cands:
 							cands[node_pos] = set([])
 					for sense in root_node.iter('sens'):
 						syn = sense.findall('syn')[0]
@@ -1118,7 +1118,7 @@ class MerriamGenerator:
 								cands[node_pos].add(synonym)
 							except UnicodeEncodeError:
 								cands = cands
-			for pos in cands.keys():
+			for pos in cands:
 				if target in cands[pos]:
 					cands[pos].remove(target)
 			if len(cands.keys())>0:
@@ -1193,9 +1193,9 @@ class WordnetGenerator:
 		toOriginal = []
 		
 		#Fill lists:
-		for target in subs.keys():
+		for target in subs:
 			targets.append(target)
-			for pos in subs[target].keys():
+			for pos in subs[target]:
 				#Get cands for a target and tag combination:
 				cands = list(subs[target][pos])
 				
@@ -1299,7 +1299,7 @@ class WordnetGenerator:
 			
 		#Create final substitutions:
 		final_substitutions = {}
-		for target in subs.keys():
+		for target in subs:
 			#Get lemma of target:
 			targetL = stemM[target]
 			
@@ -1307,7 +1307,7 @@ class WordnetGenerator:
 			final_substitutions[target] = set([])
 			
 			#Iterate through pos tags of target:
-			for pos in subs[target].keys():
+			for pos in subs[target]:
 				#Create final cands:
 				final_cands = set([])
 				
@@ -1371,8 +1371,8 @@ class WordnetGenerator:
 		adjectives = set([])
 		
 		#Fill lists:
-		for target in subs.keys():
-			for pos in subs[target].keys():
+		for target in subs:
+			for pos in subs[target]:
 				#Get cands for a target and tag combination:
 				cands = list(subs[target][pos])
 				
@@ -1435,8 +1435,8 @@ class WordnetGenerator:
 		
 		#Create extended substitutions:
 		substitutions_extended = {}
-		for target in subs.keys():
-			for pos in subs[target].keys():
+		for target in subs:
+			for pos in subs[target]:
 				#Get cands for a target and tag combination:
 				cands = list(subs[target][pos])
 				
@@ -1582,10 +1582,10 @@ class WordnetGenerator:
 		return substitutions_initial
 
 	def addToExtended(self, target, tag, cands, subs):
-		if target not in subs.keys():
+		if target not in subs:
 			subs[target] = {tag:cands}
 		else:
-			if tag not in subs[target].keys():
+			if tag not in subs[target]:
 				subs[target][tag] = cands
 			else:
 				subs[target][tag].extend(cands)
@@ -1675,7 +1675,7 @@ class BiranGenerator:
 		#Remove simple->complex substitutions:
 		substitutions_final = {}
 
-		for key in substitutions_inflected.keys():
+		for key in substitutions_inflected:
 			candidate_list = set([])
 			key_score = self.getComplexity(key, self.complex_lm, self.simple_lm)
 			for cand in substitutions_inflected[key]:
@@ -1704,9 +1704,9 @@ class BiranGenerator:
 		toOriginal = []
 		
 		#Fill lists:
-		for target in subs.keys():
+		for target in subs:
 			targets.append(target)
-			for pos in subs[target].keys():
+			for pos in subs[target]:
 				#Get cands for a target and tag combination:
 				cands = list(subs[target][pos])
 				
@@ -1810,7 +1810,7 @@ class BiranGenerator:
 			
 		#Create final substitutions:
 		final_substitutions = {}
-		for target in subs.keys():
+		for target in subs:
 			#Get lemma of target:
 			targetL = stemM[target]
 			
@@ -1818,7 +1818,7 @@ class BiranGenerator:
 			final_substitutions[target] = set([])
 			
 			#Iterate through pos tags of target:
-			for pos in subs[target].keys():
+			for pos in subs[target]:
 				#Create final cands:
 				final_cands = set([])
 				

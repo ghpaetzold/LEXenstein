@@ -72,7 +72,7 @@ class GeneratorEvaluator:
 			target = data[1].strip()
 			items = data[3:len(data)]
 			candidates = set([item.strip().split(':')[1].strip() for item in items])
-			if target in substitutions.keys():
+			if target in substitutions:
 				overlap = candidates.intersection(set(substitutions[target]))
 				precisionc += len(overlap)
 				if len(overlap)>0:

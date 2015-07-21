@@ -142,7 +142,7 @@ class SVMRankSelector:
 			word = word.strip()
 			score = scores[index]
 			index += 1
-			if id in ranking_data.keys():
+			if id in ranking_data:
 				ranking_data[id][word] = score
 			else:
 				ranking_data[id] = {word:score}
@@ -154,7 +154,7 @@ class SVMRankSelector:
 		for line in f:
 			id += 1
 			candidates = []
-			if id in ranking_data.keys():
+			if id in ranking_data:
 				candidates = ranking_data[id].keys()
 				candidates = sorted(candidates, key=ranking_data[id].__getitem__, reverse=False)
 			result.append(candidates)
@@ -478,7 +478,7 @@ class ClusterSelector:
 			target = data[1].strip()
 		
 			selected_candidates = set([])
-			if target in self.words_to_clusters.keys():	
+			if target in self.words_to_clusters:	
 				cluster = self.words_to_clusters[target]
 				candidates = set(substitution_candidates[c])
 				selected_candidates = candidates.intersection(self.clusters_to_words[cluster])
@@ -496,7 +496,7 @@ class ClusterSelector:
 			cluster = data[0].strip()
 			word = data[1].strip()
 			
-			if cluster in cw.keys():
+			if cluster in cw:
 				cw[cluster].add(word)
 			else:
 				cw[cluster] = set([word])
@@ -630,7 +630,7 @@ class POSTagSelector:
 	def getCandidatesWithSamePOS(self, candidates, word_to_tag, target_pos):
 		result = set([])
 		for candidate in candidates:
-			if candidate in word_to_tag.keys():
+			if candidate in word_to_tag:
 				ctag = word_to_tag[candidate]
 				if ctag==target_pos:
 					result.add(candidate)
@@ -688,7 +688,7 @@ class VoidSelector:
 			target = data[1].strip()
 		
 			candidates = []
-			if target in substitutions.keys():
+			if target in substitutions:
 				candidates = substitutions[target]
 		
 			selected_substitutions.append(candidates)
@@ -826,7 +826,7 @@ class BiranSelector:
 		return cosine(v1, v2)
 	
 	def getCommonVec(self, target, candidate):
-		if target not in self.model.keys() or candidate not in self.model.keys():
+		if target not in self.model.keys() or candidate not in self.model:
 			return {}
 		else:
 			result = {}
@@ -855,7 +855,7 @@ class BiranSelector:
 				cooc = tokens[j]
 				if self.isNumeral(cooc):
 					cooc = '#NUMERAL#'
-				if cooc not in coocs.keys():
+				if cooc not in coocs:
 					coocs[cooc] = 1
 				else:
 					coocs[cooc] += 1

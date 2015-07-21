@@ -502,12 +502,12 @@ class YamamotoRanker:
 		
 	def getCoocScore(self, word, sent):
 		tokens = sent.strip().split(' ')
-		if word not in self.cooc_model.keys():
+		if word not in self.cooc_model:
 			return 0
 		else:
 			result = 0
 			for token in tokens:
-				if token in self.cooc_model[word].keys():
+				if token in self.cooc_model[word]:
 					result += self.cooc_model[word][token]
 			return result
 		
@@ -1116,7 +1116,7 @@ class SVMRanker:
 			word = word.strip()
 			score = scores[index]
 			index += 1
-			if id in ranking_data.keys():
+			if id in ranking_data:
 				ranking_data[id][word] = score
 			else:
 				ranking_data[id] = {word:score}
