@@ -224,7 +224,7 @@ class FeatureEstimator:
 			target = line[1].strip()
 			for subst in line[3:len(line)]:
 				words = subst.strip().split(':')[1].strip()
-				prob = 0.0
+				prob = -9999999999
 				for word in words.split(' '):
 					if target+'\t'+word in probabilities.keys():
 						p = probabilities[target+'\t'+word]
