@@ -201,9 +201,9 @@ def addTranslationProbabilitiesFileToShelve(transprob_file, model_file):
 		key = data[0] + '\t' + data[1]
 		value = float(data[2])
 		if key not in d:
-			d[key] = int(value)
+			d[key] = value
 		else:
-			d[key] += int(value)
+			d[key] += value
 	f.close()
 	print('Translation probabilities file read!')
 	
