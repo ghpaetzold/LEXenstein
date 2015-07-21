@@ -221,17 +221,15 @@ class FeatureEstimator:
 		probabilities = self.resources[args[0]]
 		result = []
 		for line in data:
-			target_probs = {}
-			if line[1].strip() in probabilities.keys():
-				target_probs = probabilities[line[1].strip()]
+			target = line[1].strip()
 			for subst in line[3:len(line)]:
 				words = subst.strip().split(':')[1].strip()
-				prob = 1.0
+				prob = 0.0
 				for word in words.split(' '):
-					if word in target_probs.keys():
-						prob *= target_probs[word]
-					else:
-						prob = 0.0
+					if target+'\t'+word in probabilities.keys():
+						p = probabilities[target+'\t'+word]
+						if p>prob:
+							prob = p
 				result.append(prob)
 		return result
 		
@@ -905,25 +903,14 @@ class FeatureEstimator:
 		Adds a translation probability feature to the estimator.
 		The value will be the probability of a target complex word of being translated into a given candidate substitution.
 	
-		@param translation_probabilities: Path to a file containing the translation probabilities.
-		The file must produced by the following command through fast_align:
+		@param translation_probabilities: Path to a shelve file containing translation probabilities.
+		To produce the file, first run the following command through fast_align:
 		fast_align -i <parallel_data> -v -d -o <translation_probabilities_file>
+		Then, produce a shelve file with the "addTranslationProbabilitiesFileToShelve" function from LEXenstein's "util" module.
 		@param orientation: Whether the feature is a simplicity of complexity measure.
 		Possible values: Complexity, Simplicity.
 		"""
-		path = translation_probabilities
-		probabilities = {}
-		f = open(path)
-		for line in f:
-			lined = line.strip().split('\t')
-			word1 = lined[0]
-			word2 = lined[1]
-			prob = math.exp(float(lined[2]))
-			if word1 in probabilities.keys():
-				probabilities[word1][word2] = prob
-			else:
-				probabilities[word1] = {word2:prob}
-		f.close()
+		probabilities = self.readNgramFile(translation_probabilities)
 		
 		if orientation not in ['Complexity', 'Simplicity']:
 			print('Orientation must be Complexity or Simplicity')

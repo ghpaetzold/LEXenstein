@@ -176,6 +176,41 @@ def getVocabularyFromDataset(dataset, vocab_file, leftw, rightw, format='victor'
 			f.write(word.strip() + '\n')
 	f.close()
 
+def addTranslationProbabilitiesFileToShelve(transprob_file, model_file):
+	"""
+	Adds a translation probabilities file to an either new, or existing shelve dictionary.
+	The shelve file can then be used for the calculation of features.
+	To produce the translation probabilities file, first run the following command through fast_align:
+	fast_align -i <parallel_data> -v -d -o <transprob_file>
+	
+	@param transprob_file: File containing translation probabilities.
+	@param model_file: Shelve file in which to save the translation probabilities.
+	"""
+	print('Opening shelve file...')
+	d = shelve.open(model_file, protocol=pickle.HIGHEST_PROTOCOL)
+	print('Shelve file open!')
+	
+	print('Reading translation probabilities file...')
+	c = 0
+	f = open(transprob_file)
+	for line in f:
+		c += 1
+		if c % 1000000 == 0:
+			print(str(c) + ' translation probabilities read.')
+		data = line.strip().split('\t')
+		key = data[0] + '\t' + data[1]
+		value = float(data[2])
+		if key not in d:
+			d[key] = int(value)
+		else:
+			d[key] += int(value)
+	f.close()
+	print('Translation probabilities file read!')
+	
+	print('Saving model...')
+	d.close()
+	print('Finished!')
+	
 def addNgramCountsFileToShelve(ngrams_file, model_file):
 	"""
 	Adds a n-gram counts file to an either new, or existing shelve dictionary.
@@ -183,7 +218,7 @@ def addNgramCountsFileToShelve(ngrams_file, model_file):
 	The file must be in the format produced by the "-write" option of SRILM.
 	
 	@param ngrams_file: File containing n-gram counts.
-	@param model_file: File in which to save the frequency model.
+	@param model_file: Shelve file in which to save the n-gram counts file.
 	"""
 	print('Opening shelve file...')
 	d = shelve.open(model_file, protocol=pickle.HIGHEST_PROTOCOL)
