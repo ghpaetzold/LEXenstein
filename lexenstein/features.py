@@ -226,7 +226,7 @@ class FeatureEstimator:
 				words = subst.strip().split(':')[1].strip()
 				prob = -9999999999
 				for word in words.split(' '):
-					if target+'\t'+word in probabilities.keys():
+					if target+'\t'+word in probabilities:
 						p = probabilities[target+'\t'+word]
 						if p>prob:
 							prob = p
@@ -807,7 +807,7 @@ class FeatureEstimator:
 		if orientation not in ['Complexity', 'Simplicity']:
 			print('Orientation must be Complexity or Simplicity')
 		else:
-			if model not in self.resources.keys():
+			if model not in self.resources:
 				m = gensim.models.word2vec.Word2Vec.load_word2vec_format(model, binary=True)
 				self.resources[model] = m
 			self.features.append((self.wordVectorValuesFeature, [model, size]))
@@ -835,10 +835,10 @@ class FeatureEstimator:
 			print('Orientation must be Complexity or Simplicity')
 		else:
 			os.environ['JAVAHOME'] = java_path
-			if pos_model not in self.resources.keys():
+			if pos_model not in self.resources:
 				tagger = StanfordPOSTagger(pos_model, stanford_tagger)
 				self.resources[pos_model] = tagger
-			if condprob_model not in self.resources.keys():
+			if condprob_model not in self.resources:
 				m = pickle.load(open(condprob_model, 'rb'))
 				self.resources[condprob_model] = m
 			
@@ -859,7 +859,7 @@ class FeatureEstimator:
 		if orientation not in ['Complexity', 'Simplicity']:
 			print('Orientation must be Complexity or Simplicity')
 		else:
-			if model not in self.resources.keys():
+			if model not in self.resources:
 				m = gensim.models.word2vec.Word2Vec.load_word2vec_format(model, binary=True)
 				self.resources[model] = m
 			self.features.append((self.wordVectorSimilarityFeature, [model]))
@@ -889,10 +889,10 @@ class FeatureEstimator:
 		if orientation not in ['Complexity', 'Simplicity']:
 			print('Orientation must be Complexity or Simplicity')
 		else:
-			if model not in self.resources.keys():
+			if model not in self.resources:
 				m = gensim.models.word2vec.Word2Vec.load_word2vec_format(model, binary=True)
 				self.resources[model] = m
-			if pos_model not in self.resources.keys():
+			if pos_model not in self.resources:
 				tagger = StanfordPOSTagger(pos_model, stanford_tagger)
 				self.resources[pos_model] = tagger
 			self.features.append((self.taggedWordVectorSimilarityFeature, [model, pos_model, pos_type]))
@@ -915,7 +915,7 @@ class FeatureEstimator:
 		if orientation not in ['Complexity', 'Simplicity']:
 			print('Orientation must be Complexity or Simplicity')
 		else:
-			if translation_probabilities not in self.resources.keys():
+			if translation_probabilities not in self.resources:
 				self.resources[translation_probabilities] = probabilities
 			self.features.append((self.translationProbabilityFeature, [translation_probabilities]))
 			self.identifiers.append(('Translation Probability (File: '+translation_probabilities+')', orientation))
@@ -934,7 +934,7 @@ class FeatureEstimator:
 		if orientation not in ['Complexity', 'Simplicity']:
 			print('Orientation must be Complexity or Simplicity')
 		else:
-			if lexicon not in self.resources.keys():
+			if lexicon not in self.resources:
 				words = set([w.strip() for w in open(lexicon)])
 				self.resources[lexicon] = words
 			self.features.append((self.lexiconFeature, [lexicon]))
@@ -988,7 +988,7 @@ class FeatureEstimator:
 		if orientation not in ['Complexity', 'Simplicity']:
 			print('Orientation must be Complexity or Simplicity')
 		else:
-			if language_model not in self.resources.keys():
+			if language_model not in self.resources:
 				model = kenlm.LanguageModel(language_model)
 				self.resources[language_model] = model
 			self.features.append((self.collocationalFeature, [language_model, leftw, rightw]))
@@ -1014,7 +1014,7 @@ class FeatureEstimator:
 		if orientation not in ['Complexity', 'Simplicity']:
 			print('Orientation must be Complexity or Simplicity')
 		else:
-			if ngram_file not in self.resources.keys():
+			if ngram_file not in self.resources:
 				counts = self.readNgramFile(ngram_file)
 				self.resources[ngram_file] = counts
 			self.features.append((self.frequencyCollocationalFeature, [ngram_file, leftw, rightw]))
@@ -1051,11 +1051,11 @@ class FeatureEstimator:
 		if orientation not in ['Complexity', 'Simplicity']:
 			print('Orientation must be Complexity or Simplicity')
 		else:
-			if ngram_file not in self.resources.keys():
+			if ngram_file not in self.resources:
 				counts = self.readNgramFile(ngram_file)
 				self.resources[ngram_file] = counts
 			os.environ['JAVAHOME'] = java_path
-			if pos_model not in self.resources.keys():
+			if pos_model not in self.resources:
 				tagger = StanfordPOSTagger(pos_model, stanford_tagger)
 				self.resources[pos_model] = tagger
 			self.features.append((self.taggedFrequencyCollocationalFeature, [ngram_file, leftw, rightw, pos_model, pos_type]))
@@ -1092,11 +1092,11 @@ class FeatureEstimator:
 		if orientation not in ['Complexity', 'Simplicity']:
 			print('Orientation must be Complexity or Simplicity')
 		else:
-			if ngram_file not in self.resources.keys():
+			if ngram_file not in self.resources:
 				counts = self.readNgramFile(ngram_file)
 				self.resources[ngram_file] = counts
 			os.environ['JAVAHOME'] = java_path
-			if pos_model not in self.resources.keys():
+			if pos_model not in self.resources:
 				tagger = StanfordPOSTagger(pos_model, stanford_tagger)
 				self.resources[pos_model] = tagger
 			self.features.append((self.binaryTaggedFrequencyCollocationalFeature, [ngram_file, leftw, rightw, pos_model, pos_type]))
@@ -1121,7 +1121,7 @@ class FeatureEstimator:
 		if orientation not in ['Complexity', 'Simplicity']:
 			print('Orientation must be Complexity or Simplicity')
 		else:
-			if language_model not in self.resources.keys():
+			if language_model not in self.resources:
 				model = kenlm.LanguageModel(language_model)
 				self.resources[language_model] = model
 			self.features.append((self.popCollocationalFeature, [language_model, leftw, rightw]))
@@ -1144,7 +1144,7 @@ class FeatureEstimator:
 		if orientation not in ['Complexity', 'Simplicity']:
 			print('Orientation must be Complexity or Simplicity')
 		else:
-			if language_model not in self.resources.keys():
+			if language_model not in self.resources:
 				model = kenlm.LanguageModel(language_model)
 				self.resources[language_model] = model
 			self.features.append((self.ngramProbabilityFeature, [language_model, leftw, rightw]))
@@ -1165,7 +1165,7 @@ class FeatureEstimator:
 		if orientation not in ['Complexity', 'Simplicity']:
 			print('Orientation must be Complexity or Simplicity')
 		else:
-			if ngram_file not in self.resources.keys():
+			if ngram_file not in self.resources:
 				counts = self.readNgramFile(ngram_file)
 				self.resources[ngram_file] = counts
 			self.features.append((self.ngramFrequencyFeature, [ngram_file, leftw, rightw]))
@@ -1186,7 +1186,7 @@ class FeatureEstimator:
 		if orientation not in ['Complexity', 'Simplicity']:
 			print('Orientation must be Complexity or Simplicity')
 		else:
-			if ngram_file not in self.resources.keys():
+			if ngram_file not in self.resources:
 				counts = self.readNgramFile(ngram_file)
 				self.resources[ngram_file] = counts
 			self.features.append((self.binaryNgramFrequencyFeature, [ngram_file, leftw, rightw]))
@@ -1207,7 +1207,7 @@ class FeatureEstimator:
 		if orientation not in ['Complexity', 'Simplicity']:
 			print('Orientation must be Complexity or Simplicity')
 		else:
-			if language_model not in self.resources.keys():
+			if language_model not in self.resources:
 				model = kenlm.LanguageModel(language_model)
 				self.resources[language_model] = model
 			self.features.append((self.popNgramProbabilityFeature, [language_model, leftw, rightw]))
@@ -1225,7 +1225,7 @@ class FeatureEstimator:
 		if orientation not in ['Complexity', 'Simplicity']:
 			print('Orientation must be Complexity or Simplicity')
 		else:
-			if language_model not in self.resources.keys():
+			if language_model not in self.resources:
 				model = kenlm.LanguageModel(language_model)
 				self.resources[language_model] = model
 			self.features.append((self.sentenceProbabilityFeature, [language_model]))
