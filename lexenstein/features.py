@@ -5,6 +5,7 @@ import kenlm
 import math
 import gensim
 from nltk.tag.stanford import StanfordPOSTagger
+from nltk.parse.stanford import StanfordParser
 import os
 import pickle
 from sklearn.preprocessing import normalize
@@ -789,6 +790,65 @@ class FeatureEstimator:
 				resultma.append(maxdepth)
 		return resultma
 		
+	def subjectDependencyProbabilityFeature(self, data, args):
+		model = self.resources[args[0]]
+		parser = self.resources[args[1]]
+		
+		#Get parsed sentences:
+		print('Parsing...')
+		dep_parsed_sents = None
+		if 'dep_parsed_sents' in self.temp_resources:
+			dep_parsed_sents = self.temp_resources['dep_map']
+		else:
+			sentences = [l[0].strip().split(' ') for l in data]
+			dep_parsed_sents = util.dependencyParseSentences(parser, sentences)
+			dep_maps = []
+			for sent in dep_parsed_sents:
+				dep_map = {}
+				for parse in sent:
+					deplink = str(parse[0])
+					subjectindex = int(str(parse[2]))-1
+					objectindex = int(str(parse[4]))-1
+					if subjectindex not in dep_map:
+						dep_map[subjectindex] = {objectindex: set([deplink])}
+					elif objectindex not in dep_map[subjectindex]:
+						dep_map[subjectindex][objectindex] = set(deplink)
+					else:
+						dep_map[subjectindex][objectindex].add(deplink)
+				dep_maps.append(dep_map)
+			self.temp_resources['dep_maps'] = dep_maps
+		print('Parsed!')
+		
+		print('Getting links...')
+		result = []
+		for i in range(0, len(data)):
+			line = data[i]
+			sent = line[0].strip().split(' ')
+			target = line[1].strip().lower()
+			head = int(line[2].strip())
+			dep_map = dep_maps[i]
+			insts = set([])
+			if head in dep_map:
+				for object in dep_map[head]:
+					for dep_link in dep_map[head][object]:
+						insts.add((dep_link, sent[object]))
+			for subst in line[3:len(line)]:
+				word = subst.split(':')[1].strip()
+				total = 0.0
+				if len(insts)>0:
+					for inst in insts:
+						ngram = inst[0] + ' ' + word + ' ' + inst[1]
+						print('\tNgram: ' + ngram)
+						prob = math.exp(model.score(ngram, bos=False, eos=False))
+						print('\tProb: ' + str(prob))
+						total += prob
+					total /= float(len(insts))
+				else:
+					total = 1.0
+				result.append(total)
+			print('Links produced!')
+		return result
+		
 	def readNgramFile(self, ngram_file):
 		counts = shelve.open(ngram_file, protocol=pickle.HIGHEST_PROTOCOL)
 		return counts
@@ -1044,7 +1104,6 @@ class FeatureEstimator:
 		@param pos_type: The type of POS tags to be used.
 		Values supported: treebank, paetzold
 		@param orientation: Whether the feature is a simplicity of complexity measure.
-		Currently supported types: treebank, paetzold.
 		Possible values: Complexity, Simplicity.
 		"""
 		
@@ -1085,7 +1144,6 @@ class FeatureEstimator:
 		@param pos_type: The type of POS tags to be used.
 		Values supported: treebank, paetzold
 		@param orientation: Whether the feature is a simplicity of complexity measure.
-		Currently supported types: treebank, paetzold.
 		Possible values: Complexity, Simplicity.
 		"""
 		
@@ -1365,3 +1423,36 @@ class FeatureEstimator:
 		else:
 			self.features.append((self.maxDepth ,[]))
 			self.identifiers.append(('Maximal Sense Depth', orientation))
+			
+	def addSubjectDependencyProbabilityFeature(self, language_model, stanford_parser, dependency_models, java_path, orientation):
+		"""
+		Adds a subject dependency probability feature to the estimator.
+		The value will be the average language model probability of all dependency links of which the target word is subject, with the target word replaced by a given candidate.
+		To train the language model used by this feature, one must first extract dependency links from a large corpora of sentences.
+		In sequence, the dependency links must be transformed into the following format: <type_of_dependency_link> <subject_word> <object_word>
+		In the format above, each token is space-separated.
+		Once transformed, one can then run any language modelling tool to produce a language model in ARPA format.
+	
+		@param language_model: Path to the language model from which to extract dependency link probabilities.
+		@param stanford_parser: Path to the "stanford-parser.jar" file.
+		The parser can be downloaded from the following link: http://nlp.stanford.edu/software/lex-parser.shtml
+		@param dependency_models: Path to a JAR file containing parsing models.
+		The models can be downloaded from the following link: http://nlp.stanford.edu/software/lex-parser.shtml
+		@param java_path: Path to the system's "java" executable.
+		Can be commonly found in "/usr/bin/java" in Unix/Linux systems, or in "C:/Program Files/Java/jdk_version/java.exe" in Windows systems.
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Possible values: Complexity, Simplicity.
+		"""
+		
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:
+			if language_model not in self.resources:
+				model = kenlm.LanguageModel(language_model)
+				self.resources[language_model] = model
+			os.environ['JAVAHOME'] = java_path
+			if dependency_models not in self.resources:
+				parser = StanfordParser(path_to_jar=stanford_parser, path_to_models_jar=dependency_models)
+				self.resources[dependency_models] = parser
+			self.features.append((self.subjectDependencyProbabilityFeature, [language_model, dependency_models]))
+			self.identifiers.append(('Input Dependency Probability Feature (Language Model: '+language_model+') (Models: '+dependency_models+')', orientation))

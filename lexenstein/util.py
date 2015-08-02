@@ -11,6 +11,7 @@ def dependencyParseSentences(parser, sentences):
 	If whitespaces exists inside a token, then the token will be treated as separate tokens.
 	This method is an adaptation of the code provided by NLTK.
 
+	@param parser: An instance of the nltk.parse.stanford.StanfordParser class.
 	@param sentences: Input sentences to parse.
 	Each sentence must be a list of tokens.
 	@return A list of the dependency links of each sentence.
