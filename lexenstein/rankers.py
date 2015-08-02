@@ -48,7 +48,7 @@ class GlavasRanker:
 			substitutions = data[3:len(data)]
 			
 			rankings = {}
-			for i in range(0, len(fe.identifiers)):
+			for i in range(0, len(self.fe.identifiers)):
 				#Create dictionary of substitution to feature value:
 				scores = {}
 				for substitution in substitutions:
