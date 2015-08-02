@@ -73,14 +73,14 @@ class GlavasRanker:
 				
 				#Update rankings:
 				for j in range(0, len(sorted_substitutions)):
-					word = words[j]
+					word = sorted_substitutions[j]
 					if word in rankings:
 						rankings[word] += j
 					else:
 						rankings[word] = j
 		
 			#Produce final rankings:
-			final_rankings = sorted(rankings.keys(), key=scores.__getitem__)
+			final_rankings = sorted(rankings.keys(), key=rankings.__getitem__)
 		
 			#Add them to result:
 			result.append(final_rankings)
