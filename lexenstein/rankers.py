@@ -47,14 +47,20 @@ class GlavasRanker:
 			data = line.strip().split('\t')
 			substitutions = data[3:len(data)]
 			
+			#Get instance's feature values:
+			instance_features = []
+			for substitution in substitutions:
+				instance_features.append(self.feature_values[index])
+				index += 1
+			
 			rankings = {}
 			for i in range(0, len(self.fe.identifiers)):
 				#Create dictionary of substitution to feature value:
 				scores = {}
-				for substitution in substitutions:
+				for j in range(0, len(substitutions)):
+					substitution = substitutions[j]
 					word = substitution.strip().split(':')[1].strip()
-					scores[word] = self.feature_values[index][i]
-					index += 1
+					scores[word] = instance_features[j][i]
 				
 				#Check if feature is simplicity or complexity measure:
 				rev = False
