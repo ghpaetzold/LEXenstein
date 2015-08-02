@@ -1,4 +1,4 @@
-from lexenstein.util import getGeneralisedPOS
+from lexenstein.util import *
 from nltk.stem.porter import *
 from nltk.corpus import wordnet as wn
 import kenlm
@@ -801,7 +801,7 @@ class FeatureEstimator:
 			dep_parsed_sents = self.temp_resources['dep_map']
 		else:
 			sentences = [l[0].strip().split(' ') for l in data]
-			dep_parsed_sents = util.dependencyParseSentences(parser, sentences)
+			dep_parsed_sents = dependencyParseSentences(parser, sentences)
 			dep_maps = []
 			for sent in dep_parsed_sents:
 				dep_map = {}
