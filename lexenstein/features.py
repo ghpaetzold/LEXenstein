@@ -799,7 +799,12 @@ class FeatureEstimator:
 			dep_maps = self.temp_resources['dep_maps']
 		else:
 			sentences = [l[0].strip().split(' ') for l in data]
-			dep_parsed_sents = dependencyParseSentences(parser, sentences)
+			dep_parsed_sents = None
+			if 'dep_parsed_sents' in self.temp_resources:
+				dep_parsed_sents = self.temp_resources['dep_parsed_sents']
+			else:
+				dep_parsed_sents = dependencyParseSentences(parser, sentences)
+				self.temp_resources['dep_parsed_sents'] = dep_parsed_sents
 			dep_maps = []
 			for sent in dep_parsed_sents:
 				dep_map = {}
@@ -852,7 +857,12 @@ class FeatureEstimator:
 			dep_maps = self.temp_resources['dep_maps']
 		else:
 			sentences = [l[0].strip().split(' ') for l in data]
-			dep_parsed_sents = dependencyParseSentences(parser, sentences)
+			dep_parsed_sents = None
+			if 'dep_parsed_sents' in self.temp_resources:
+				dep_parsed_sents = self.temp_resources['dep_parsed_sents']
+			else:
+				dep_parsed_sents = dependencyParseSentences(parser, sentences)
+				self.temp_resources['dep_parsed_sents'] = dep_parsed_sents
 			dep_maps = []
 			for sent in dep_parsed_sents:
 				dep_map = {}
@@ -904,7 +914,12 @@ class FeatureEstimator:
 			dep_maps = self.temp_resources['dep_maps']
 		else:
 			sentences = [l[0].strip().split(' ') for l in data]
-			dep_parsed_sents = dependencyParseSentences(parser, sentences)
+			dep_parsed_sents = None
+			if 'dep_parsed_sents' in self.temp_resources:
+				dep_parsed_sents = self.temp_resources['dep_parsed_sents']
+			else:
+				dep_parsed_sents = dependencyParseSentences(parser, sentences)
+				self.temp_resources['dep_parsed_sents'] = dep_parsed_sents
 			dep_maps = []
 			for sent in dep_parsed_sents:
 				dep_map = {}
@@ -962,7 +977,12 @@ class FeatureEstimator:
 				dep_maps = self.temp_resources['dep_maps']
 			else:
 				sentences = [l[0].strip().split(' ') for l in data]
-				dep_parsed_sents = dependencyParseSentences(parser, sentences)
+				dep_parsed_sents = None
+				if 'dep_parsed_sents' in self.temp_resources:
+					dep_parsed_sents = self.temp_resources['dep_parsed_sents']
+				else:
+					dep_parsed_sents = dependencyParseSentences(parser, sentences)
+					self.temp_resources['dep_parsed_sents'] = dep_parsed_sents
 				dep_maps = []
 				for sent in dep_parsed_sents:
 					dep_map = {}
@@ -1030,7 +1050,12 @@ class FeatureEstimator:
 				dep_maps = self.temp_resources['dep_maps']
 			else:
 				sentences = [l[0].strip().split(' ') for l in data]
-				dep_parsed_sents = dependencyParseSentences(parser, sentences)
+				dep_parsed_sents = None
+				if 'dep_parsed_sents' in self.temp_resources:
+					dep_parsed_sents = self.temp_resources['dep_parsed_sents']
+				else:
+					dep_parsed_sents = dependencyParseSentences(parser, sentences)
+					self.temp_resources['dep_parsed_sents'] = dep_parsed_sents
 				dep_maps = []
 				for sent in dep_parsed_sents:
 					dep_map = {}
@@ -1097,7 +1122,12 @@ class FeatureEstimator:
 				dep_maps = self.temp_resources['dep_maps']
 			else:
 				sentences = [l[0].strip().split(' ') for l in data]
-				dep_parsed_sents = dependencyParseSentences(parser, sentences)
+				dep_parsed_sents = None
+				if 'dep_parsed_sents' in self.temp_resources:
+					dep_parsed_sents = self.temp_resources['dep_parsed_sents']
+				else:
+					dep_parsed_sents = dependencyParseSentences(parser, sentences)
+					self.temp_resources['dep_parsed_sents'] = dep_parsed_sents
 				dep_maps = []
 				for sent in dep_parsed_sents:
 					dep_map = {}
@@ -1165,7 +1195,12 @@ class FeatureEstimator:
 				dep_maps = self.temp_resources['dep_maps']
 			else:
 				sentences = [l[0].strip().split(' ') for l in data]
-				dep_parsed_sents = dependencyParseSentences(parser, sentences)
+				dep_parsed_sents = None
+				if 'dep_parsed_sents' in self.temp_resources:
+					dep_parsed_sents = self.temp_resources['dep_parsed_sents']
+				else:
+					dep_parsed_sents = dependencyParseSentences(parser, sentences)
+					self.temp_resources['dep_parsed_sents'] = dep_parsed_sents
 				dep_maps = []
 				for sent in dep_parsed_sents:
 					dep_map = {}
@@ -1246,7 +1281,12 @@ class FeatureEstimator:
 				dep_maps = self.temp_resources['dep_maps']
 			else:
 				sentences = [l[0].strip().split(' ') for l in data]
-				dep_parsed_sents = dependencyParseSentences(parser, sentences)
+				dep_parsed_sents = None
+				if 'dep_parsed_sents' in self.temp_resources:
+					dep_parsed_sents = self.temp_resources['dep_parsed_sents']
+				else:
+					dep_parsed_sents = dependencyParseSentences(parser, sentences)
+					self.temp_resources['dep_parsed_sents'] = dep_parsed_sents
 				dep_maps = []
 				for sent in dep_parsed_sents:
 					dep_map = {}
