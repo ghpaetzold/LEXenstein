@@ -883,6 +883,8 @@ class FeatureEstimator:
 				inv_dep_map = {}
 				for subjectindex in inst:
 					for objectindex in inst[subjectindex]:
+						if objectindex not in inv_dep_map:
+							inv_dep_map[objectindex] = {}
 						inv_dep_map[objectindex][subjectindex] = inst[subjectindex][objectindex]
 				inv_dep_maps.append(inv_dep_map)
 			self.temp_resources['inv_dep_maps'] = inv_dep_maps
@@ -893,11 +895,11 @@ class FeatureEstimator:
 			sent = line[0].strip().split(' ')
 			target = line[1].strip().lower()
 			head = int(line[2].strip())
-			inv_dep_map = inv_dep_map[i]
+			inv_dep_map = inv_dep_maps[i]
 			insts = set([])
 			if head in inv_dep_map:
 				for object in inv_dep_map[head]:
-					for dep_link in dep_map[head][object]:
+					for dep_link in inv_dep_map[head][object]:
 						insts.add((dep_link, sent[object]))
 			for subst in line[3:len(line)]:
 				word = subst.split(':')[1].strip()
