@@ -843,7 +843,7 @@ class FeatureEstimator:
 				result.append(total)
 		return result
 		
-	def binarySubjectDependencyProbabilityFeature(self, data, args):
+	def binarySubjectDependencyFeature(self, data, args):
 		model = self.resources[args[0]]
 		parser = self.resources[args[1]]
 		
@@ -892,6 +892,59 @@ class FeatureEstimator:
 							total = 0.0
 				else:
 					total = 1.0
+				result.append(total)
+		return result
+		
+	def subjectDependencyFrequencyFeature(self, data, args):
+		model = self.resources[args[0]]
+		parser = self.resources[args[1]]
+		
+		#Get parsed sentences:
+		dep_maps = None
+		if 'dep_maps' in self.temp_resources:
+			dep_maps = self.temp_resources['dep_maps']
+		else:
+			sentences = [l[0].strip().split(' ') for l in data]
+			dep_parsed_sents = dependencyParseSentences(parser, sentences)
+			dep_maps = []
+			for sent in dep_parsed_sents:
+				dep_map = {}
+				for parse in sent:
+					deplink = str(parse[0])
+					subjectindex = int(str(parse[2]))-1
+					objectindex = int(str(parse[4]))-1
+					if subjectindex not in dep_map:
+						dep_map[subjectindex] = {objectindex: set([deplink])}
+					elif objectindex not in dep_map[subjectindex]:
+						dep_map[subjectindex][objectindex] = set([deplink])
+					else:
+						dep_map[subjectindex][objectindex].add(deplink)
+				dep_maps.append(dep_map)
+			self.temp_resources['dep_maps'] = dep_maps
+
+		result = []
+		for i in range(0, len(data)):
+			line = data[i]
+			sent = line[0].strip().split(' ')
+			target = line[1].strip().lower()
+			head = int(line[2].strip())
+			dep_map = dep_maps[i]
+			insts = set([])
+			if head in dep_map:
+				for object in dep_map[head]:
+					for dep_link in dep_map[head][object]:
+						insts.add((dep_link, sent[object]))
+			for subst in line[3:len(line)]:
+				word = subst.split(':')[1].strip()
+				total = 0.0
+				if len(insts)>0:
+					for inst in insts:
+						ngram = inst[0] + ' ' + word + ' ' + inst[1]
+						if ngram in model:
+							total += model[ngram]
+				total /= float(len(insts))
+				else:
+					total = 99999.0
 				result.append(total)
 		return result
 		
@@ -963,7 +1016,7 @@ class FeatureEstimator:
 				result.append(total)
 		return result
 		
-	def binaryObjectDependencyProbabilityFeature(self, data, args):
+	def binaryObjectDependencyFeature(self, data, args):
 		model = self.resources[args[0]]
 		parser = self.resources[args[1]]
 		
@@ -1027,6 +1080,74 @@ class FeatureEstimator:
 							total = 0.0
 				else:
 					total = 1.0
+				result.append(total)
+		return result
+		
+	def objectDependencyFrequencyFeature(self, data, args):
+		model = self.resources[args[0]]
+		parser = self.resources[args[1]]
+		
+		#Get parsed sentences:
+		inv_dep_maps = None
+		if 'inv_dep_maps' in self.temp_resources:
+			inv_dep_maps = self.temp_resources['inv_dep_maps']
+		else:
+			dep_maps = None
+			if 'dep_maps' in self.temp_resources:
+				dep_maps = self.temp_resources['dep_maps']
+			else:
+				sentences = [l[0].strip().split(' ') for l in data]
+				dep_parsed_sents = dependencyParseSentences(parser, sentences)
+				dep_maps = []
+				for sent in dep_parsed_sents:
+					dep_map = {}
+					for parse in sent:
+						deplink = str(parse[0])
+						subjectindex = int(str(parse[2]))-1
+						objectindex = int(str(parse[4]))-1
+						if subjectindex not in dep_map:
+							dep_map[subjectindex] = {objectindex: set([deplink])}
+						elif objectindex not in dep_map[subjectindex]:
+							dep_map[subjectindex][objectindex] = set([deplink])
+						else:
+							dep_map[subjectindex][objectindex].add(deplink)
+					dep_maps.append(dep_map)
+				self.temp_resources['dep_maps'] = dep_maps
+				
+			inv_dep_maps = []
+			for inst in dep_maps:
+				inv_dep_map = {}
+				for subjectindex in inst:
+					for objectindex in inst[subjectindex]:
+						if objectindex not in inv_dep_map:
+							inv_dep_map[objectindex] = {}
+						inv_dep_map[objectindex][subjectindex] = inst[subjectindex][objectindex]
+				inv_dep_maps.append(inv_dep_map)
+			self.temp_resources['inv_dep_maps'] = inv_dep_maps
+
+		result = []
+		for i in range(0, len(data)):
+			line = data[i]
+			sent = line[0].strip().split(' ')
+			target = line[1].strip().lower()
+			head = int(line[2].strip())
+			inv_dep_map = inv_dep_maps[i]
+			insts = set([])
+			if head in inv_dep_map:
+				for object in inv_dep_map[head]:
+					for dep_link in inv_dep_map[head][object]:
+						insts.add((dep_link, sent[object]))
+			for subst in line[3:len(line)]:
+				word = subst.split(':')[1].strip()
+				total = 0.0
+				if len(insts)>0:
+					for inst in insts:
+						ngram = inst[0] + ' ' + inst[1] + ' ' + word
+						if ngram in model:
+							total += model[ngram]
+				total /= float(len(insts))
+				else:
+					total = 99999.0
 				result.append(total)
 		return result
 		
@@ -1111,7 +1232,7 @@ class FeatureEstimator:
 				result.append(total)
 		return result
 		
-	def binaryAllDependencyProbabilityFeature(self, data, args):
+	def binaryAllDependencyFeature(self, data, args):
 		model = self.resources[args[0]]
 		parser = self.resources[args[1]]
 		
@@ -1188,6 +1309,87 @@ class FeatureEstimator:
 							total = 0.0
 				else:
 					total = 1.0
+				result.append(total)
+		return result
+		
+	def allDependencyFrequencyFeature(self, data, args):
+		model = self.resources[args[0]]
+		parser = self.resources[args[1]]
+		
+		#Get parsed sentences:
+		if 'inv_dep_maps' in self.temp_resources:
+			inv_dep_maps = self.temp_resources['inv_dep_maps']
+		else:
+			dep_maps = None
+			if 'dep_maps' in self.temp_resources:
+				dep_maps = self.temp_resources['dep_maps']
+			else:
+				sentences = [l[0].strip().split(' ') for l in data]
+				dep_parsed_sents = dependencyParseSentences(parser, sentences)
+				dep_maps = []
+				for sent in dep_parsed_sents:
+					dep_map = {}
+					for parse in sent:
+						deplink = str(parse[0])
+						subjectindex = int(str(parse[2]))-1
+						objectindex = int(str(parse[4]))-1
+						if subjectindex not in dep_map:
+							dep_map[subjectindex] = {objectindex: set([deplink])}
+						elif objectindex not in dep_map[subjectindex]:
+							dep_map[subjectindex][objectindex] = set([deplink])
+						else:
+							dep_map[subjectindex][objectindex].add(deplink)
+					dep_maps.append(dep_map)
+				self.temp_resources['dep_maps'] = dep_maps
+				
+			inv_dep_maps = []
+			for inst in dep_maps:
+				inv_dep_map = {}
+				for subjectindex in inst:
+					for objectindex in inst[subjectindex]:
+						if objectindex not in inv_dep_map:
+							inv_dep_map[objectindex] = {}
+						inv_dep_map[objectindex][subjectindex] = inst[subjectindex][objectindex]
+				inv_dep_maps.append(inv_dep_map)
+			self.temp_resources['inv_dep_maps'] = inv_dep_maps
+
+		dep_maps = self.temp_resources['dep_maps']
+		inv_dep_maps = self.temp_resources['inv_dep_maps']
+			
+		result = []
+		for i in range(0, len(data)):
+			line = data[i]
+			sent = line[0].strip().split(' ')
+			target = line[1].strip().lower()
+			head = int(line[2].strip())
+			
+			dep_map = dep_maps[i]
+			inv_dep_map = inv_dep_maps[i]
+			insts = set([])
+			if head in dep_map:
+				for object in dep_map[head]:
+					for dep_link in dep_map[head][object]:
+						insts.add((dep_link, sent[object]))
+			insts_inv = set([])
+			if head in inv_dep_map:
+				for object in inv_dep_map[head]:
+					for dep_link in inv_dep_map[head][object]:
+						insts_inv.add((dep_link, sent[object]))
+			for subst in line[3:len(line)]:
+				word = subst.split(':')[1].strip()
+				total = 0.0
+				if len(insts)>0 or len(insts_inv)>0:
+					for inst in insts:
+						ngram = inst[0] + ' ' + word + ' ' + inst[1]
+						if ngram in model:
+							total += model[ngram]
+					for inst in insts_inv:
+						ngram = inst[0] + ' ' + inst[1] + ' ' + word
+						if ngram in model:
+							total += model[ngram]
+					total /= float(len(insts))
+				else:
+					total = 99999.0
 				result.append(total)
 		return result
 		
@@ -1812,9 +2014,9 @@ class FeatureEstimator:
 			self.features.append((self.subjectDependencyProbabilityFeature, [language_model, dependency_models]))
 			self.identifiers.append(('Subject Dependency Probability Feature (Language Model: '+language_model+') (Models: '+dependency_models+')', orientation))
 			
-	def addBinarySubjectDependencyProbabilityFeature(self, dep_counts_file, stanford_parser, dependency_models, java_path, orientation):
+	def addBinarySubjectDependencyFeature(self, dep_counts_file, stanford_parser, dependency_models, java_path, orientation):
 		"""
-		Adds a binary subject dependency probability feature to the estimator.
+		Adds a binary subject dependency feature to the estimator.
 		The value will be 1 if all dependency links of which the target word is subject exist for a given candidate, and 0 otherwise.
 		To produce the dependency link counts file used by this feature, one must first extract dependency links from a large corpora of sentences.
 		In sequence, the dependency links must be transformed into the following format: <type_of_dependency_link> <subject_word> <object_word>
@@ -1843,9 +2045,43 @@ class FeatureEstimator:
 			if dependency_models not in self.resources:
 				parser = StanfordParser(path_to_jar=stanford_parser, path_to_models_jar=dependency_models)
 				self.resources[dependency_models] = parser
-			self.features.append((self.binarySubjectDependencyProbabilityFeature, [dep_counts_file, dependency_models]))
-			self.identifiers.append(('Binary Subject Dependency Probability Feature (Dependency Link Counts File: '+dep_counts_file+') (Models: '+dependency_models+')', orientation))
-			
+			self.features.append((self.binarySubjectDependencyFeature, [dep_counts_file, dependency_models]))
+			self.identifiers.append(('Binary Subject Dependency Feature (Dependency Link Counts File: '+dep_counts_file+') (Models: '+dependency_models+')', orientation))
+	
+	def addSubjectDependencyFrequencyFeature(self, dep_counts_file, stanford_parser, dependency_models, java_path, orientation):
+		"""
+		Adds a subject dependency frequency feature to the estimator.
+		The value will be the average raw frequency of all dependency links of which the target word is subject, with the target word replaced by a given candidate.
+		To produce the dependency link counts file used by this feature, one must first extract dependency links from a large corpora of sentences.
+		In sequence, the dependency links must be transformed into the following format: <type_of_dependency_link> <subject_word> <object_word>
+		In the format above, each token is space-separated.
+		Once transformed, the dependency links can then be placed in a text file, one per line.
+		Finally, one can then run any language modelling tool to produce a language model in ARPA format.
+	
+		@param dep_counts_file: Path to a shelve file containing dependency link counts.
+		@param stanford_parser: Path to the "stanford-parser.jar" file.
+		The parser can be downloaded from the following link: http://nlp.stanford.edu/software/lex-parser.shtml
+		@param dependency_models: Path to a JAR file containing parsing models.
+		The models can be downloaded from the following link: http://nlp.stanford.edu/software/lex-parser.shtml
+		@param java_path: Path to the system's "java" executable.
+		Can be commonly found in "/usr/bin/java" in Unix/Linux systems, or in "C:/Program Files/Java/jdk_version/java.exe" in Windows systems.
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Possible values: Complexity, Simplicity.
+		"""
+		
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:
+			if dep_counts_file not in self.resources:
+				counts = self.readNgramFile(dep_counts_file)
+				self.resources[dep_counts_file] = counts
+			os.environ['JAVAHOME'] = java_path
+			if dependency_models not in self.resources:
+				parser = StanfordParser(path_to_jar=stanford_parser, path_to_models_jar=dependency_models)
+				self.resources[dependency_models] = parser
+			self.features.append((self.subjectDependencyFrequencyFeature, [dep_counts_file, dependency_models]))
+			self.identifiers.append(('Subject Dependency Frequency Feature (Dependency Link Counts File: '+dep_counts_file+') (Models: '+dependency_models+')', orientation))
+	
 	def addObjectDependencyProbabilityFeature(self, language_model, stanford_parser, dependency_models, java_path, orientation):
 		"""
 		Adds an object dependency probability feature to the estimator.
@@ -1880,9 +2116,9 @@ class FeatureEstimator:
 			self.features.append((self.objectDependencyProbabilityFeature, [language_model, dependency_models]))
 			self.identifiers.append(('Object Dependency Probability Feature (Language Model: '+language_model+') (Models: '+dependency_models+')', orientation))
 	
-	def addBinaryObjectDependencyProbabilityFeature(self, dep_counts_file, stanford_parser, dependency_models, java_path, orientation):
+	def addBinaryObjectDependencyFeature(self, dep_counts_file, stanford_parser, dependency_models, java_path, orientation):
 		"""
-		Adds a binary object dependency probability feature to the estimator.
+		Adds a binary object dependency feature to the estimator.
 		The value will be 1 if all dependency links of which the target word is object exist for a given candidate, and 0 otherwise.
 		To produce the dependency link counts file used by this feature, one must first extract dependency links from a large corpora of sentences.
 		In sequence, the dependency links must be transformed into the following format: <type_of_dependency_link> <subject_word> <object_word>
@@ -1911,8 +2147,42 @@ class FeatureEstimator:
 			if dependency_models not in self.resources:
 				parser = StanfordParser(path_to_jar=stanford_parser, path_to_models_jar=dependency_models)
 				self.resources[dependency_models] = parser
-			self.features.append((self.binaryObjectDependencyProbabilityFeature, [dep_counts_file, dependency_models]))
-			self.identifiers.append(('Binary Object Dependency Probability Feature (Dependency Link Counts File: '+dep_counts_file+') (Models: '+dependency_models+')', orientation))
+			self.features.append((self.binaryObjectDependencyFeature, [dep_counts_file, dependency_models]))
+			self.identifiers.append(('Binary Object Dependency Feature (Dependency Link Counts File: '+dep_counts_file+') (Models: '+dependency_models+')', orientation))
+			
+	def addObjectDependencyFrequencyFeature(self, dep_counts_file, stanford_parser, dependency_models, java_path, orientation):
+		"""
+		Adds an object dependency frequency feature to the estimator.
+		The value will be the average raw frequency of all dependency links of which the target word is object, with the target word replaced by a given candidate.
+		To produce the dependency link counts file used by this feature, one must first extract dependency links from a large corpora of sentences.
+		In sequence, the dependency links must be transformed into the following format: <type_of_dependency_link> <subject_word> <object_word>
+		In the format above, each token is space-separated.
+		Once transformed, the dependency links can then be placed in a text file, one per line.
+		Finally, one can then run any language modelling tool to produce a language model in ARPA format.
+	
+		@param dep_counts_file: Path to a shelve file containing dependency link counts.
+		@param stanford_parser: Path to the "stanford-parser.jar" file.
+		The parser can be downloaded from the following link: http://nlp.stanford.edu/software/lex-parser.shtml
+		@param dependency_models: Path to a JAR file containing parsing models.
+		The models can be downloaded from the following link: http://nlp.stanford.edu/software/lex-parser.shtml
+		@param java_path: Path to the system's "java" executable.
+		Can be commonly found in "/usr/bin/java" in Unix/Linux systems, or in "C:/Program Files/Java/jdk_version/java.exe" in Windows systems.
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Possible values: Complexity, Simplicity.
+		"""
+		
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:
+			if dep_counts_file not in self.resources:
+				counts = self.readNgramFile(dep_counts_file)
+				self.resources[dep_counts_file] = counts
+			os.environ['JAVAHOME'] = java_path
+			if dependency_models not in self.resources:
+				parser = StanfordParser(path_to_jar=stanford_parser, path_to_models_jar=dependency_models)
+				self.resources[dependency_models] = parser
+			self.features.append((self.objectDependencyFrequencyFeature, [dep_counts_file, dependency_models]))
+			self.identifiers.append(('Object Dependency Frequency Feature (Dependency Link Counts File: '+dep_counts_file+') (Models: '+dependency_models+')', orientation))
 	
 	def addAllDependencyProbabilityFeature(self, language_model, stanford_parser, dependency_models, java_path, orientation):
 		"""
@@ -1948,9 +2218,9 @@ class FeatureEstimator:
 			self.features.append((self.allDependencyProbabilityFeature, [language_model, dependency_models]))
 			self.identifiers.append(('Dependency Probability Feature (Language Model: '+language_model+') (Models: '+dependency_models+')', orientation))
 
-	def addBinaryAllDependencyProbabilityFeature(self, dep_counts_file, stanford_parser, dependency_models, java_path, orientation):
+	def addBinaryAllDependencyFeature(self, dep_counts_file, stanford_parser, dependency_models, java_path, orientation):
 		"""
-		Adds a binary dependency probability feature to the estimator.
+		Adds a binary dependency feature to the estimator.
 		The value will be 1 if all dependency links of the target word exist for a given candidate, and 0 otherwise.
 		To produce the dependency link counts file used by this feature, one must first extract dependency links from a large corpora of sentences.
 		In sequence, the dependency links must be transformed into the following format: <type_of_dependency_link> <subject_word> <object_word>
@@ -1979,5 +2249,39 @@ class FeatureEstimator:
 			if dependency_models not in self.resources:
 				parser = StanfordParser(path_to_jar=stanford_parser, path_to_models_jar=dependency_models)
 				self.resources[dependency_models] = parser
-			self.features.append((self.binaryAllDependencyProbabilityFeature, [dep_counts_file, dependency_models]))
-			self.identifiers.append(('Binary All Dependency Probability Feature (Dependency Link Counts File: '+dep_counts_file+') (Models: '+dependency_models+')', orientation))
+			self.features.append((self.binaryAllDependencyFeature, [dep_counts_file, dependency_models]))
+			self.identifiers.append(('Binary All Dependency Feature (Dependency Link Counts File: '+dep_counts_file+') (Models: '+dependency_models+')', orientation))
+			
+	def addAllDependencyFrequencyFeature(self, dep_counts_file, stanford_parser, dependency_models, java_path, orientation):
+		"""
+		Adds a dependency frequency feature to the estimator.
+		The value will be the average raw frequency of all dependency links of the target word, with the target word replaced by a given candidate.
+		To produce the dependency link counts file used by this feature, one must first extract dependency links from a large corpora of sentences.
+		In sequence, the dependency links must be transformed into the following format: <type_of_dependency_link> <subject_word> <object_word>
+		In the format above, each token is space-separated.
+		Once transformed, the dependency links can then be placed in a text file, one per line.
+		Finally, one can then run any language modelling tool to produce a language model in ARPA format.
+	
+		@param dep_counts_file: Path to a shelve file containing dependency link counts.
+		@param stanford_parser: Path to the "stanford-parser.jar" file.
+		The parser can be downloaded from the following link: http://nlp.stanford.edu/software/lex-parser.shtml
+		@param dependency_models: Path to a JAR file containing parsing models.
+		The models can be downloaded from the following link: http://nlp.stanford.edu/software/lex-parser.shtml
+		@param java_path: Path to the system's "java" executable.
+		Can be commonly found in "/usr/bin/java" in Unix/Linux systems, or in "C:/Program Files/Java/jdk_version/java.exe" in Windows systems.
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Possible values: Complexity, Simplicity.
+		"""
+		
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:
+			if dep_counts_file not in self.resources:
+				counts = self.readNgramFile(dep_counts_file)
+				self.resources[dep_counts_file] = counts
+			os.environ['JAVAHOME'] = java_path
+			if dependency_models not in self.resources:
+				parser = StanfordParser(path_to_jar=stanford_parser, path_to_models_jar=dependency_models)
+				self.resources[dependency_models] = parser
+			self.features.append((self.allDependencyFrequencyFeature, [dep_counts_file, dependency_models]))
+			self.identifiers.append(('All Dependency Frequency Feature (Dependency Link Counts File: '+dep_counts_file+') (Models: '+dependency_models+')', orientation))
