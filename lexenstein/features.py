@@ -41,6 +41,8 @@ class FeatureEstimator:
 		Values available: victor, cwictor
 		@return: Returns a MxN matrix, where M is the number of substitutions of all instances in the VICTOR corpus, and N the number of selected features.
 		"""
+		#Clear one-run resources:
+		self.temp_resources = {}
 		
 		data = []
 		if format.strip().lower()=='victor':
@@ -69,10 +71,7 @@ class FeatureEstimator:
 		#Normalize if required:
 		if self.norm:
 			result = normalize(result, axis=0)
-		
-		#Clear one-run resources:
-		self.temp_resources = {}
-		
+
 		return result
 		
 	def calculateInstanceFeatures(self, sent, target, head, candidate):
@@ -1327,7 +1326,12 @@ class FeatureEstimator:
 				dep_maps = self.temp_resources['dep_maps']
 			else:
 				sentences = [l[0].strip().split(' ') for l in data]
-				dep_parsed_sents = dependencyParseSentences(parser, sentences)
+				dep_parsed_sents = None
+				if 'dep_parsed_sents' in self.temp_resources:
+					dep_parsed_sents = self.temp_resources['dep_parsed_sents']
+				else:
+					dep_parsed_sents = dependencyParseSentences(parser, sentences)
+					self.temp_resources['dep_parsed_sents'] = dep_parsed_sents
 				dep_maps = []
 				for sent in dep_parsed_sents:
 					dep_map = {}
