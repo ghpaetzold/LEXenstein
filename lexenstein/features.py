@@ -806,13 +806,14 @@ class FeatureEstimator:
 			for sent in dep_parsed_sents:
 				dep_map = {}
 				for parse in sent:
+					print('Parse:' + str(parse))
 					deplink = str(parse[0])
 					subjectindex = int(str(parse[2]))-1
 					objectindex = int(str(parse[4]))-1
 					if subjectindex not in dep_map:
 						dep_map[subjectindex] = {objectindex: set([deplink])}
 					elif objectindex not in dep_map[subjectindex]:
-						dep_map[subjectindex][objectindex] = set(deplink)
+						dep_map[subjectindex][objectindex] = set([deplink])
 					else:
 						dep_map[subjectindex][objectindex].add(deplink)
 				dep_maps.append(dep_map)
@@ -831,6 +832,7 @@ class FeatureEstimator:
 			if head in dep_map:
 				for object in dep_map[head]:
 					for dep_link in dep_map[head][object]:
+						print('Dep link found:' + str(dep_link))
 						insts.add((dep_link, sent[object]))
 			for subst in line[3:len(line)]:
 				word = subst.split(':')[1].strip()
