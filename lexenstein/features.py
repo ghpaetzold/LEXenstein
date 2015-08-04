@@ -795,10 +795,9 @@ class FeatureEstimator:
 		parser = self.resources[args[1]]
 		
 		#Get parsed sentences:
-		print('Parsing...')
-		dep_parsed_sents = None
-		if 'dep_parsed_sents' in self.temp_resources:
-			dep_parsed_sents = self.temp_resources['dep_map']
+		dep_maps = None
+		if 'dep_maps' in self.temp_resources:
+			dep_maps = self.temp_resources['dep_maps']
 		else:
 			sentences = [l[0].strip().split(' ') for l in data]
 			dep_parsed_sents = dependencyParseSentences(parser, sentences)
@@ -818,9 +817,7 @@ class FeatureEstimator:
 						dep_map[subjectindex][objectindex].add(deplink)
 				dep_maps.append(dep_map)
 			self.temp_resources['dep_maps'] = dep_maps
-		print('Parsed!')
-		
-		print('Getting links...')
+
 		result = []
 		for i in range(0, len(data)):
 			line = data[i]
@@ -848,7 +845,6 @@ class FeatureEstimator:
 				else:
 					total = 1.0
 				result.append(total)
-			print('Links produced!')
 		return result
 		
 	def objectDependencyProbabilityFeature(self, data, args):
@@ -856,41 +852,51 @@ class FeatureEstimator:
 		parser = self.resources[args[1]]
 		
 		#Get parsed sentences:
-		print('Parsing...')
-		dep_parsed_sents = None
-		if 'dep_parsed_sents' in self.temp_resources:
-			dep_parsed_sents = self.temp_resources['dep_map']
+		inv_dep_maps = None
+		if 'inv_dep_maps' in self.temp_resources:
+			inv_dep_maps = self.temp_resources['inv_dep_maps']
 		else:
-			sentences = [l[0].strip().split(' ') for l in data]
-			dep_parsed_sents = dependencyParseSentences(parser, sentences)
-			dep_maps = []
-			for sent in dep_parsed_sents:
-				dep_map = {}
-				for parse in sent:
-					deplink = str(parse[0])
-					subjectindex = int(str(parse[2]))-1
-					objectindex = int(str(parse[4]))-1
-					if subjectindex not in dep_map:
-						dep_map[subjectindex] = {objectindex: set([deplink])}
-					elif objectindex not in dep_map[subjectindex]:
-						dep_map[subjectindex][objectindex] = set(deplink)
-					else:
-						dep_map[subjectindex][objectindex].add(deplink)
-				dep_maps.append(dep_map)
-			self.temp_resources['dep_maps'] = dep_maps
-		print('Parsed!')
-		
-		print('Getting links...')
+			dep_maps = None
+			if 'dep_maps' in self.temp_resources:
+				dep_maps = self.temp_resources['dep_maps']
+			else:
+				sentences = [l[0].strip().split(' ') for l in data]
+				dep_parsed_sents = dependencyParseSentences(parser, sentences)
+				dep_maps = []
+				for sent in dep_parsed_sents:
+					dep_map = {}
+					for parse in sent:
+						deplink = str(parse[0])
+						subjectindex = int(str(parse[2]))-1
+						objectindex = int(str(parse[4]))-1
+						if subjectindex not in dep_map:
+							dep_map[subjectindex] = {objectindex: set([deplink])}
+						elif objectindex not in dep_map[subjectindex]:
+							dep_map[subjectindex][objectindex] = set([deplink])
+						else:
+							dep_map[subjectindex][objectindex].add(deplink)
+					dep_maps.append(dep_map)
+				self.temp_resources['dep_maps'] = dep_maps
+				
+			inv_dep_maps = []
+			for inst in dep_maps:
+				inv_dep_map = {}
+				for subjectindex in inst:
+					for objectindex in inst[subjectindex]:
+						inv_dep_map[objectindex][subjectindex] = inst[subjectindex][objectindex]
+				inv_dep_maps.append(inv_dep_map)
+			self.temp_resources['inv_dep_maps'] = inv_dep_maps
+
 		result = []
 		for i in range(0, len(data)):
 			line = data[i]
 			sent = line[0].strip().split(' ')
 			target = line[1].strip().lower()
 			head = int(line[2].strip())
-			dep_map = dep_maps[i]
+			inv_dep_map = inv_dep_map[i]
 			insts = set([])
-			if head in dep_map:
-				for object in dep_map[head]:
+			if head in inv_dep_map:
+				for object in inv_dep_map[head]:
 					for dep_link in dep_map[head][object]:
 						insts.add((dep_link, sent[object]))
 			for subst in line[3:len(line)]:
@@ -898,16 +904,13 @@ class FeatureEstimator:
 				total = 0.0
 				if len(insts)>0:
 					for inst in insts:
-						ngram = inst[0] + ' ' + word + ' ' + inst[1]
-						print('\tNgram: ' + ngram)
+						ngram = inst[0] + ' ' + inst[1] + ' ' + word
 						prob = math.exp(model.score(ngram, bos=False, eos=False))
-						print('\tProb: ' + str(prob))
 						total += prob
 					total /= float(len(insts))
 				else:
 					total = 1.0
 				result.append(total)
-			print('Links produced!')
 		return result
 		
 	def readNgramFile(self, ngram_file):
