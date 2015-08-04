@@ -942,7 +942,8 @@ class FeatureEstimator:
 						ngram = inst[0] + ' ' + word + ' ' + inst[1]
 						if ngram in model:
 							total += model[ngram]
-				total /= float(len(insts))
+					if total>0.0:
+						total /= float(len(insts))
 				else:
 					total = 99999.0
 				result.append(total)
@@ -1145,7 +1146,8 @@ class FeatureEstimator:
 						ngram = inst[0] + ' ' + inst[1] + ' ' + word
 						if ngram in model:
 							total += model[ngram]
-				total /= float(len(insts))
+					if total>0.0:
+						total /= float(len(insts))
 				else:
 					total = 99999.0
 				result.append(total)
@@ -1387,7 +1389,8 @@ class FeatureEstimator:
 						ngram = inst[0] + ' ' + inst[1] + ' ' + word
 						if ngram in model:
 							total += model[ngram]
-					total /= float(len(insts))
+					if total>0.0:
+						total /= float(len(insts)+len(insts_inv))
 				else:
 					total = 99999.0
 				result.append(total)
