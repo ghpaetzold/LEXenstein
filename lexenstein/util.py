@@ -41,7 +41,7 @@ def dependencyParseSentences(parser, sentences):
 			if len(depdata)>0:
 				link = depdata[0]
 				subjecth = link[1].rfind('-')
-		                objecth = link[2].rfind('-')
+				objecth = link[2].rfind('-')
 				clean_link = (link[0], link[1][0:subjecth], link[1][subjecth+1:len(link[1])], link[2][0:objecth], link[2][objecth+1:len(link[2])])
 				cur_lines.append(clean_link)
 	return res
