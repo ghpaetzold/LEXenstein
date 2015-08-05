@@ -41,9 +41,6 @@ class FeatureEstimator:
 		Values available: victor, cwictor
 		@return: Returns a MxN matrix, where M is the number of substitutions of all instances in the VICTOR corpus, and N the number of selected features.
 		"""
-		#Clear one-run resources:
-		self.temp_resources = {}
-		
 		data = []
 		if format.strip().lower()=='victor':
 			data = [line.strip().split('\t') for line in open(corpus)]
@@ -71,6 +68,9 @@ class FeatureEstimator:
 		#Normalize if required:
 		if self.norm:
 			result = normalize(result, axis=0)
+			
+		#Clear one-run resources:
+		self.temp_resources = {}
 
 		return result
 		

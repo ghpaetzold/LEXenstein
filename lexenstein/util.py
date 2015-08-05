@@ -49,7 +49,12 @@ def dependencyParseSentences(parser, sentences):
 				if objectindex.endswith(r"'"):
 					objectindex = objectindex[0:len(objectindex)-1]
 				clean_link = (link[0], link[1][0:subjecth], subjectindex, link[2][0:objecth], objectindex)
-				cur_lines.append(clean_link)
+				try:
+					a = int(subjectindex)
+					b = int(objectindex)
+					cur_lines.append(clean_link)
+				except Exception:
+					pass
 	return res
 
 def getGeneralisedPOS(tag):
