@@ -42,7 +42,13 @@ def dependencyParseSentences(parser, sentences):
 				link = depdata[0]
 				subjecth = link[1].rfind('-')
 				objecth = link[2].rfind('-')
-				clean_link = (link[0], link[1][0:subjecth], link[1][subjecth+1:len(link[1])], link[2][0:objecth], link[2][objecth+1:len(link[2])])
+				subjectindex = link[1][subjecth+1:len(link[1])]
+				if subjectindex.endswith(r"'"):
+					subjectindex = subjectindex[0:len(subjectindex)-1]
+				objectindex = link[2][objecth+1:len(link[2])]
+				if objectindex.endswith(r"'"):
+					objectindex = objectindex[0:len(objectindex)-1]
+				clean_link = (link[0], link[1][0:subjecth], subjectindex, link[2][0:objecth], objectindex)
 				cur_lines.append(clean_link)
 	return res
 
