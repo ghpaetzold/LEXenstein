@@ -260,8 +260,9 @@ class GlavasGenerator:
 		@param w2vmodel: Binary parsed word vector model.
 		For more information on how to produce the model, please refer to the LEXenstein Manual.
 		"""
+		self.lemmatizer = WordNetLemmatizer()
 		self.stemmer = PorterStemmer()
-		self.model = gensim.models.word2vec.Word2Vec.load_word2vec_format(posw2vmodel, binary=True)
+		self.model = gensim.models.word2vec.Word2Vec.load_word2vec_format(w2vmodel, binary=True)
 
 	def getSubstitutions(self, victor_corpus, amount):
 		"""
@@ -384,7 +385,6 @@ class GlavasGenerator:
 			tlemma = trgslemmas[i]
 
 			word = t
-			wordc = tc
 
 			most_sim = subs[i]
 			most_simf = []
@@ -394,7 +394,7 @@ class GlavasGenerator:
 				clemma = candmap[cword][0]
 				cstem = candmap[cword][1]
 
-				if clemma!=tlemma and clemma!=tclemma and cstem!=tstem and cstem!=tcstem:
+				if clemma!=tlemma and cstem!=tstem:
 					most_simf.append(cand)
 
 			result.append(most_simf)
