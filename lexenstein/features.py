@@ -1586,6 +1586,7 @@ class FeatureEstimator:
 		if orientation not in ['Complexity', 'Simplicity']:
 			print('Orientation must be Complexity or Simplicity')
 		else:
+			os.environ['JAVAHOME'] = java_path
 			if model not in self.resources:
 				m = gensim.models.word2vec.Word2Vec.load_word2vec_format(model, binary=True)
 				self.resources[model] = m
@@ -2379,13 +2380,19 @@ class FeatureEstimator:
 			self.features.append((self.allDependencyFrequencyFeature, [dep_counts_file, dependency_models]))
 			self.identifiers.append(('All Dependency Frequency Feature (Dependency Link Counts File: '+dep_counts_file+') (Models: '+dependency_models+')', orientation))
 			
-	def addWordVectorContextSimilarityFeature(self, model, orientation):
+	def addWordVectorContextSimilarityFeature(self, model, pos_model, stanford_tagger, java_path, orientation):
 		"""
 		Adds a word vector context similarity feature to the estimator.
 		The value will be the average similarity between the word vector of a candidate and the vectors of all content word in the target word's context.
 	
 		@param model: Path to a binary word vector model.
 		For instructions on how to create the model, please refer to the LEXenstein Manual.
+		@param pos_model: Path to a POS tagging model for the Stanford POS Tagger.
+		The models can be downloaded from the following link: http://nlp.stanford.edu/software/tagger.shtml
+		@param stanford_tagger: Path to the "stanford-postagger.jar" file.
+		The tagger can be downloaded from the following link: http://nlp.stanford.edu/software/tagger.shtml
+		@param java_path: Path to the system's "java" executable.
+		Can be commonly found in "/usr/bin/java" in Unix/Linux systems, or in "C:/Program Files/Java/jdk_version/java.exe" in Windows systems.
 		@param orientation: Whether the feature is a simplicity of complexity measure.
 		Possible values: Complexity, Simplicity.
 		"""
@@ -2396,6 +2403,7 @@ class FeatureEstimator:
 			if model not in self.resources:
 				m = gensim.models.word2vec.Word2Vec.load_word2vec_format(model, binary=True)
 				self.resources[model] = m
+			os.environ['JAVAHOME'] = java_path
 			if pos_model not in self.resources:
 				tagger = StanfordPOSTagger(pos_model, stanford_tagger)
 				self.resources[pos_model] = tagger
