@@ -1489,6 +1489,13 @@ class FeatureEstimator:
 	def readNgramFile(self, ngram_file):
 		counts = shelve.open(ngram_file, protocol=pickle.HIGHEST_PROTOCOL)
 		return counts
+
+	def isContentWord(self, word, tag):
+		content_tags = set(['JJ', 'JJS', 'JJR', 'NN', 'NNS', 'RB', 'RBR', 'RBS', 'VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ'])
+		if tag in content_tags:
+			return True
+		else:
+			return False
 	
 	def addWordVectorValues(self, model, size, orientation):
 		"""
