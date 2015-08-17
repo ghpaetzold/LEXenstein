@@ -1530,8 +1530,6 @@ class FeatureEstimator:
 				model_tag = model_tagged_sents[i][j][1]
 				if self.isContentWord(token, tag):
 					content_words.add(token+'|||'+model_tag)
-					
-			print('Content words: ' + str(content_words))
 			
 			#Produce divisor:
 			divisor = float(len(content_words))
