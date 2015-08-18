@@ -69,7 +69,7 @@ class SVMRankSelector:
 		self.ranker.getTrainingModel(features_file, parameters[0], parameters[2], parameters[1], model_file)
 		self.model = model_file
 		
-	def selectCandidates(self, substitutions, victor_corpus, features_file, scores_file, temp_file, proportion):
+	def selectCandidates(self, substitutions, victor_corpus, features_file, scores_file, temp_file, proportion, proportion_type='percentage'):
 		"""
 		Selects which candidates can replace the target complex words in each instance of a VICTOR corpus.
 	
@@ -86,7 +86,11 @@ class SVMRankSelector:
 		User must have the privilege to delete such file without administrator privileges.
 		@param temp_file: File in which to save a temporary victor corpus.
 		The file is removed after the algorithm is concluded.
-		@param proportion: Percentage of substitutions to keep.
+		@param proportion: Proportion of substitutions to keep.
+		If proportion_type is set to "percentage", then this parameter must be a floating point number between 0 and 1.
+		If proportion_type is set to "integer", then this parameter must be an integer number.
+		@param proportion_type: Type of proportion to be kept.
+		Values supported: percentage, integer.
 		@return: Returns a vector of size N, containing a set of selected substitutions for each instance in the VICTOR corpus.
 		"""
 		void = VoidSelector()
@@ -104,7 +108,17 @@ class SVMRankSelector:
 		for line in lexf:
 			index += 1
 		
-			selected_candidates = rankings[index][0:max(1, int(proportion*float(len(rankings[index]))))]
+			selected_candidates = None
+			if proportion_type == 'percentage':
+				if proportion > 1.0:
+					proportion = 1.0
+				selected_candidates = rankings[index][0:max(1, int(proportion*float(len(rankings[index]))))]
+			else:
+				if proportion < 1:
+					proportion = 1
+				if proportion > len(rankings[index]):
+					proportion = len(rankings[index])
+				selected_candidates = rankings[index][0:proportion]
 		
 			selected_substitutions.append(selected_candidates)
 		lexf.close()
