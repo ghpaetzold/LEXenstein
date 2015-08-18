@@ -110,15 +110,21 @@ class SVMRankSelector:
 		
 			selected_candidates = None
 			if proportion_type == 'percentage':
+				toselect = None
 				if proportion > 1.0:
-					proportion = 1.0
-				selected_candidates = rankings[index][0:max(1, int(proportion*float(len(rankings[index]))))]
+					toselect = 1.0
+				else:
+					toselect = proportion
+				selected_candidates = rankings[index][0:max(1, int(toselect*float(len(rankings[index]))))]
 			else:
+				toselect = None
 				if proportion < 1:
-					proportion = 1
-				if proportion > len(rankings[index]):
-					proportion = len(rankings[index])
-				selected_candidates = rankings[index][0:proportion]
+					toselect = 1
+				elif proportion > len(rankings[index]):
+					toselect = len(rankings[index])
+				else:
+					toselect = proportion
+				selected_candidates = rankings[index][0:toselect]
 		
 			selected_substitutions.append(selected_candidates)
 		lexf.close()
@@ -297,15 +303,21 @@ class SVMBoundarySelector:
 		
 			selected_candidates = None
 			if proportion_type == 'percentage':
+				toselect = None
 				if proportion > 1.0:
-					proportion = 1.0
-				selected_candidates = rankings[index][0:max(1, int(proportion*float(len(rankings[index]))))]
+					toselect = 1.0
+				else:
+					toselect = proportion
+				selected_candidates = rankings[index][0:max(1, int(toselect*float(len(rankings[index]))))]
 			else:
+				toselect = None
 				if proportion < 1:
-					proportion = 1
-				if proportion > len(rankings[index]):
-					proportion = len(rankings[index])
-				selected_candidates = rankings[index][0:proportion]
+					toselect = 1
+				elif proportion > len(rankings[index]):
+					toselect = len(rankings[index])
+				else:
+					toselect = proportion
+				selected_candidates = rankings[index][0:toselect]
 		
 			selected_substitutions.append(selected_candidates)
 		lexf.close()
