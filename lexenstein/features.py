@@ -534,7 +534,7 @@ class FeatureEstimator:
 		result = []
 		counts = self.resources[ngrams]
 		for line in data:
-			sent = line[0].strip().split(' ')
+			sent = line[0].strip()
 			target = line[1]
 			head = int(line[2])
 			for subst in line[3:len(line)]:
@@ -543,8 +543,8 @@ class FeatureEstimator:
 				maxscore = -999999
 				for ngram in ngrams:
 					aux = 0.0
-					if ngram in counts:
-						aux = counts[ngram]
+					if ngram[0] in counts:
+						aux = counts[ngram[0]]
 					
 					if aux>maxscore:
 						maxscore = aux
@@ -597,7 +597,7 @@ class FeatureEstimator:
 				ngram += cand + ' '
 				for i in range(chead+1, min(len(ctokens), chead+configr+1)):
 					ngram += ctokens[i] + ' '
-				result.add((ngram, bosv, eosv))
+				result.add((ngram.strip(), bosv, eosv))
 			return result
 			
 	def getPopContexts(self, sent, head):
