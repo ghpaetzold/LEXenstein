@@ -11,14 +11,14 @@ MaxPos.x=-1
 MaxPos.y=-1
 NormalPos.left=4
 NormalPos.top=26
-NormalPos.right=1200
-NormalPos.bottom=503
+NormalPos.right=1169
+NormalPos.bottom=388
 Class=LaTeXView
-Document=thesis.tex
+Document=manual.tex
 
 [Frame0_View0,0]
-TopLine=34
-Cursor=1108
+TopLine=36
+Cursor=937
 
 [Frame1]
 Flags=0
@@ -29,16 +29,16 @@ MaxPos.x=-1
 MaxPos.y=-1
 NormalPos.left=4
 NormalPos.top=26
-NormalPos.right=1200
-NormalPos.bottom=503
+NormalPos.right=1169
+NormalPos.bottom=388
 Class=LaTeXView
-Document=Chapter4\chapter4.tex
+Document=Chapter2\chapter2.tex
 
 [Frame1_View0,0]
-TopLine=1673
-Cursor=48296
+TopLine=0
+Cursor=0
 
 [SessionInfo]
 FrameCount=2
-ActiveFrame=0
+ActiveFrame=1
 

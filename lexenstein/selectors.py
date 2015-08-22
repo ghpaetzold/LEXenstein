@@ -686,7 +686,6 @@ class POSTagSelector:
 			except UnicodeDecodeError:
 				return 'None'
 			
-		
 	def getCandidatesWithSamePOS(self, candidates, word_to_tag, target_pos):
 		result = set([])
 		for candidate in candidates:

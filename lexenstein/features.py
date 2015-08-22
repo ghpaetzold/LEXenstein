@@ -526,6 +526,31 @@ class FeatureEstimator:
 						maxscore = aux
 				result.append(maxscore)
 		return result
+		
+	def popNgramFrequencyFeature(self, data, args):
+		ngrams = args[0]
+		spanl = args[1]
+		spanr = args[2]
+		result = []
+		counts = self.resources[ngrams]
+		for line in data:
+			sent = line[0].strip().split(' ')
+			target = line[1]
+			head = int(line[2])
+			for subst in line[3:len(line)]:
+				word = subst.split(':')[1].strip()
+				ngrams = self.getPopNgrams(word, sent, head, spanl, spanl)
+				maxscore = -999999
+				for ngram in ngrams:
+					aux = 0.0
+					if ngram in counts:
+						aux = counts[ngram]
+					
+					if aux>maxscore:
+						maxscore = aux
+				result.append(maxscore)
+				
+		return result
 	
 	def getNgram(self, cand, tokens, head, configl, configr):
 		if configl==0 and configr==0:
@@ -1990,6 +2015,30 @@ class FeatureEstimator:
 				self.resources[language_model] = model
 			self.features.append((self.popNgramProbabilityFeature, [language_model, leftw, rightw]))
 			self.identifiers.append(('Pop N-Gram Frequency Feature ['+str(leftw)+', '+str(rightw)+'] (LM: '+language_model+')', orientation))
+			
+	def addPopNGramFrequencyFeature(self, ngram_file, leftw, rightw, orientation):
+		"""
+		Adds a pop n-gram frequency feature to the estimator.
+		The value is the highest raw frequency count of the n-gram with leftw tokens to the left and rightw tokens to the right, with a popping window of one token to the left and right.
+		To produce the ngram counts file, the user must first acquire a large corpus of text.
+		In sequence, the user can then use SRILM to produce an ngram counts file with the "-write" option.
+		Finally, the user must create a shelve file using the "addNgramCountsFileToShelve" function from the "util" module.
+	
+		@param ngram_file: Path to a shelve file containing n-gram frequency counts.
+		@param leftw: Number of tokens to the left.
+		@param rightw: Number of tokens to the right.
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Possible values: Complexity, Simplicity.
+		"""
+		
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:
+			if ngram_file not in self.resources:
+				counts = self.readNgramFile(ngram_file)
+				self.resources[ngram_file] = counts
+			self.features.append((self.popNgramFrequencyFeature, [ngram_file, leftw, rightw]))
+			self.identifiers.append(('Pop N-Gram Frequency Feature ['+str(leftw)+', '+str(rightw)+'] (N-grams File: '+ngram_file+')', orientation))
 		
 	def addSentenceProbabilityFeature(self, language_model, orientation):
 		"""
