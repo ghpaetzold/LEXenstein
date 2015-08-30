@@ -60,19 +60,21 @@ class MorphAdornerToolkit:
 		result = out.strip().split('\n')
 		return result
 
-	def conjugateVerbs(self, lemmas, tense):
+	def conjugateVerbs(self, lemmas, tense, person):
 		"""
 		Conjugate a set of verbs in a given tense.
 	
 		@param lemmas: Lemmas of verbs to be conjugated.
 		@param tense: Tense in which to conjugate the verbs.
 		Tenses available: PAST, PAST_PARTICIPLE, PAST_PERFECT, PAST_PERFECT_PARTICIPLE, PERFECT, PRESENT, PRESENT_PARTICIPLE.
+		@param person: Person in which to conjugate the verbs.
+		Tenses available: FIRST_PERSON_SINGULAR, FIRST_PERSON_PLURAL, SECOND_PERSON_SINGULAR, SECOND_PERSON_PLURAL, THIRD_PERSON_SINGULAR, THIRD_PERSON_PLURAL.
 		@return: List of the conjugated versions of the verb lemmas passed as input.
 		"""
 		
 		input = ''
 		for lemma in lemmas:
-			input += lemma + ' ' + tense +  '\n'
+			input += lemma + ' ' + tense +  ' ' + person + '\n'
 		input += '\n'
 
 		args = ['java', '-jar', self.conjugator]
@@ -111,8 +113,9 @@ class MorphAdornerToolkit:
 	
 		@param lemmas: Lemmas of verbs to be tensed.
 		@param verbs: Verbs in their original forms.
-		@return: List of the tenses of the verb passed as input.
+		@return: List of the tenses and persons of the verb passed as input.
 		Tenses available: PAST, PAST_PARTICIPLE, PAST_PERFECT, PAST_PERFECT_PARTICIPLE, PERFECT, PRESENT, PRESENT_PARTICIPLE.
+		Persons available: FIRST_PERSON_SINGULAR, FIRST_PERSON_PLURAL, SECOND_PERSON_SINGULAR, SECOND_PERSON_PLURAL, THIRD_PERSON_SINGULAR, THIRD_PERSON_PLURAL.
 		"""
 		
 		input = ''
