@@ -1335,6 +1335,7 @@ class WordnetGenerator:
 		toPA = []
 		toPRPA = []
 		toPAPA = []
+		toPE = []
 		toPR = []
 		toComparative = []
 		toSuperlative = []
@@ -1362,7 +1363,9 @@ class WordnetGenerator:
 				elif pos == 'VBN':
 					toPA.extend(cands)
 					toPAPA.extend(cands)
-				elif pos == 'VBP' or pos == 'VBZ':
+				elif pos == 'VBP':
+					toPE.extend(cands)
+				elif pos == 'VBZ':
 					toPR.extend(cands)
 				elif pos == 'JJR' or pos == 'RBR':
 					toComparative.extend(cands)
@@ -1382,6 +1385,7 @@ class WordnetGenerator:
 		toPAL = self.correctWords(self.mat.lemmatizeWords(toPA))
 		toPRPAL = self.correctWords(self.mat.lemmatizeWords(toPRPA))
 		toPAPAL = self.correctWords(self.mat.lemmatizeWords(toPAPA))
+		toPEL = self.correctWords(self.mat.lemmatizeWords(toPE))
 		toPRL = self.correctWords(self.mat.lemmatizeWords(toPR))
 		toComparativeL = self.correctWords(self.mat.lemmatizeWords(toComparative))
 		toSuperlativeL = self.correctWords(self.mat.lemmatizeWords(toSuperlative))
@@ -1391,11 +1395,12 @@ class WordnetGenerator:
 		plurals = self.correctWords(self.mat.inflectNouns(toPluralL, 'plural'))
 		
 		#Inflect verbs:
-		papepas = self.correctWords(self.mat.conjugateVerbs(toPAPEPAL, 'PAST_PERFECT_PARTICIPLE'))
-		pas = self.correctWords(self.mat.conjugateVerbs(toPAL, 'PAST'))
-		prpas = self.correctWords(self.mat.conjugateVerbs(toPRPAL, 'PRESENT_PARTICIPLE'))
-		papas = self.correctWords(self.mat.conjugateVerbs(toPAPAL, 'PAST_PARTICIPLE'))
-		prs = self.correctWords(self.mat.conjugateVerbs(toPRL, 'PRESENT'))
+		papepas = self.correctWords(self.mat.conjugateVerbs(toPAPEPAL, 'PAST_PERFECT_PARTICIPLE', 'FIRST_PERSON_SINGULAR'))
+		pas = self.correctWords(self.mat.conjugateVerbs(toPAL, 'PAST', 'FIRST_PERSON_SINGULAR'))
+		prpas = self.correctWords(self.mat.conjugateVerbs(toPRPAL, 'PRESENT_PARTICIPLE', 'FIRST_PERSON_SINGULAR'))
+		papas = self.correctWords(self.mat.conjugateVerbs(toPAPAL, 'PAST_PARTICIPLE', 'FIRST_PERSON_SINGULAR'))
+		pes = self.correctWords(self.mat.conjugateVerbs(toPEL, 'PERFECT', 'FIRST_PERSON_SINGULAR'))
+		prs = self.correctWords(self.mat.conjugateVerbs(toPRL, 'PRESENT', 'THIRD_PERSON_SINGULAR'))
 		
 		#Inflect adjectives and adverbs:
 		comparatives = self.correctWords(self.mat.inflectAdjectives(toComparativeL, 'comparative'))
@@ -1409,6 +1414,7 @@ class WordnetGenerator:
 		paM = {}
 		prpaM = {}
 		papaM = {}
+		peM = {}
 		prM = {}
 		comparativeM = {}
 		superlativeM = {}
@@ -1435,6 +1441,9 @@ class WordnetGenerator:
 		for i in range(0, len(toPAPA)):
 			stemM[toPAPA[i]] = toPAPAL[i]
 			papaM[toPAPA[i]] = papas[i]
+		for i in range(0, len(toPE)):
+			stemM[toPE[i]] = toPEL[i]
+			peM[toPE[i]] = pes[i]
 		for i in range(0, len(toPR)):
 			stemM[toPR[i]] = toPRL[i]
 			prM[toPR[i]] = prs[i]
@@ -1491,7 +1500,11 @@ class WordnetGenerator:
 						if targetL!=stemM[cand]:
 							final_cands.add(paM[cand])
 							final_cands.add(papaM[cand])
-				elif pos == 'VBP' or pos == 'VBZ':
+				elif pos == 'VBP':
+					for cand in cands:
+						if targetL!=stemM[cand]:
+							final_cands.add(peM[cand])
+				elif pos == 'VBZ':
 					for cand in cands:
 						if targetL!=stemM[cand]:
 							final_cands.add(prM[cand])
