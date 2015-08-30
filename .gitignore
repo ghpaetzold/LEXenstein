@@ -2,6 +2,7 @@
 /morph/
 /corpora/
 /.idea/
+/tests/
 test_pipe.py
 test_features.py
 /epydoc/
