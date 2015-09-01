@@ -5,6 +5,7 @@ import nltk
 from nltk.tag.stanford import StanfordPOSTagger
 import numpy as np
 import os
+import pickle
 
 class SVMRankSelector:
 
