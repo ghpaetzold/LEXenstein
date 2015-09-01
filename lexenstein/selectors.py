@@ -492,11 +492,11 @@ class BoundarySelector:
 		f.close()
 		o.close()
 
-class ClusterSelector:
+class BelderSelector:
 
 	def __init__(self, clusters):
 		"""
-		Creates an instance of the ClusterSelector class.
+		Creates an instance of the BelderSelector class.
 	
 		@param clusters: Path to a file containing clusters of words.
 		For instructions on how to create the file, please refer to the LEXenstein Manual.
@@ -589,12 +589,14 @@ class ClusterSelector:
 		f.close()
 		o.close()
 
-class POSTagSelector:
+class NunesSelector:
 
-	def __init__(self, pos_model, stanford_tagger, java_path):
+	def __init__(self, condprob_model, pos_model, stanford_tagger, java_path):
 		"""
 		Creates a POSTagSelector instance.
 	
+		@param condprob_model: Path to a binary conditional probability model.
+		For instructions on how to create the model, please refer to the LEXenstein Manual.
 		@param pos_model: Path to a POS tagging model for the Stanford POS Tagger.
 		The models can be downloaded from the following link: http://nlp.stanford.edu/software/tagger.shtml
 		@param stanford_tagger: Path to the "stanford-postagger.jar" file.
@@ -604,6 +606,7 @@ class POSTagSelector:
 		"""
 		os.environ['JAVAHOME'] = java_path
 		self.tagger = StanfordPOSTagger(pos_model, stanford_tagger)
+		self.model = pickle.load(open(condprob_model, 'rb'))
 
 	def selectCandidates(self, substitutions, victor_corpus):
 		"""
@@ -636,7 +639,6 @@ class POSTagSelector:
 		sents = []
 		targets = []
 		heads = []
-		words = set([])
 		c = -1
 		for line in lexf:
 			c += 1
@@ -647,19 +649,10 @@ class POSTagSelector:
 			sents.append(sent)
 			targets.append(target)
 			heads.append(head)
-			words.update(set(substitution_candidates[c]))
 		lexf.close()
 		
 		#Tag sentences:
 		tagged_sents = self.tagger.tag_sents(sents)
-		
-		#Tag words:
-		words = list(words)
-		words_sents = [[w] for w in words]
-		tagged_words = self.tagger.tag_sents(words_sents)
-		word_to_tag = {}
-		for i in range(0, len(words)):
-			word_to_tag[words[i]] = tagged_words[i][0][1]
 		
 		for i in range(0, len(sents)):
 			target = targets[i]
@@ -668,7 +661,7 @@ class POSTagSelector:
 		
 			candidates = []
 			candidates = set(substitution_candidates[i])
-			candidates = self.getCandidatesWithSamePOS(candidates, word_to_tag, target_pos)
+			candidates = self.getCandidatesWithSamePOS(candidates, target_pos)
 		
 			selected_substitutions.append(candidates)
 		lexf.close()
@@ -686,13 +679,16 @@ class POSTagSelector:
 			except UnicodeDecodeError:
 				return 'None'
 			
-	def getCandidatesWithSamePOS(self, candidates, word_to_tag, target_pos):
+	def getCandidatesWithSamePOS(self, candidates, target_pos):
 		result = set([])
 		for candidate in candidates:
-			if candidate in word_to_tag:
-				ctag = word_to_tag[candidate]
-				if ctag==target_pos:
-					result.add(candidate)
+			cand_tag = None
+			try:
+				cand_tag = self.model[candidate].max()
+			except Exception:
+				pass
+			if cand_tag and cand_tag==target_pos:
+				result.add(candidate)
 		return result
 	
 	def toVictorFormat(self, victor_corpus, substitutions, output_path, addTargetAsCandidate=False):
