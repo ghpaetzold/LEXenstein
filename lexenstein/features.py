@@ -300,7 +300,8 @@ class FeatureEstimator:
 				for span1 in spanlv:
 					for span2 in spanrv:
 						ngram, bosv, eosv = self.getNgram(word, sent, head, span1, span2)
-						aux = model.score(ngram, bos=bosv, eos=eosv)
+						#aux = model.score(ngram, bos=bosv, eos=eosv)
+						aux = model.score(ngram)
 						values.append(aux)
 				result.append(values)
 		return result
@@ -444,7 +445,8 @@ class FeatureEstimator:
 						ngrams = self.getPopNgrams(word, sent, head, span1, span2)
 						maxscore = -999999
 						for ngram in ngrams:
-							aux = model.score(ngram[0], bos=ngram[1], eos=ngram[2])
+							#aux = model.score(ngram[0], bos=ngram[1], eos=ngram[2])
+							aux = model.score(ngram[0])
 							if aux>maxscore:
 								maxscore = aux
 						values.append(maxscore)
@@ -464,7 +466,8 @@ class FeatureEstimator:
 			for subst in line[3:len(line)]:
 				word = subst.split(':')[1].strip()
 				ngram, bosv, eosv = self.getNgram(word, sent, head, spanl, spanr)
-				prob = model.score(ngram, bos=bosv, eos=eosv)
+				#prob = model.score(ngram, bos=bosv, eos=eosv)
+				prob = model.score(ngram)
 				result.append(prob)
 		return result
 		
@@ -521,7 +524,8 @@ class FeatureEstimator:
 				ngrams = self.getPopNgrams(word, sent, head, spanl, spanl)
 				maxscore = -999999
 				for ngram in ngrams:
-					aux = model.score(ngram[0], bos=ngram[1], eos=ngram[2])
+					#aux = model.score(ngram[0], bos=ngram[1], eos=ngram[2])
+					aux = model.score(ngram[0])
 					if aux>maxscore:
 						maxscore = aux
 				result.append(maxscore)
@@ -632,7 +636,8 @@ class FeatureEstimator:
 			for subst in line[3:len(line)]:
 				word = subst.split(':')[1].strip()
 				ngram, bosv, eosv = self.getNgram(word, sent, head, 9999, 9999)
-				aux = -1.0*model.score(ngram, bos=bosv, eos=eosv)
+				#aux = model.score(ngram, bos=bosv, eos=eosv)
+				aux = model.score(ngram)
 				result.append(aux)
 		return result
 		
@@ -864,7 +869,8 @@ class FeatureEstimator:
 				if len(insts)>0:
 					for inst in insts:
 						ngram = inst[0] + ' ' + word + ' ' + inst[1]
-						prob = math.exp(model.score(ngram, bos=False, eos=False))
+						#prob = math.exp(model.score(ngram, bos=False, eos=False))
+						prob = math.exp(model.score(ngram))
 						total += prob
 					total /= float(len(insts))
 				else:
@@ -1053,7 +1059,8 @@ class FeatureEstimator:
 				if len(insts)>0:
 					for inst in insts:
 						ngram = inst[0] + ' ' + inst[1] + ' ' + word
-						prob = math.exp(model.score(ngram, bos=False, eos=False))
+						#prob = math.exp(model.score(ngram, bos=False, eos=False))
+						prob = math.exp(model.score(ngram))
 						total += prob
 					total /= float(len(insts))
 				else:
@@ -1281,11 +1288,13 @@ class FeatureEstimator:
 				if len(insts)>0 or len(insts_inv)>0:
 					for inst in insts:
 						ngram = inst[0] + ' ' + word + ' ' + inst[1]
-						prob = math.exp(model.score(ngram, bos=False, eos=False))
+						#prob = math.exp(model.score(ngram, bos=False, eos=False))
+						prob = math.exp(model.score(ngram))
 						total += prob
 					for inst in insts_inv:
 						ngram = inst[0] + ' ' + inst[1] + ' ' + word
-						prob = math.exp(model.score(ngram, bos=False, eos=False))
+						#prob = math.exp(model.score(ngram, bos=False, eos=False))
+						prob = math.exp(model.score(ngram))
 						total += prob
 					total /= float(len(insts)+len(insts_inv))
 				else:
