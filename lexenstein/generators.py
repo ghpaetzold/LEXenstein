@@ -2096,8 +2096,8 @@ class BiranGenerator:
 		return substitutions_initial
 		
 	def getComplexity(self, word, clm, slm):
-		#C = (clm.score(word, bos=False, eos=False))/(slm.score(word, bos=False, eos=False))
-		C = (clm.score(word)/(slm.score(word))
+		C = (clm.score(word, bos=False, eos=False))/(slm.score(word, bos=False, eos=False))
+		#C = (clm.score(word)/(slm.score(word))
 		L = float(len(word))
 		return C*L
 
