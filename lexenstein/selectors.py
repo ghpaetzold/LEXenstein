@@ -1,3 +1,4 @@
+from lexenstein.util import *
 import pywsd
 import gensim
 from scipy.spatial.distance import cosine
@@ -964,16 +965,27 @@ class BiranSelector:
 	
 class WordVectorSelector:
 	
-	def __init__(self, vector_model):
+	def __init__(self, vector_model, pos_model, stanford_tagger, java_path, pos_type='none'):
 		"""
 		Creates an instance of the WordVectorSelector class.
 	
 		@param vector_model: Path to a binary word vector model.
 		For instructions on how to create the model, please refer to the LEXenstein Manual.
+		@param pos_model: Path to a POS tagging model for the Stanford POS Tagger.
+		The models can be downloaded from the following link: http://nlp.stanford.edu/software/tagger.shtml
+		@param stanford_tagger: Path to the "stanford-postagger.jar" file.
+		The tagger can be downloaded from the following link: http://nlp.stanford.edu/software/tagger.shtml
+		@param java_path: Path to the system's "java" executable.
+		Can be commonly found in "/usr/bin/java" in Unix/Linux systems, or in "C:/Program Files/Java/jdk_version/java.exe" in Windows systems.
+		@param pos_type: The type of POS tags with which the model's words are annotated, if any.
+		Values supported: none, treebank, paetzold
 		"""
 		self.model = gensim.models.word2vec.Word2Vec.load_word2vec_format(vector_model, binary=True)
+		self.pos_type = pos_type
+		os.environ['JAVAHOME'] = java_path
+		self.tagger = StanfordPOSTagger(pos_model, stanford_tagger)
 	
-	def selectCandidates(self, substitutions, victor_corpus, proportion=1.0, stop_words_file=None, window=99999, onlyInformative=False, keepTarget=False, onePerWord=False):
+	def selectCandidates(self, substitutions, victor_corpus, proportion=1.0, proportion_type='percentage', stop_words_file=None, window=99999, onlyInformative=False, keepTarget=False, onePerWord=False):
 		"""
 		Selects which candidates can replace the target complex words in each instance of a VICTOR corpus.
 	
@@ -986,6 +998,10 @@ class WordVectorSelector:
 		@param victor_corpus: Path to a corpus in the VICTOR format.
 		For more information about the file's format, refer to the LEXenstein Manual.
 		@param proportion: Percentage of substitutions to keep.
+		If proportion_type is set to "percentage", then this parameter must be a floating point number between 0 and 1.
+		If proportion_type is set to "integer", then this parameter must be an integer number.
+		@param proportion_type: Type of proportion to be kept.
+		Values supported: percentage, integer.
 		@param stop_words_file: Path to the file containing stop words of the desired language.
 		The file must contain one stop word per line.
 		@param window: Number of tokens around the target complex sentence to consider as its context.
@@ -994,12 +1010,15 @@ class WordVectorSelector:
 		@param onePerWord: If True, a word in the complex word's context can only contribute once to its resulting word vector.
 		@return: Returns a vector of size N, containing a set of selected substitutions for each instance in the VICTOR corpus.
 		"""
+		#Initialize selected substitutions:
+		selected_substitutions = []
+		
+		#Read stop words:
 		stop_words = set([])
 		if stop_words_file != None:
 			stop_words = set([word.strip() for word in open(stop_words_file)])
-	
-		selected_substitutions = []
 
+		#Configure input:
 		substitution_candidates = []
 		if isinstance(substitutions, list):
 			substitution_candidates = substitutions
@@ -1008,8 +1027,25 @@ class WordVectorSelector:
 			substitution_candidates = void.selectCandidates(substitutions, victor_corpus)
 		else:
 			print('ERROR: Substitutions are neither a dictionary or a list!')
-			return selected_substitutions			
+			return selected_substitutions		
 
+		#Parse sentences:
+		lexf = open(victor_corpus)
+		sents = [line.strip().split('\t')[0].strip().split(' ') for line in lexf]
+		lexf.close()
+		tagged_sents = self.tagger.tag_sents(sentences)
+		
+		#Transform them to the right format:
+		if self.pos_type=='paetzold':
+			transformed = []
+			for sent in tagged_sents:
+				tokens = []
+				for token in sent:
+					tokens.append((token[0], getGeneralisedPOS(token[1])))
+				transformed.append(tokens)
+			tagged_sents = transformed
+		
+		#Rank candidates:
 		c = -1
 		lexf = open(victor_corpus)
 		for line in lexf:
@@ -1018,53 +1054,61 @@ class WordVectorSelector:
 			sent = data[0].strip()
 			target = data[1].strip()
 			head = int(data[2].strip())
+			pos_tags = tagged_sents[c]
+			target_pos = pos_tags[head][1]
 		
-			target_vec = self.getSentVec(sent, head, stop_words, window, onlyInformative, keepTarget, onePerWord)
+			target_vec = self.getSentVec(sent, head, stop_words, window, onlyInformative, keepTarget, onePerWord, pos_tags)
 		
 			candidates = substitution_candidates[c]
 
 			candidate_dists = {}
 			for candidate in candidates:
-				candidate_vec = self.getWordVec(candidate)
+				candidate_vec = self.getWordVec(candidate, target_pos)
 				try:
 					candidate_dists[candidate] = cosine(candidate_vec, target_vec)
 				except ValueError:
 					candidate_dists = candidate_dists
 
-			final_candidates = self.getFinalCandidates(candidate_dists, proportion)
+			final_candidates = self.getFinalCandidates(candidate_dists, proportion, proportion_type)
 
 			selected_substitutions.append(final_candidates)
 		lexf.close()
 		return selected_substitutions
 		
-	def getSentVec(self, sentence, head, stop_words, window, onlyInformative, keepTarget, onePerWord):
+	def getSentVec(self, sentence, head, stop_words, window, onlyInformative, keepTarget, onePerWord, pos_tokens):
 		informative_tags = set([])
 		if onlyInformative:
-			informative_tags = set(['nn', 'nns', 'jj', 'jjs', 'jjr', 'vb', 'vbd', 'vbg', 'vbn', 'vbp', 'vbz', 'rb', 'rbr', 'rbs'])
+			if self.pos_type=='treebank':
+				informative_tags = set(['NN', 'NNS', 'JJ', 'JJS', 'JJR', 'VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ', 'RB', 'RBR', 'RBS'])
+			if self.pos_type=='paetzold':
+				informative_tags = set(['N', 'V', 'J', 'R'])
 		
 		tokens = sentence.split(' ')
-		pos_tokens = []
-		try:
-			pos_tokens = nltk.pos_tag(tokens)
-		except UnicodeDecodeError:
-			informative_tags = set([])
-			pos_tokens = []
 		
 		valid_tokens = []
 		if keepTarget:
-			valid_tokens.append(tokens[head].strip())
+			valid = tokens[head].strip()
+			if self.pos_type!='none':
+				valid += '|||' + pos_tokens[head][1]
+			valid_tokens.append(valid)
 		
 		if head>0:
 			for i in range(max(0, head-window), head):
 				if len(informative_tags)==0 or pos_tokens[i][1].lower().strip() in informative_tags:
 					if tokens[i] not in stop_words:
-						valid_tokens.append(tokens[i])
+						valid = tokens[i]
+						if self.pos_type!='none':
+							valid += '|||' + pos_tokens[i][1]
+						valid_tokens.append(valid)
 		
 		if head<len(tokens)-1:
 			for i in range(head+1, min(len(tokens), head+1+window)):
 				if len(informative_tags)==0 or pos_tokens[i][1].lower().strip() in informative_tags:
 					if tokens[i] not in stop_words:
-						valid_tokens.append(tokens[i])
+						valid = tokens[i]
+						if self.pos_type!='none':
+							valid += '|||' + pos_tokens[i][1]
+						valid_tokens.append(valid)
 						
 		if onePerWord:
 			valid_tokens = list(set(valid_tokens))
@@ -1074,35 +1118,39 @@ class WordVectorSelector:
 			if len(result)==0:
 				try:
 					result = self.model[token]
-				except KeyError:
-					try:
-						result = self.model[token.lower()]
-					except KeyError:
-						result = []
+				except Exception:
+					result = []
 			else:
 				try:
 					result = np.add(result, self.model[token])
-				except KeyError:
-					try:
-						result = np.add(result, self.model[token.lower()])
-					except KeyError:
-						result = result
+				except Exception:
+					result = result
+		result = result/float(len(valid_tokens))
 		return result
 		
-	def getWordVec(self, candidate):
-		result = []
+	def getWordVec(self, candidate, target_pos):
+		if self.pos_type!='none':
+			cand = candidate + '|||' + target_pos
+			
+		result = np.array([])
 		try:
-			result = self.model[candidate]
-		except KeyError:
-			try:
-				result = self.model[candidate.lower()]
-			except KeyError:
-				result = result
+			result = self.model[cand]
+		except Exception:
+			pass
 		return result
 				
-	def getFinalCandidates(self, candidate_dists, proportion):
+	def getFinalCandidates(self, candidate_dists, proportion, proportion_type):
 		result = sorted(list(candidate_dists.keys()), key=candidate_dists.__getitem__)
-		return result[0:max(1, int(proportion*float(len(result))))]
+		if proportion_type=='percentage':
+			return result[0:max(1, int(proportion*float(len(result))))]
+		elif proportion_type=='integer':
+			if proportion>=len(result):
+				return result
+			else:
+				return result[0:max(1, int(proportion))]
+		else:
+			print('Unrecognized proportion type.')
+			return result
 		
 	def toVictorFormat(self, victor_corpus, substitutions, output_path, addTargetAsCandidate=False):
 		"""
