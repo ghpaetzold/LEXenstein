@@ -1033,7 +1033,7 @@ class WordVectorSelector:
 		lexf = open(victor_corpus)
 		sents = [line.strip().split('\t')[0].strip().split(' ') for line in lexf]
 		lexf.close()
-		tagged_sents = self.tagger.tag_sents(sentences)
+		tagged_sents = self.tagger.tag_sents(sents)
 		
 		#Transform them to the right format:
 		if self.pos_type=='paetzold':
@@ -1058,7 +1058,6 @@ class WordVectorSelector:
 			target_pos = pos_tags[head][1]
 		
 			target_vec = self.getSentVec(sent, head, stop_words, window, onlyInformative, keepTarget, onePerWord, pos_tags)
-		
 			candidates = substitution_candidates[c]
 
 			candidate_dists = {}
@@ -1129,9 +1128,12 @@ class WordVectorSelector:
 		return result
 		
 	def getWordVec(self, candidate, target_pos):
+		cand = None
 		if self.pos_type!='none':
 			cand = candidate + '|||' + target_pos
-			
+		else:
+			cand = candidate
+
 		result = np.array([])
 		try:
 			result = self.model[cand]
