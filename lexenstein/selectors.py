@@ -1112,18 +1112,18 @@ class WordVectorSelector:
 		if onePerWord:
 			valid_tokens = list(set(valid_tokens))
 		
-		result = []
+		result = np.array([])
 		for	token in valid_tokens:
 			if len(result)==0:
 				try:
 					result = self.model[token]
 				except Exception:
-					result = []
+					pass
 			else:
 				try:
 					result = np.add(result, self.model[token])
 				except Exception:
-					result = result
+					pass
 		result = result/float(len(valid_tokens))
 		return result
 		
