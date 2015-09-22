@@ -6,7 +6,7 @@ LEXenstein is a framework that allows for one to easily create full Lexical Simp
 
 To install LEXenstein, you must:
 
-1. Download and unpack the LEXenstein's [latest release](https://github.com/ghpaetzold/LEXenstein/releases/tag/v1.0).
+1. Download and unpack the LEXenstein's [latest release](https://github.com/ghpaetzold/LEXenstein/releases/latest).
 2. Navigate to the LEXenstein's root folder.
 3. Run the following command line:
 
@@ -19,5 +19,6 @@ copy the “lexenstein” folder into the folder of your project.
 
 # Documentation:
 
-For instructions, tutorials and examples, take a look at the [LEXenstein Manual](https://github.com/ghpaetzold/LEXenstein/raw/master/manual/LEXenstein%20Manual.pdf).
-You can also access LEXenstein's API documentation [here](http://ghpaetzold.github.io/lexenstein/documentation/).
+For instructions, and examples, take a look at the [LEXenstein Manual](https://github.com/ghpaetzold/LEXenstein/raw/master/manual/LEXenstein%20Manual.pdf).
+
+You can also access [LEXenstein's API](http://ghpaetzold.github.io/lexenstein/documentation/).
