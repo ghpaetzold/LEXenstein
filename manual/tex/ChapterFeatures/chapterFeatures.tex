@@ -1,0 +1,204 @@
+\chapter{The Feature Estimation Module}
+\label{features}
+
+LEXenstein's Feature Estimation module (lexenstein.features) allows the calculation of several features for LS related tasks. Its class FeatureEstimator allows the user to select and configure many types of features commonly used by LS approaches.
+
+The FeatureEstimator object can be used either for the creation of LEXenstein's rankers, or in stand-alone setups. For the latter, the class provides a function called \textit{calculateFeatures}, which takes as input a dataset in the VICTOR/CWICTOR format (that can be built from generated/selected substitutions). If the dataset is in VICTOR format, it returns as output a matrix $M$x$N$ containing $M$ feature values for each of the $N$ substitution candidates listed in the dataset. If the dataset is in CWICTOR format, it returns as output a matrix $M$x$N$ containing $M$ feature values for the target word of each of the $N$ instances of the dataset.
+
+
+
+
+
+
+
+\section{Features Supported}
+
+Each of the $39$ features supported must be configured individually. They can be grouped in eight categories:
+
+\begin{itemize}
+\item \textbf{Lexicon-oriented}: A binary feature that receives value $1$ if a candidate appears in a given vocabulary, and $0$ otherwise.
+
+\item \textbf{Morphological}: Features that exploit morphological characteristics of substitutions. They include:
+
+\begin{enumerate}
+	\item The length of a candidate.
+	\item The number of syllables of a candidate.
+\end{enumerate}
+
+\item \textbf{Collocational}: Comprised of several raw frequency counts and language model probabilities of the form $P\left ( S_{h-1}^{h-l} \: c \: S_{h+1}^{h+r} \right )$, where $c$ is a candidate substitution in the $h$th position in sentence $S$, and $S_{h-1}^{h-l}$ and $S_{h+1}^{h+r}$ are n-grams of size $l$ and $r$, respectively. Included in this category of features are:
+
+\begin{enumerate}
+	\item The language model probability of the entire sentence $S$ with the target word replace by a candidate.
+	\item The language model probability of an n-gram.
+	\item The raw frequency count of an n-gram in a corpus.
+	\item A binary feature that receives value $1$ if an n-gram is in a corpus, and $0$ otherwise.
+\end{enumerate}
+
+\item \textbf{Pop-Collocational}: Comprised of several raw frequency counts and language model probabilities of the ``pop'' n-grams introduced by \cite{uowshef}. They differ from typical collocational features in the sense that, instead of retrieving the frequency of the n-gram itself, it retrieves the highest frequency between three variants of an n-gram: its original form, $S_{h-1}^{h-l} \: c \: S_{h+1}^{h+r}$, its leftmost ``popped'' version, $S_{h-2}^{h-l} \: c \: S_{h+1}^{h+r}$, its rightmost ``popped'' version, $S_{h-1}^{h-l} \: c \: S_{h+2}^{h+r}$, and its double ``popped'' version, $S_{h-2}^{h-l} \: c \: S_{h+2}^{h+r}$. Included in this category of features are:
+
+\begin{enumerate}
+	\item The language model probability of a pop n-gram.
+	\item The raw frequency count of a pop n-gram in a corpus.
+\end{enumerate}
+
+\item \textbf{Tagged-Collocational}: Comprised of several raw frequency counts of ``tagged'' n-grams, a novel concept introduced in this work. They differ from typical collocational features in the sense that, instead of retrieving the frequency of an n-gram in its original form, $S_{h-1}^{h-l} \: c \: S_{h+1}^{h+r}$, it retrieves the frequency of a candidate surrounded by the neighbor words' POS tags, $P_{h-1}^{h-l} \: c \: P_{h+1}^{h+r}$, given that $P$ is the set of POS tags that describe sentence $S$. Included in this category of features are:
+
+\begin{enumerate}
+	\item The raw frequency count of a tagged n-gram in a corpus.
+	\item A binary feature that receives value $1$ if a tagged n-gram is in a corpus, and $0$ otherwise.
+\end{enumerate}
+
+\item \textbf{Sense-oriented}: Comprised of features that describe the semantic information of a candidate substitution. They include:
+
+\begin{enumerate}
+	\item The number of senses of a candidate.
+	\item The number of synonyms of a candidate.
+	\item The number of hypernyms of a candidate.
+	\item The number of hyponyms of a candidate.
+	\item The maximum semantic distance between all of a candidate's senses in a thesaurus.
+	\item The minimum semantic distance between all of a candidate's senses in a thesaurus.
+	\item A binary feature that receives value $1$ if the candidate is a synonym of the target word, and $0$ otherwise.
+	\item A binary feature that receives value $1$ if the candidate is a hypernym of the target word, and $0$ otherwise.
+	\item A binary feature that receives value $1$ if the candidate is a hyponym of the target word, and $0$ otherwise.
+\end{enumerate}
+
+These feature values are extracted from the WordNet thesaurus.
+
+\item \textbf{Syntactic}: Comprised of features that measure how likely a candidate substitution is of assuming the syntactic role of the target word. We describe the syntactic role of a target word $w$ in sentence $S$ as its POS tag and its set of subject dependency links, $\left ( w \rightarrow  S_{i} \right )$, and object dependency links, $\left ( w \leftarrow  S_{i} \right )$. Included in this category of features are:
+
+\begin{enumerate}
+	\item The conditional probability of the candidate assuming the POS tag of the target word.
+	\item The average probability of the candidate assuming the subject dependency links of the target word.
+	\item The average raw occurrence counts in which the candidate assumes the subject dependency links of the target word.
+	\item A binary feature that receives value $1$ if the candidate assumes all subject dependency links of the target word at least once in a corpus.
+	\item The average probability of the candidate assuming the object dependency links of the target word.
+	\item The average raw occurrence counts in which the candidate assumes the object dependency links of the target word.
+	\item A binary feature that receives value $1$ if the candidate assumes all object dependency links of the target word at least once in a corpus.
+	\item The average probability of the candidate assuming all dependency links of the target word.
+	\item The average raw occurrence counts in which the candidate assumes all dependency links of the target word.
+	\item A binary feature that receives value $1$ if the candidate assumes all dependency links of the target word at least once in a corpus.
+\end{enumerate}
+
+\item \textbf{Semantic}: Comprised of features that describe not only the semantic content pertaining to a candidate individually, but also its semantic similarity with the target word and the sentence in question. Included in this category of features are:
+
+\begin{enumerate}
+	\item The probability of the target word being translated into a given candidate.
+	\item The candidate's word embedding values, as determined by a word embeddings model.
+	\item The cosine similarity between the candidate's and the target word's embedding vectors.
+	\item The average cosine similarity between the candidate's embeddings vector, and those of all content words in the sentence.
+	\item The candidate's word embedding values, as determined by an enhanced word embeddings model.
+	\item The cosine similarity between the candidate's and the target word's enhanced embedding vectors.
+	\item The average cosine similarity between the candidate's enhanced embeddings vector, and those of all content words in the sentence.
+\end{enumerate}
+
+\end{itemize}
+
+The code snippet below shows an example of how to configure and use a FeatureEstimator object:
+
+\begin{lstlisting}
+from lexenstein.morphadorner import MorphAdornerToolkit
+from lexenstein.features import *
+
+m = MorphAdornerToolkit('./morph/')
+fe = FeatureEstimator(norm=False)
+fe.addLexiconFeature('lexicon.txt', 'Simplicity')
+fe.addWordVectorValues('model.bin', 300, 'Simplicity')
+fe.addLengthFeature('Complexity')
+fe.addSyllableFeature(m, 'Complexity')
+fe.addCollocationalFeature('lm.bin', 2, 2, 'Simplicity')
+fe.addNGramFrequencyFeature('lm.bin', 3, 0, 'Simplicity')
+fe.addSentenceProbabilityFeature('lm.bin', 'Simplicity')
+fe.addSenseCountFeature('Simplicity')
+fe.addSynonymCountFeature('Simplicity')
+fe.addHypernymCountFeature('Simplicity')
+fe.addHyponymCountFeature('Simplicity')
+fe.addMinDepthFeature('Complexity')
+fe.addMaxDepthFeature('Complexity')
+fe.addTranslationProbabilityFeature('translation_probs.bin', 'Simplicity')
+fe.addWordVectorSimilarityFeature('word_vectors.bin', 'Simplicity')
+fe.addTargetPOSTagProbability('cond_prob.bin', 'pos_model.bin', 'stanford-postagger.jar', '/usr/bin/java', 'Simplicity')
+feats = fe.calculateFeatures('lexmturk.txt', format='victor')
+\end{lstlisting}
+
+The output produced by the script above will be:
+
+\begin{lstlisting}
+[[1.0, 7, 2, 4.470454216003418, 6.206913948059082, 7.3130669593811035, 10.297701835632324, 12.034161567687988, 13.140314102172852, 11.422476768493652, 13.158936500549316, 14.26508903503418, 51.03892517089844, 12, 51, 12, 83, 3, 8, 0.0167457456, 0.234516], [0.0, 6, 3, 4.487872123718262, 7.389286041259766, 8.941888809204102, 10.315119743347168, 13.216533660888672, 14.769136428833008, 11.439894676208496, 14.34130859375, 15.893911361694336, 52.66774368286, 2, 6, 0, 0, 0, 0, 0.0134387482374, 0.234833]
+...
+[0.0, 7, 2, 4.950876235961914, 8.496809005737305, 9.830375671386719, 10.77812385559082, 14.324056625366211, 15.657623291015625, 11.902898788452148, 15.448831558227539, 16.782398223876953, 53.556236267089844, 6, 13, 1, 0, 0, 8, 0.0023717232, 0.43812894]]
+\end{lstlisting}
+
+In the Section that follows, we elaborate on how to produce the resources required by the features included in LEXenstein.
+
+
+
+\section{Producing Feature Resources}
+
+In this Section, we provide tutorials on how to produce several resources required by LEXenstein's features. They are:
+
+\begin{itemize}
+	\item \textbf{Lexicons}: Must be a plain text file with one word per line.
+	
+	\item \textbf{Language Models}: Must be produced by KenLM with the following command lines:
+
+			\begin{lstlisting}
+			lmplz -o [order] <[corpus_of_text] >[language_model]
+			\end{lstlisting}
+			\begin{lstlisting}
+			build_binary [language_model] [binary_language_model]
+			\end{lstlisting}
+			
+		The user can also use other language modeling tools, such as SRILM, to produce a language model in ARPA format, and then binarize it with KenLM.
+			
+	\item \textbf{N-gram Count Files}: Must be a Python shelve file created with the ``addNgramCountsFileToShelve'' function in the Utilities module of LEXenstein (lexenstein.util). For more detailed instructions, please refer to the documentation of the ``addNgramCountsFileToShelve'' function.
+	
+	\item \textbf{Tagged N-gram Count Files}: Must be a Python shelve file created with the ``addNgramCountsFileToShelve'' function in the Utilities module of LEXenstein (lexenstein.util). To create a tagged n-grams file using SRILM, use the ``createTaggedNgramsFile'' function in the Utilities module. For more detailed instructions, please refer to the documentation of the ``addNgramCountsFileToShelve'' and ``createTaggedNgramsFile'' functions.
+	
+	\item \textbf{Dependency Link Language Models}: To create such a language model, you must:
+	
+		\begin{enumerate}
+			\item Produce a large corpus of dependency parsed sentences.
+			\item Transform each and every dependency link to the format of Example~\ref{eq:deplm}, where each token is space-separated.
+			
+				\begin{equation}
+				\label{eq:deplm}
+				<\!\textup{type\_of\_dependency\_link}\!>\; <\!\textup{subject\_word}\!>\; <\!\textup{object\_word}\!>
+				\end{equation}
+				
+			\item Place all dependency links in a plain text file.
+			\item Run a language modeling tool over the file, producing a file in ARPA format.
+			\item Binarize the language model with KenLM using the following command:
+			
+			\begin{lstlisting}
+			build_binary [language_model] [binary_language_model]
+			\end{lstlisting}
+		\end{enumerate}
+			
+	\item \textbf{Translation Probability Files}: Must be a Python shelve file created with the ``addTranslationProbabilitiesFileToShelve'' function in the Utilities module of LEXenstein (lexenstein.util). For more detailed instructions, please refer to the documentation of the ``addTranslationProbabilitiesFileToShelve'' function.
+	
+	\item \textbf{Word Vector Models}: Must be a binary file created through the use of word$2$vec. For more information on how to create them, please follow the instructions on the website of the application at \url{https://code.google.com/p/word2vec/}.
+	
+	\item \textbf{Tagged Word Vector Models}: To create a tagged word vector model, you must:
+	
+		\begin{enumerate}
+			\item Produce POS tags for a large corpus of text.
+			\item Concatenate the POS tags to each word in the corpus using the format of Example~\ref{eq:taggedw2v}, where $w_{i}$ is the $i$th word in a sentence, and $p_{i}$ its POS tag.
+			
+			\begin{equation}
+				\label{eq:taggedw2v}
+				w_{1}|||p_{1}\; w_{2}|||p_{2}\;  ...\; w_{n-1}|||p_{n-1}\; w_{n}|||p_{n}
+				\end{equation}
+				
+			\item Train a binary word vector model over the resulting corpus using word$2$vec.
+		\end{enumerate}
+		
+		LEXenstein supports two POS tag conventions:
+		
+			\begin{enumerate}
+				\item Treebank: POS tags in the Penn Treebank format \cite{Marcus1993}. They can be produced by any modern POS tagger, such as the Stanford Tagger \cite{stanfordparser}.
+				
+				\item Paetzold: Generalized versions of Treebank tags. They can be derived from Treebank tags using the ``getGeneralisedPOS'' from the LEXenstein's Utilities module (lexenstein.util).
+			\end{enumerate}
+	
+	\item \textbf{Conditional Probability Models}: Must be created by the ``createConditionalProbabilityModel'' function from LEXenstein's Utilities module (lexenstein.utilities). For detailed instructions, please refer to the documentation of the ``createConditionalProbabilityModel'' function.
+\end{itemize}

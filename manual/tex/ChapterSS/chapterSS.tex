@@ -1,0 +1,403 @@
+\chapter{The Substitution Selection Module}
+\label{selectors}
+
+Substitution Selection (SS) is the task of selecting which substitutions from a given list can replace a complex word in a given sentence without altering its meaning. Most work addresses this task referring to the context of the complex word by employing Word Sense Disambiguation (WSD) approaches \cite{Sedding04,Nunes2013}, or by discarding substitutions which do not share the same POS tag of the target complex word \cite{Yamamoto2013,Paetzold2013}.
+
+LEXenstein's SS module (lexenstein.selectors) provides access to $8$ approaches, each represented by a Python class. All classes have a ``selectCandidates'' function, which receives as input a set of candidate substitutions and a corpus in the VICTOR format. The candidate substitutions can be either a dictionary produced by a Substitution Generation approach, or a list of candidates that have been already selected by another Substitution Selection approach. This feature allows for multiple selectors to be used in sequence. The following Sections describe each of the classes in the LEXenstein SS module individually.
+
+
+
+
+
+
+
+\section{WordVectorSelector}
+
+Employs a novel strategy, in which a word vector model is used to determine which substitutions have the closest meaning to that of the sentence being simplified. It retrieves a user-defined percentage of the substitutions, which are ranked with respect to the cosine distance between its word vector and the sum of some, or all of the sentences' words, depending on the settings defined by the user.
+
+
+\subsection{Parameters}
+
+To create a WordVectorSelector object, you must provide a binary word vector model created with Word$2$Vec. To create the word vector, follow the steps below:
+
+\begin{enumerate}
+\item Download and install Word$2$Vec in your machine from \url{https://code.google.com/p/word2vec/}.
+\item Gather large amounts of corpora (>10 billion words). You can find some sources of data in \url{https://code.google.com/p/word2vec/}.
+\item With Word$2$Vec installed, run it with the following command line:
+
+\begin{lstlisting}
+./word2vec -train <corpus> -output <binary_model_path> -cbow 1 -size 300 -window 5 -negative 3 -hs 0 -sample 1e-5 -threads 12 -binary 1 -min-count 10
+\end{lstlisting}
+\end{enumerate}
+
+The command line above creates word vectors with $300$ dimensions and considers only a window of $5$ tokens around each word. You can customize those parameters if you wish. For more information on how to use other class functions, please refer to LEXenstein's documentation.
+
+\subsection{Example}
+
+The code snippet below shows the WordVectorSelector class being used:
+
+\begin{lstlisting}
+from lexenstein.morphadorner import MorphAdornerToolkit
+from lexenstein.generators import *
+from lexenstein.selectors import *
+
+m = MorphAdornerToolkit('./morph/')
+
+kg = KauchakGenerator(m, 'parallel.txt', 'alignments.txt', 'stop_words.txt')
+subs = kg.getSubstitutions('lexmturk.txt')
+
+wordvecselector = WordVectorSelector('word_vector_model.bin')
+selected = wordvecselector.selectCandidates(subs, 'lexmturk.txt', proportion=0.75, stop_words_file='stop_words.txt', onlyInformative=True, keepTarget=True, onePerWord=True)
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+\section{BiranSelector}
+
+Employs the strategy described in \cite{Biran2011}, in which a word co-occurrence model is used to determine which substitutions have meaning similar to that of a target complex word. It filters all substitutions which are estimated to be more complex than the target word, and also all those for which the distance between its co-occurrence vector and the target sentence's vector is higher than a threshold set by the user.
+
+
+\subsection{Parameters}
+
+To create a BiranSelector object, you must provide a word co-occurrence model. The model must be in plain text format, and each line must follow the format illustrated in Example~\ref{cooc}, where $\left\langle w_{i} \right\rangle$ is a word, $\left\langle c_{i}^{j} \right\rangle$ a co-occurring word and $\left\langle f_{i}^{j} \right\rangle$ its frequency of appearance.
+
+\begin{equation}
+\label{cooc}
+\left\langle w_{i} \right\rangle\; \left\langle c_{i}^{0} \right\rangle\!:\!\left\langle f_{i}^{0} \right\rangle\;\left\langle c_{i}^{1} \right\rangle\!:\!\left\langle f_{i}^{1} \right\rangle\cdots\left\langle c_{i}^{n-1} \right\rangle\!:\!\left\langle f_{i}^{n-1} \right\rangle \; \left\langle c_{i}^{n} \right\rangle\!:\!\left\langle f_{i}^{n} \right\rangle
+\end{equation}
+
+Each component in the format above must be separated by a tabulation marker. To create a co-occurrence model, either create a script that does so, or follow the steps below:
+
+\begin{enumerate}
+\item Gather a corpus of text composed of one tokenized and truecased sentence per line.
+\item Run the script \url{resources/scripts/Produce_Co-occurrence_Model.py} with the following command line:
+
+\begin{lstlisting}
+python Produce_Co-occurrence_Model.py <corpus> <window> <model_path>
+\end{lstlisting}
+
+Where ``<window>'' is the number of tokens to the left and right of a word to be included as a co-occurring word.
+
+\end{enumerate}
+
+To produce models faster, you can split your corpus in various small portions, run parallel processes to produce various small models, and then join them.  For more information on how to use other class functions, please refer to LEXenstein's documentation.
+
+\subsection{Example}
+
+The code snippet below shows the BiranSelector class being used:
+
+\begin{lstlisting}
+from lexenstein.morphadorner import MorphAdornerToolkit
+from lexenstein.generators import *
+from lexenstein.selectors import *
+
+m = MorphAdornerToolkit('./morph/')
+
+kg = KauchakGenerator(m, 'parallel.txt', 'alignments.txt', 'stop_words.txt')
+subs = kg.getSubstitutions('lexmturk.txt')
+
+biranselector = BiranSelector('cooc_model.txt')
+selected = biranselector.selectCandidates(subs, 'lexmturk.txt', 0.01, 0.75)
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{WSDSelector}
+
+Allows for the user to use many distinct classic WSD approaches in SS. It requires for the PyWSD \cite{pywsd} module to be installed, which includes the approaches presented by \cite{lesk} and \cite{wupalmer}, as well as baselines such as random and first senses. The user can use any of the aforementioned approaches through the WSDSelector class by changing instantiation parameters.
+
+\subsection{Parameters}
+
+During instantiation, the WSDSelector class requires only for you to provide an id for the WSD method that you desire to use for Substitution Selection. For the options available, please refer to LEXenstein's documentation.
+
+\subsection{Example}
+
+The code snippet below shows the WSDSelector class being used:
+
+\begin{lstlisting}
+from lexenstein.morphadorner import MorphAdornerToolkit
+from lexenstein.generators import *
+from lexenstein.selectors import *
+
+m = MorphAdornerToolkit('./morph/')
+
+kg = KauchakGenerator(m, 'parallel.txt', 'alignments.txt', 'stop_words.txt')
+subs = kg.getSubstitutions('lexmturk.txt')
+
+wsdselector = WSDSelector('lesk')
+selected = wsdselector.selectCandidates(subs, 'lexmturk.txt')
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{NunesSelector}
+
+Employs an SS strategy similar to the one introduced by \cite{Nunes2013}. It selects only those candidates of which the most likely POS tag is that of the target word. The selector initially parses a given sentence, and retrieves the POS tag of the target word. Using a POS tag conditional probability model, it then retrieves the most likely tag of each candidate, and checks to see if it matches with the target's tag.
+
+\subsection{Parameters}
+
+During instantiation, the NunesSelector class requires for a POS tag conditional probability model, a binary POS tagging model, the path to a compiled version of the Stanford Tagger, and the path to the user's java installation.
+
+The tagging model and tagger can both be downloaded from \url{http://nlp.stanford.edu/software/tagger.shtml}. The conditional probability model required must be created by the ``createConditionalProbabilityModel'' function from LEXenstein's Utilities module (lexenstein.utilities). For detailed instructions, please refer to the documentation of the ``createConditionalProbabilityModel'' function.
+
+\subsection{Example}
+
+The code snippet below shows the NunesSelector class being used:
+
+\begin{lstlisting}
+from lexenstein.morphadorner import MorphAdornerToolkit
+from lexenstein.generators import *
+from lexenstein.selectors import *
+
+m = MorphAdornerToolkit('./morph/')
+
+kg = KauchakGenerator(m, 'parallel.txt', 'alignments.txt', 'stop_words.txt')
+subs = kg.getSubstitutions('lexmturk.txt')
+
+nunesselector = NunesSelector('cond_prob.bin', 'pos_model.bin', 'stanford-tagger.jar', '/usr/bin/java')
+selected = nunesselector.selectCandidates(subs, 'lexmturk.txt')
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{BelderSelector}
+
+Selects only those candidates which appear in the same word clusters in which a given target word is present. This strategy is inspired by the work of \cite{Belder2010}, in which synonyms are automatically extracted from a latent variable language model.
+
+\subsection{Parameters}
+
+During instantiation, the BelderSelector class requires for a file with clusters of words. The file must be in plain text format, and each line must follow the format illustrated in Example~\ref{clusterfile}, which is the one adopted by the Brown Clusters implementation of \cite{brownclusters}. In the Example~\ref{clusterfile}, $c_{i}$ is a class identifier, $w_{i}$ a word, and $f_{i}$ an optional frequency of occurrence of word $w_{i}$ in the corpus over which the word classes were estimated.
+
+\begin{equation}
+\label{clusterfile}
+\left\langle c_{i} \right\rangle\; \left\langle w_{i} \right\rangle \left\langle f_{i} \right\rangle
+\end{equation}
+
+Each component in the format above must be separated by a tabulation marker. To create the file, one can use the software provided at \url{https://github.com/percyliang/brown-cluster}. Once the tool is installed, run the following command line:
+
+\begin{lstlisting}
+./wcluster --text <corpus_of_sentences> --c <number_of_clusters>
+\end{lstlisting}
+
+The clusters file will be placed at \textbf{input-c50-p1.out/paths}.
+
+\subsection{Example}
+
+The code snippet below shows the BelderSelector class being used:
+
+\begin{lstlisting}
+from lexenstein.morphadorner import MorphAdornerToolkit
+from lexenstein.generators import *
+from lexenstein.selectors import *
+
+m = MorphAdornerToolkit('./morph/')
+
+kg = KauchakGenerator(m, 'parallel.txt', 'alignments.txt', 'stop_words.txt')
+subs = kg.getSubstitutions('lexmturk.txt')
+
+belderselector = BelderSelector('clusters.txt')
+selected = belderselector.selectCandidates(subs, 'lexmturk.txt')
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+\section{BoundarySelector}
+
+Employs a novel strategy, in which a Boundary Ranker is trained over a given set of features and then used to rank candidate substitutions according to how likely they are of being able to replace a target word without compromising the sentence's grammaticality or coherence. It retrieves a user-defined percentage of a set of substitutions.
+
+\subsection{Parameters}
+
+During instantiation, the BoundarySelector class requires for a BoundaryRanker object, which must be configured according to which features and resources the user intends to use to rank substitution candidates. The user can then use the ``trainSelector'' function to train the selector given a set of parameters, or the ``trainSelectorWithCrossValidation'' function to train it with cross-validation. Finally, the user can then retrieve a proportion of the candidate substitutions by using the ``selectCandidates'' function. For more information about the parameters of each function, please refer to LEXenstein's documentation.
+
+\subsection{Example}
+
+The code snippet below shows the BoundarySelector class being used:
+
+\begin{lstlisting}
+from lexenstein.morphadorner import MorphAdornerToolkit
+from lexenstein.generators import *
+from lexenstein.selectors import *
+from lexenstein.features import *
+from lexenstein.rankers import *
+
+fe = FeatureEstimator()
+fe.addCollocationalFeature('lm.txt', 0, 0, 'Complexity')
+fe.addSenseCountFeature('Simplicity')
+
+m = MorphAdornerToolkit('./morph/')
+
+kg = KauchakGenerator(m, 'parallel.txt', 'alignments.txt', 'stop_words.txt')
+subs = kg.getSubstitutions('lexmturk.txt')
+
+br = BoundaryRanker(fe)
+bs = BoundarySelector(br)
+bs.trainSelectorWithCrossValidation('lexmturk.txt', 1, 5, 0.25)
+selected = bs.selectCandidates(subs, 'lexmturk.txt', 'temp.txt', 0.25)
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+\section{SVMBoundarySelector}
+
+Employs the same strategy used by the BoundaryRankerSelector, but instead of learning a linear model estimated over Stochastic Gradient Descent, it learns an either linear or non-linear model through Support Vector Machines. It retrieves a user-defined percentage of a set of substitutions.
+
+\subsection{Parameters}
+
+During instantiation, the SVMBoundarySelector class requires for a SVMBoundaryRanker object, which must be configured according to which features and resources the user intends to use to rank substitution candidates. The user can then use the ``trainSelector'' function to train the selector given a set of parameters, or the ``trainSelectorWithCrossValidation'' function to train it with cross-validation. Finally, the user can then retrieve a proportion of the candidate substitutions by using the ``selectCandidates'' function. For more information about the parameters of each function, please refer to LEXenstein's documentation.
+
+\subsection{Example}
+
+The code snippet below shows the SVMBoundarySelector class being used:
+
+\begin{lstlisting}
+from lexenstein.morphadorner import MorphAdornerToolkit
+from lexenstein.generators import *
+from lexenstein.selectors import *
+from lexenstein.features import *
+from lexenstein.rankers import *
+
+fe = FeatureEstimator()
+fe.addCollocationalFeature('lm.txt', 0, 0, 'Complexity')
+fe.addSenseCountFeature('Simplicity')
+
+m = MorphAdornerToolkit('./morph/')
+
+kg = KauchakGenerator(m, 'parallel.txt', 'alignments.txt', 'stop_words.txt')
+subs = kg.getSubstitutions('lexmturk.txt')
+
+br = SVMBoundaryRanker(fe)
+sbs = SVMBoundarySelector(br)
+sbs.trainSelectorWithCrossValidation('lexmturk.txt', 1, 5, 0.25)
+selected = sbs.selectCandidates(subs, 'lexmturk.txt', 'temp.txt', 0.25)
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+\section{SVMRankSelector}
+
+Employs a novel strategy, in which a SVM Ranker is trained over a given set of features and then used to rank candidate substitutions according to how likely they are of being able to replace a target word without compromising the sentence's grammaticality or coherence. It retrieves a user-defined percentage of a set of substitutions.
+
+\subsection{Parameters}
+
+During instantiation, the SVMRankSelector class requires for a SVMRanker object, which must be configured according to which features and resources the user intends to use to rank substitution candidates. The user can then use the ``trainSelector'' function to train the selector given a set of parameters, or the ``trainSelectorWithCrossValidation'' function to train it with cross-validation. Finally, the user can then retrieve a proportion of the candidate substitutions by using the ``selectCandidates'' function. For more information about the parameters of each function, please refer to LEXenstein's documentation.
+
+\subsection{Example}
+
+The code snippet below shows the SVMRankSelector class being used:
+
+\begin{lstlisting}
+from lexenstein.morphadorner import MorphAdornerToolkit
+from lexenstein.generators import *
+from lexenstein.selectors import *
+from lexenstein.features import *
+from lexenstein.rankers import *
+
+fe = FeatureEstimator()
+fe.addCollocationalFeature('lm.txt', 0, 0, 'Complexity')
+fe.addSenseCountFeature('Simplicity')
+
+m = MorphAdornerToolkit('./morph/')
+
+kg = KauchakGenerator(m, 'parallel.txt', 'alignments.txt', 'stop_words.txt')
+subs = kg.getSubstitutions('lexmturk.txt')
+
+sr = SVMRanker(fe, './svm-rank/'
+ss = SVMRankSelector(br)
+ss.trainSelectorWithCrossValidation('lexmturk.txt', 'f1.txt', 'm.txt', 5, 0.25, './temp/', 0)
+selected = bs.selectCandidates(subs, 'lexmturk.txt', 'f2.txt', 's1.txt', 'temp.txt', 0.25)
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+\section{VoidSelector}
+
+Does not perform any type of explicit substitution selection, and selects all possible substitutions generated for a given target word.
+
+\subsection{Parameters}
+
+During instantiation, the VoidSelector class requires no parameters.
+
+\subsection{Example}
+
+The code snippet below shows the VoidSelector class being used:
+
+\begin{lstlisting}
+from lexenstein.generators import *
+from lexenstein.selectors import *
+
+m = MorphAdornerToolkit('./morph/')
+
+kg = KauchakGenerator(m, 'parallel.txt', 'alignments.txt', 'stop_words.txt')
+subs = kg.getSubstitutions('lexmturk.txt')
+
+voidselector = VoidSelector()
+selected = voidselector.selectCandidates(subs, 'lexmturk.txt')
+\end{lstlisting}

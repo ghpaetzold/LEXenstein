@@ -1,0 +1,339 @@
+\chapter{The Substitution Generation Module}
+\label{sg}
+
+We define Substitution Generation (SG) as the task of producing candidate substitutions for complex words. Authors commonly address this task by querying WordNet \cite{wordnet} and UMLS\cite{Bodenreider04}. Some examples of authors who resort to this strategy are \cite{Devlin1998} and \cite{Carroll99}. Recently however, learning substitutions from aligned corpora have become a more popular strategy \cite{Paetzold2013} and \cite{Horn2014}.
+
+In the Substitution Generation module of LEXenstein (lexenstein.generators), one has access to several Substitution Generation methods available in literature. The module contains a series of classes, each representing a distinct approach in literature. Currently, it offers support for $5$ distinct approaches. All approaches use LEXenstein's Text Adorning module, described in Section~\ref{adorning}, to create substitutions for all possible inflections of verbs and nouns. The following Sections describe each one individually.
+
+
+
+
+
+
+
+
+\section{PaetzoldGenerator}
+
+Employs a novel strategy, in which substitutions are extracted from tagged word embedding models. To be instantiated, this class requires as input a path to a binary tagged word vector model trained with word$2$vec. As output, its \textit{getSubstitutions} function produces a dictionary containing the $n$ words of which the embeddings vector has the highest cosine similarity with each target word in a VICTOR corpus.
+
+\subsection{Parameters}
+
+The word vector model required by the PaetzoldGenerator class must be in the binary format produced by word$2$vec. The model can be trained over a POS tag annotated corpus using any of the parameters supported by word$2$vec. To produce the tagged corpus required, you must:
+
+	\begin{enumerate}
+		\item Produce POS tags for a large corpus of text.
+		\item Concatenate the POS tags to each word in the corpus using the format of Example~\ref{eq:taggedw2v}, where $w_{i}$ is the $i$th word in a sentence, and $p_{i}$ its POS tag.
+			
+		\begin{equation}
+			\label{eq:taggedw2v}
+				w_{1}|||p_{1}\; w_{2}|||p_{2}\;  ...\; w_{n-1}|||p_{n-1}\; w_{n}|||p_{n}
+			\end{equation}
+				
+		\item Train a binary word vector model over the resulting corpus using word$2$vec.
+	\end{enumerate}
+
+The PaetzoldGenerator supports two POS tag conventions:
+		
+			\begin{enumerate}
+				\item Treebank: POS tags in the Penn Treebank format \cite{Marcus1993}. They can be produced by any modern POS tagger, such as the Stanford Tagger \cite{stanfordparser}.
+				
+				\item Paetzold: Generalized versions of Treebank tags. They can be derived from Treebank tags using the ``getGeneralisedPOS'' from the LEXenstein's Utilities module (lexenstein.util).
+			\end{enumerate}
+
+To learn how to use word$2$vec, please refer to their documentation at \url{https://code.google.com/p/word2vec/}.
+
+
+
+\subsection{Example}
+
+The code snippet below shows the GlavasGenerator class being used:
+
+\begin{lstlisting}
+from lexenstein.generators import *
+
+kg = GlavasGenerator('model.bin')
+subs = kg.getSubstitutions('lexmturk.txt', 10)
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
+\section{GlavasGenerator}
+
+Employs the strategy described in \cite{glavas2015}, in which substitutions are extracted from typical word embedding models. To be instantiated, this class requires as input a path to a binary word vector model trained with word$2$vec. As output, its \textit{getSubstitutions} function produces a dictionary containing the $n$ words of which the embeddings vector has the highest cosine similarity with each target word in a VICTOR corpus.
+
+\subsection{Parameters}
+
+The word vector model required by the GlavasGenerator class must be in the binary format produced by word$2$vec. The model can be trained over any type of corpus using any of the parameters supported by word$2$vec. To learn how to use word$2$vec, please refer to their documentation at \url{https://code.google.com/p/word2vec/}.
+
+
+
+\subsection{Example}
+
+The code snippet below shows the GlavasGenerator class being used:
+
+\begin{lstlisting}
+from lexenstein.generators import *
+
+kg = GlavasGenerator('model.bin')
+subs = kg.getSubstitutions('lexmturk.txt', 10)
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{KauchakGenerator}
+
+Employs the strategy described in \cite{Horn2014}, in which substitutions are automatically extracted from parallel corpora. To be instantiated, this class requires as input an object of the MorphAdornerToolkit class, a parsed document of parallel sentences, the word alignments between them in Pharaoh format, a list of stop words and a NorvigCorrector object. As output, its \textit{getSubstitutions} function produces a dictionary of complex-to-simple substitutions filtered by the criteria described in \cite{Horn2014}.
+
+\subsection{Parameters}
+
+The parsed parallel document, the alignments file, and the stop words list required by the KauchakGenerator class must be in a specific format. Each line of the parsed parallel document must be in the format described in Example~\ref{parsedparallel}, where $w_{i}^{s}$ is a word in position $i$ of a source sentence $s$, $p_{i}^{s}$ its POS tag, $w_{j}^{t}$ is a word in position $j$ of a target sentence $t$, and $p_{j}^{t}$ its POS tag.
+
+\begin{equation}
+\label{parsedparallel}
+\left \langle w_{0}^{s} \right \rangle\! |||\! \left \langle p_{0}^{s} \right \rangle\cdots\left \langle w_{n}^{s} \right \rangle\!|||\!\left \langle p_{n}^{s} \right \rangle \;\; \left \langle w_{0}^{t} \right \rangle\! |||\! \left \langle p_{0}^{t} \right \rangle\cdots\left \langle w_{n}^{t} \right \rangle\!|||\!\left \langle p_{n}^{t} \right \rangle
+\end{equation}
+
+All tokens of form $\left \langle w_{i}^{s} \right \rangle\! |||\! \left \langle p_{i}^{s} \right \rangle$ are separated by a blank space, and the two set of source and target tokens $\left \langle w_{0}^{s} \right \rangle\! |||\! \left \langle p_{0}^{s} \right \rangle\cdots\left \langle w_{n}^{s} \right \rangle\!|||\!\left \langle p_{n}^{s} \right \rangle$ are separated by a tabulation marker. An example of file with such notation can be found in ``\url{resources/parallel_data/alignment_pos_file.txt}''.
+
+The alignments file must be in Pharaoh format. Each line of the alignments file must be structured as illustrated in Example~\ref{pharaoh}, where $\left \langle i_{h}^{s} \right \rangle$ is an index $i$ in source sentence $s$, and $\left \langle j_{h}^{t} \right \rangle$ is the index $j$ in source sentence $t$ aligned to it.
+
+\begin{equation}
+\label{pharaoh}
+\left \langle i_{0}^{s} \right \rangle\! -\! \left \langle j_{0}^{t} \right \rangle\; \left \langle i_{1}^{s} \right \rangle\! -\! \left \langle j_{1}^{t} \right \rangle\cdots\left \langle i_{n-1}^{s} \right \rangle\! -\! \left \langle j_{n-1}^{t} \right \rangle\; \left \langle i_{n}^{s} \right \rangle\! -\! \left \langle j_{n}^{t} \right \rangle
+\end{equation}
+
+All tokens of form $\left \langle i_{h}^{s} \right \rangle\! -\! \left \langle j_{h}^{t} \right \rangle$ are separated by a blank space. An example of file with such notation can be found in ``\url{resources/parallel_data/alignments.txt}''.
+
+\subsection{Example}
+
+The code snippet below shows the KauchakGenerator class being used:
+
+\begin{lstlisting}
+from lexenstein.morphadorner import MorphAdornerToolkit
+from lexenstein.generators import *
+from lexenstein.spelling import *
+
+nc = NorvigCorrector('corpus.txt')
+
+m = MorphAdornerToolkit('./morph/')
+
+kg = KauchakGenerator(m, 'parallel.txt', 'alignments.txt', 'stop_words.txt', nc)
+subs = kg.getSubstitutions('lexmturk.txt')
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{YamamotoGenerator}
+
+Employs the strategy described in \cite{Yamamoto2013}, in which substitutions are extracted from dictionary definitions of complex words. This approach requires as input an API key for the Merriam Dictionary\footnote{http://www.dictionaryapi.com/}, which can be obtained for free, and a NorvigCorrector object. As output, it produces a dictionary linking words in the Merriam Dictionary and WordNet to words with the same Part-of-Speech (POS) tag in its entries' definitions and usage examples.
+
+\subsection{Parameters}
+
+The YamamotoGenerator class requires a free Dictionary key to the Merriam Dictionary. To get the key, follow the steps below:
+
+\begin{enumerate}
+\item Visit the page \url{http://www.dictionaryapi.com/register/index.htm}.
+\item Fill in your personal information.
+\item In "Request API Key \#1:" and "Request API Key \#2:", select "Collegiate Dictionary" and "Collegiate Thesaurus".
+\item Login in \url{http://www.dictionaryapi.com}.
+\item Visit your "My Keys" page.
+\item Use the "Dictionary" key to create a YamamotoGenerator object.
+\end{enumerate}
+
+\subsection{Example}
+
+The code snippet below shows the YamamotoGenerator class being used:
+
+\begin{lstlisting}
+from lexenstein.morphadorner import MorphAdornerToolkit
+from lexenstein.generators import *
+from lexenstein.spelling import *
+
+nc = NorvigCorrector('corpus.txt')
+
+m = MorphAdornerToolkit('./morph/')
+
+yg = YamamotoGenerator(m, '0000-0000-0000-0000', nc)
+subs = yg.getSubstitutions('lexmturk.txt')
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{MerriamGenerator}
+
+Extracts a dictionary linking words to their synonyms, as listed in the Merriam Thesaurus. This approach requires as input an API key for the Merriam Thesaurus\footnote{http://www.dictionaryapi.com/}, which can be obtained for free, and a NorvigCorrector object.
+
+\subsection{Parameters}
+
+The MerriamGenerator class requires a free Thesaurus key to the Merriam Dictionary. To get the key, follow the steps below:
+
+\begin{enumerate}
+\item Visit the page \url{http://www.dictionaryapi.com/register/index.htm}.
+\item Fill in your personal information.
+\item In "Request API Key \#1:" and "Request API Key \#2:", select "Collegiate Dictionary" and "Collegiate Thesaurus".
+\item Login in \url{http://www.dictionaryapi.com}.
+\item Visit your "My Keys" page.
+\item Use the "Thesaurus" key to create a MerriamGenerator object.
+\end{enumerate}
+
+\subsection{Example}
+
+The code snippet below shows the MerriamGenerator class being used:
+
+\begin{lstlisting}
+from lexenstein.morphadorner import MorphAdornerToolkit
+from lexenstein.generators import *
+from lexenstein.spelling import *
+
+nc = NorvigCorrector('corpus.txt')
+
+m = MorphAdornerToolkit('./morph/')
+
+mg = MerriamGenerator(m, '0000-0000-0000-0000', nc)
+subs = mg.getSubstitutions('lexmturk.txt')
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{WordnetGenerator}
+
+Extracts a dictionary linking words to their synonyms, as listed in WordNet. It requires for a NorvigCorrector object, the path to a POS tagging model, and the path to the Stanford Tagger.
+
+\subsection{Parameters}
+
+In order to obtain the model and tagger required by the WordnetGenerator class, download the full version of the Stanford Tagger package from the link: \url{http://nlp.stanford.edu/software/tagger.shtml}. Inside the package's ``models'' folder you will find tagging models for various languages. In the package's root folder, you will find the ``stanford-postagger.jar'' application, which is the one required by the WordnetGenerator.
+
+\subsection{Example}
+
+The code snippet below shows the WordnetGenerator class being used:
+
+\begin{lstlisting}
+from lexenstein.morphadorner import MorphAdornerToolkit
+from lexenstein.generators import *
+from lexenstein.spelling import *
+
+nc = NorvigCorrector('corpus.txt')
+
+m = MorphAdornerToolkit('./morph/')
+
+wg = WordnetGenerator(m, nc, 'english-left3words-distsim.tagger', 'stanford-postagger.jar', '/usr/bin/java')
+subs = wg.getSubstitutions('lexmturk.txt')
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+\section{BiranGenerator}
+
+Employs the strategy described in \cite{Biran2011}, in which substitutions are filtered from the Cartesian product between vocabularies of complex and simple words. This approach requires as input vocabularies of complex and simple words, as well as two Language Models trained over complex and simple corpora, a NorvigCorrector object, the path to a POS tagging model, and the path to the Stanford Tagger. As output, it produces a dictionary linking words to a set of synonyms and hypernyms filtered by the criteria described in \cite{Biran2011}.
+
+\subsection{Parameters}
+
+The vocabularies of complex and simple words and Language Models trained over complex and simple corpora required by the BiranGenerator class must be in a specific format. The vocabularies must contain one word per line, and can be produced over large corpora with SRILM by running the following command line:
+
+\begin{lstlisting}
+ngram-count -text [corpus_of_text] -write-vocab [vocabulary_name]
+\end{lstlisting}
+
+The Language Models must be binary, and must be produced by KenLM with the following command lines:
+
+\begin{lstlisting}
+lmplz -o [order] <[corpus_of_text] >[language_model_name]
+\end{lstlisting}
+\begin{lstlisting}
+build_binary [language_model_name] [binary_language_model_name]
+\end{lstlisting}
+
+Complex and simple data can be downloaded fro David Kauchak's page\footnote{http://www.cs.pomona.edu/~dkauchak/simplification/}, or extracted from other sources. In order to obtain the model and tagger required by the BiranGenerator class, download the full version of the Stanford Tagger package from the link: \url{http://nlp.stanford.edu/software/tagger.shtml}. Inside the package's ``models'' folder you will find tagging models for various languages. In the package's root folder, you will find the ``stanford-postagger.jar'' application, which is the one required by the BiranGenerator.
+
+\subsection{Example}
+
+The code snippet below shows the BiranGenerator class being used:
+
+\begin{lstlisting}
+from lexenstein.morphadorner import MorphAdornerToolkit
+from lexenstein.generators import *
+from lexenstein.spelling import *
+
+nc = NorvigCorrector('corpus.txt')
+
+m = MorphAdornerToolkit('./morph/')
+
+bg = BiranGenerator(m, 'vocabc.txt', 'vocabs.txt', 'lmc.bin', 'lms.bin', nc, 'english-left3words-distsim.tagger', 'stanford-postagger.jar', '/usr/bin/java')
+subs = bg.getSubstitutions('lexmturk.txt')
+\end{lstlisting}
