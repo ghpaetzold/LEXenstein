@@ -86,7 +86,11 @@
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="lexenstein.selectors.WordVectorSelector-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">vector_model</span>)</span><br />
+        <span class="summary-sig-arg">vector_model</span>,
+        <span class="summary-sig-arg">pos_model</span>,
+        <span class="summary-sig-arg">stanford_tagger</span>,
+        <span class="summary-sig-arg">java_path</span>,
+        <span class="summary-sig-arg">pos_type</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">none</code><code class="variable-quote">'</code></span>)</span><br />
       Creates an instance of the WordVectorSelector class.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="lexenstein.selectors-pysrc.html#WordVectorSelector.__init__">source&nbsp;code</a></span>
@@ -105,7 +109,8 @@
         <tr>
           <td><span class="summary-sig"><a name="getFinalCandidates"></a><span class="summary-sig-name">getFinalCandidates</span>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">candidate_dists</span>,
-        <span class="summary-sig-arg">proportion</span>)</span></td>
+        <span class="summary-sig-arg">proportion</span>,
+        <span class="summary-sig-arg">proportion_type</span>)</span></td>
           <td align="right" valign="top">
             <span class="codelink"><a href="lexenstein.selectors-pysrc.html#WordVectorSelector.getFinalCandidates">source&nbsp;code</a></span>
             
@@ -128,7 +133,8 @@
         <span class="summary-sig-arg">window</span>,
         <span class="summary-sig-arg">onlyInformative</span>,
         <span class="summary-sig-arg">keepTarget</span>,
-        <span class="summary-sig-arg">onePerWord</span>)</span></td>
+        <span class="summary-sig-arg">onePerWord</span>,
+        <span class="summary-sig-arg">pos_tokens</span>)</span></td>
           <td align="right" valign="top">
             <span class="codelink"><a href="lexenstein.selectors-pysrc.html#WordVectorSelector.getSentVec">source&nbsp;code</a></span>
             
@@ -145,7 +151,8 @@
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a name="getWordVec"></a><span class="summary-sig-name">getWordVec</span>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">candidate</span>)</span></td>
+        <span class="summary-sig-arg">candidate</span>,
+        <span class="summary-sig-arg">target_pos</span>)</span></td>
           <td align="right" valign="top">
             <span class="codelink"><a href="lexenstein.selectors-pysrc.html#WordVectorSelector.getWordVec">source&nbsp;code</a></span>
             
@@ -165,6 +172,7 @@
         <span class="summary-sig-arg">substitutions</span>,
         <span class="summary-sig-arg">victor_corpus</span>,
         <span class="summary-sig-arg">proportion</span>=<span class="summary-sig-default">1.0</span>,
+        <span class="summary-sig-arg">proportion_type</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">percentage</code><code class="variable-quote">'</code></span>,
         <span class="summary-sig-arg">stop_words_file</span>=<span class="summary-sig-default">None</span>,
         <span class="summary-sig-arg">window</span>=<span class="summary-sig-default">99999</span>,
         <span class="summary-sig-arg">onlyInformative</span>=<span class="summary-sig-default">False</span>,
@@ -229,7 +237,11 @@
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr valign="top"><td>
   <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
-        <span class="sig-arg">vector_model</span>)</span>
+        <span class="sig-arg">vector_model</span>,
+        <span class="sig-arg">pos_model</span>,
+        <span class="sig-arg">stanford_tagger</span>,
+        <span class="sig-arg">java_path</span>,
+        <span class="sig-arg">pos_type</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string">none</code><code class="variable-quote">'</code></span>)</span>
     <br /><em class="fname">(Constructor)</em>
   </h3>
   </td><td align="right" valign="top"
@@ -243,6 +255,18 @@
     <dd><ul class="nomargin-top">
         <li><strong class="pname"><code>vector_model</code></strong> - Path to a binary word vector model. For instructions on how to 
           create the model, please refer to the LEXenstein Manual.</li>
+        <li><strong class="pname"><code>pos_model</code></strong> - Path to a POS tagging model for the Stanford POS Tagger. The 
+          models can be downloaded from the following link: 
+          http://nlp.stanford.edu/software/tagger.shtml</li>
+        <li><strong class="pname"><code>stanford_tagger</code></strong> - Path to the &quot;stanford-postagger.jar&quot; file. The tagger 
+          can be downloaded from the following link: 
+          http://nlp.stanford.edu/software/tagger.shtml</li>
+        <li><strong class="pname"><code>java_path</code></strong> - Path to the system's &quot;java&quot; executable. Can be commonly
+          found in &quot;/usr/bin/java&quot; in Unix/Linux systems, or in 
+          &quot;C:/Program Files/Java/jdk_version/java.exe&quot; in Windows
+          systems.</li>
+        <li><strong class="pname"><code>pos_type</code></strong> - The type of POS tags with which the model's words are annotated, 
+          if any. Values supported: none, treebank, paetzold</li>
     </ul></dd>
   </dl>
 </td></tr></table>
@@ -258,6 +282,7 @@
         <span class="sig-arg">substitutions</span>,
         <span class="sig-arg">victor_corpus</span>,
         <span class="sig-arg">proportion</span>=<span class="sig-default">1.0</span>,
+        <span class="sig-arg">proportion_type</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string">percentage</code><code class="variable-quote">'</code></span>,
         <span class="sig-arg">stop_words_file</span>=<span class="sig-default">None</span>,
         <span class="sig-arg">window</span>=<span class="sig-default">99999</span>,
         <span class="sig-arg">onlyInformative</span>=<span class="sig-default">False</span>,
@@ -283,7 +308,13 @@
           ['easy', 'uncomplicated']]</li>
         <li><strong class="pname"><code>victor_corpus</code></strong> - Path to a corpus in the VICTOR format. For more information about
           the file's format, refer to the LEXenstein Manual.</li>
-        <li><strong class="pname"><code>proportion</code></strong> - Percentage of substitutions to keep.</li>
+        <li><strong class="pname"><code>proportion</code></strong> - Percentage of substitutions to keep. If proportion_type is set to
+          &quot;percentage&quot;, then this parameter must be a floating 
+          point number between 0 and 1. If proportion_type is set to 
+          &quot;integer&quot;, then this parameter must be an integer 
+          number.</li>
+        <li><strong class="pname"><code>proportion_type</code></strong> - Type of proportion to be kept. Values supported: percentage, 
+          integer.</li>
         <li><strong class="pname"><code>stop_words_file</code></strong> - Path to the file containing stop words of the desired language. 
           The file must contain one stop word per line.</li>
         <li><strong class="pname"><code>window</code></strong> - Number of tokens around the target complex sentence to consider 
@@ -365,7 +396,7 @@
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Sat Jun 13 14:46:19 2015
+    Generated by Epydoc 3.0.1 on Tue Sep 22 13:04:54 2015
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

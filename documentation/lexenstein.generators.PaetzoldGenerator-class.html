@@ -3,7 +3,7 @@
           "DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>lexenstein.spelling.NorvigCorrector</title>
+  <title>lexenstein.generators.PaetzoldGenerator</title>
   <link rel="stylesheet" href="epydoc.css" type="text/css" />
   <script type="text/javascript" src="epydoc.js"></script>
 </head>
@@ -43,8 +43,8 @@
     <td width="100%">
       <span class="breadcrumbs">
         <a href="lexenstein-module.html">Package&nbsp;lexenstein</a> ::
-        <a href="lexenstein.spelling-module.html">Module&nbsp;spelling</a> ::
-        Class&nbsp;NorvigCorrector
+        <a href="lexenstein.generators-module.html">Module&nbsp;generators</a> ::
+        Class&nbsp;PaetzoldGenerator
       </span>
     </td>
     <td>
@@ -54,14 +54,14 @@
     onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
         <tr><td align="right"><span class="options"
             >[<a href="frames.html" target="_top">frames</a
-            >]&nbsp;|&nbsp;<a href="lexenstein.spelling.NorvigCorrector-class.html"
+            >]&nbsp;|&nbsp;<a href="lexenstein.generators.PaetzoldGenerator-class.html"
             target="_top">no&nbsp;frames</a>]</span></td></tr>
       </table>
     </td>
   </tr>
 </table>
 <!-- ==================== CLASS DESCRIPTION ==================== -->
-<h1 class="epydoc">Class NorvigCorrector</h1><p class="nomargin-top"><span class="codelink"><a href="lexenstein.spelling-pysrc.html#NorvigCorrector">source&nbsp;code</a></span></p>
+<h1 class="epydoc">Class PaetzoldGenerator</h1><p class="nomargin-top"><span class="codelink"><a href="lexenstein.generators-pysrc.html#PaetzoldGenerator">source&nbsp;code</a></span></p>
 <!-- ==================== INSTANCE METHODS ==================== -->
 <a name="section-InstanceMethods"></a>
 <table class="summary" border="1" cellpadding="3"
@@ -85,12 +85,15 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a href="lexenstein.spelling.NorvigCorrector-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">model_file</span>,
-        <span class="summary-sig-arg">format</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">text</code><code class="variable-quote">'</code></span>)</span><br />
-      Creates an instance of the NorvigCorrector class.</td>
+          <td><span class="summary-sig"><a href="lexenstein.generators.PaetzoldGenerator-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">posw2vmodel</span>,
+        <span class="summary-sig-arg">nc</span>,
+        <span class="summary-sig-arg">pos_model</span>,
+        <span class="summary-sig-arg">stanford_tagger</span>,
+        <span class="summary-sig-arg">java_path</span>)</span><br />
+      Creates a PaetzoldGenerator instance.</td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="lexenstein.spelling-pysrc.html#NorvigCorrector.__init__">source&nbsp;code</a></span>
+            <span class="codelink"><a href="lexenstein.generators-pysrc.html#PaetzoldGenerator.__init__">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -104,11 +107,19 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a href="lexenstein.spelling.NorvigCorrector-class.html#correct" class="summary-sig-name">correct</a>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">word</span>)</span><br />
-      Returns the spell-corrected version of a word.</td>
+          <td><span class="summary-sig"><a name="filterSubs"></a><span class="summary-sig-name">filterSubs</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">data</span>,
+        <span class="summary-sig-arg">tsents</span>,
+        <span class="summary-sig-arg">subs</span>,
+        <span class="summary-sig-arg">candmap</span>,
+        <span class="summary-sig-arg">trgs</span>,
+        <span class="summary-sig-arg">trgsc</span>,
+        <span class="summary-sig-arg">trgsstems</span>,
+        <span class="summary-sig-arg">trgscstems</span>,
+        <span class="summary-sig-arg">trgslemmas</span>,
+        <span class="summary-sig-arg">trgsclemmas</span>)</span></td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="lexenstein.spelling-pysrc.html#NorvigCorrector.correct">source&nbsp;code</a></span>
+            <span class="codelink"><a href="lexenstein.generators-pysrc.html#PaetzoldGenerator.filterSubs">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -122,10 +133,10 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="getEdits"></a><span class="summary-sig-name">getEdits</span>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">word</span>)</span></td>
+          <td><span class="summary-sig"><a name="getClass"></a><span class="summary-sig-name">getClass</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">tag</span>)</span></td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="lexenstein.spelling-pysrc.html#NorvigCorrector.getEdits">source&nbsp;code</a></span>
+            <span class="codelink"><a href="lexenstein.generators-pysrc.html#PaetzoldGenerator.getClass">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -139,10 +150,66 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="getKnown"></a><span class="summary-sig-name">getKnown</span>(<span class="summary-sig-arg">self</span>,
+          <td><span class="summary-sig"><a name="getInitialSet"></a><span class="summary-sig-name">getInitialSet</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">victor_corpus</span>,
+        <span class="summary-sig-arg">tsents</span>,
+        <span class="summary-sig-arg">amount</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.generators-pysrc.html#PaetzoldGenerator.getInitialSet">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="getParsedSentences"></a><span class="summary-sig-name">getParsedSentences</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">victor_corpus</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.generators-pysrc.html#PaetzoldGenerator.getParsedSentences">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="lexenstein.generators.PaetzoldGenerator-class.html#getSubstitutions" class="summary-sig-name">getSubstitutions</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">victor_corpus</span>,
+        <span class="summary-sig-arg">amount</span>)</span><br />
+      Generates substitutions for the target words of a corpus in VICTOR 
+      format.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.generators-pysrc.html#PaetzoldGenerator.getSubstitutions">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="lemmatizeWords"></a><span class="summary-sig-name">lemmatizeWords</span>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">words</span>)</span></td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="lexenstein.spelling-pysrc.html#NorvigCorrector.getKnown">source&nbsp;code</a></span>
+            <span class="codelink"><a href="lexenstein.generators-pysrc.html#PaetzoldGenerator.lemmatizeWords">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -156,45 +223,10 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="getKnownEdits"></a><span class="summary-sig-name">getKnownEdits</span>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">word</span>)</span></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="lexenstein.spelling-pysrc.html#NorvigCorrector.getKnownEdits">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a name="getSpellingModel"></a><span class="summary-sig-name">getSpellingModel</span>(<span class="summary-sig-arg">self</span>,
+          <td><span class="summary-sig"><a name="stemWords"></a><span class="summary-sig-name">stemWords</span>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">words</span>)</span></td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="lexenstein.spelling-pysrc.html#NorvigCorrector.getSpellingModel">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a href="lexenstein.spelling.NorvigCorrector-class.html#saveBinaryModel" class="summary-sig-name">saveBinaryModel</a>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">model_path</span>)</span><br />
-      Saves the spelling correction model in binary format.</td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="lexenstein.spelling-pysrc.html#NorvigCorrector.saveBinaryModel">source&nbsp;code</a></span>
+            <span class="codelink"><a href="lexenstein.generators-pysrc.html#PaetzoldGenerator.stemWords">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -229,79 +261,67 @@
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr valign="top"><td>
   <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
-        <span class="sig-arg">model_file</span>,
-        <span class="sig-arg">format</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string">text</code><code class="variable-quote">'</code></span>)</span>
+        <span class="sig-arg">posw2vmodel</span>,
+        <span class="sig-arg">nc</span>,
+        <span class="sig-arg">pos_model</span>,
+        <span class="sig-arg">stanford_tagger</span>,
+        <span class="sig-arg">java_path</span>)</span>
     <br /><em class="fname">(Constructor)</em>
   </h3>
   </td><td align="right" valign="top"
-    ><span class="codelink"><a href="lexenstein.spelling-pysrc.html#NorvigCorrector.__init__">source&nbsp;code</a></span>&nbsp;
+    ><span class="codelink"><a href="lexenstein.generators-pysrc.html#PaetzoldGenerator.__init__">source&nbsp;code</a></span>&nbsp;
     </td>
   </tr></table>
   
-  <p>Creates an instance of the NorvigCorrector class.</p>
+  <p>Creates a PaetzoldGenerator instance.</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>model_file</code></strong> - Path to a file containing either raw, untokenized text, or a 
-          binary spelling correction model. If &quot;model_file&quot; is 
-          the path to a text file, then the value of &quot;format&quot; 
-          must be &quot;text&quot;. If &quot;model_file&quot; is the path 
-          to a binary spelling correction model, then the value of 
-          &quot;format&quot; must be &quot;bin&quot;.</li>
-        <li><strong class="pname"><code>format</code></strong> - Indicator of the type of input provided. Possible values: 
-          &quot;text&quot;, &quot;bin&quot;.</li>
+        <li><strong class="pname"><code>posw2vmodel</code></strong> - Binary parsed word vector model. For more information on how to 
+          produce the model, please refer to the LEXenstein Manual.</li>
+        <li><strong class="pname"><code>nc</code></strong> - NorvigCorrector object.</li>
+        <li><strong class="pname"><code>pos_model</code></strong> - Path to a POS tagging model for the Stanford POS Tagger. The 
+          models can be downloaded from the following link: 
+          http://nlp.stanford.edu/software/tagger.shtml</li>
+        <li><strong class="pname"><code>stanford_tagger</code></strong> - Path to the &quot;stanford-postagger.jar&quot; file. The tagger 
+          can be downloaded from the following link: 
+          http://nlp.stanford.edu/software/tagger.shtml</li>
+        <li><strong class="pname"><code>java_path</code></strong> - Path to the system's &quot;java&quot; executable. Can be commonly
+          found in &quot;/usr/bin/java&quot; in Unix/Linux systems, or in 
+          &quot;C:/Program Files/Java/jdk_version/java.exe&quot; in Windows
+          systems.</li>
     </ul></dd>
   </dl>
 </td></tr></table>
 </div>
-<a name="correct"></a>
+<a name="getSubstitutions"></a>
 <div>
 <table class="details" border="1" cellpadding="3"
        cellspacing="0" width="100%" bgcolor="white">
 <tr><td>
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr valign="top"><td>
-  <h3 class="epydoc"><span class="sig"><span class="sig-name">correct</span>(<span class="sig-arg">self</span>,
-        <span class="sig-arg">word</span>)</span>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">getSubstitutions</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">victor_corpus</span>,
+        <span class="sig-arg">amount</span>)</span>
   </h3>
   </td><td align="right" valign="top"
-    ><span class="codelink"><a href="lexenstein.spelling-pysrc.html#NorvigCorrector.correct">source&nbsp;code</a></span>&nbsp;
+    ><span class="codelink"><a href="lexenstein.generators-pysrc.html#PaetzoldGenerator.getSubstitutions">source&nbsp;code</a></span>&nbsp;
     </td>
   </tr></table>
   
-  <p>Returns the spell-corrected version of a word. If the model determines
-  that the word has no spelling errors, it returns the word itself.</p>
+  <p>Generates substitutions for the target words of a corpus in VICTOR 
+  format.</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>word</code></strong> - Word to be spell-corrected.</li>
+        <li><strong class="pname"><code>victor_corpus</code></strong> - Path to a corpus in the VICTOR format. For more information about
+          the file's format, refer to the LEXenstein Manual.</li>
     </ul></dd>
-  </dl>
-</td></tr></table>
-</div>
-<a name="saveBinaryModel"></a>
-<div>
-<table class="details" border="1" cellpadding="3"
-       cellspacing="0" width="100%" bgcolor="white">
-<tr><td>
-  <table width="100%" cellpadding="0" cellspacing="0" border="0">
-  <tr valign="top"><td>
-  <h3 class="epydoc"><span class="sig"><span class="sig-name">saveBinaryModel</span>(<span class="sig-arg">self</span>,
-        <span class="sig-arg">model_path</span>)</span>
-  </h3>
-  </td><td align="right" valign="top"
-    ><span class="codelink"><a href="lexenstein.spelling-pysrc.html#NorvigCorrector.saveBinaryModel">source&nbsp;code</a></span>&nbsp;
-    </td>
-  </tr></table>
-  
-  <p>Saves the spelling correction model in binary format. The saved model 
-  can then be loaded with the &quot;bin&quot; format during the creation of
-  a NorvigCorrector.</p>
-  <dl class="fields">
-    <dt>Parameters:</dt>
-    <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>model_path</code></strong> - Path in which to save the model.</li>
-    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>A dictionary that assigns target complex words to sets of 
+          candidate substitutions. Example: substitutions['perched'] = 
+          {'sat', 'roosted'}</dd>
   </dl>
 </td></tr></table>
 </div>

@@ -3,7 +3,7 @@
           "DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>lexenstein.rankers.BottRanker</title>
+  <title>lexenstein.generators.GlavasGenerator</title>
   <link rel="stylesheet" href="epydoc.css" type="text/css" />
   <script type="text/javascript" src="epydoc.js"></script>
 </head>
@@ -43,8 +43,8 @@
     <td width="100%">
       <span class="breadcrumbs">
         <a href="lexenstein-module.html">Package&nbsp;lexenstein</a> ::
-        <a href="lexenstein.rankers-module.html">Module&nbsp;rankers</a> ::
-        Class&nbsp;BottRanker
+        <a href="lexenstein.generators-module.html">Module&nbsp;generators</a> ::
+        Class&nbsp;GlavasGenerator
       </span>
     </td>
     <td>
@@ -54,14 +54,14 @@
     onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
         <tr><td align="right"><span class="options"
             >[<a href="frames.html" target="_top">frames</a
-            >]&nbsp;|&nbsp;<a href="lexenstein.rankers.BottRanker-class.html"
+            >]&nbsp;|&nbsp;<a href="lexenstein.generators.GlavasGenerator-class.html"
             target="_top">no&nbsp;frames</a>]</span></td></tr>
       </table>
     </td>
   </tr>
 </table>
 <!-- ==================== CLASS DESCRIPTION ==================== -->
-<h1 class="epydoc">Class BottRanker</h1><p class="nomargin-top"><span class="codelink"><a href="lexenstein.rankers-pysrc.html#BottRanker">source&nbsp;code</a></span></p>
+<h1 class="epydoc">Class GlavasGenerator</h1><p class="nomargin-top"><span class="codelink"><a href="lexenstein.generators-pysrc.html#GlavasGenerator">source&nbsp;code</a></span></p>
 <!-- ==================== INSTANCE METHODS ==================== -->
 <a name="section-InstanceMethods"></a>
 <table class="summary" border="1" cellpadding="3"
@@ -85,11 +85,11 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a href="lexenstein.rankers.BottRanker-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">simple_lm</span>)</span><br />
-      Creates an instance of the BottRanker class.</td>
+          <td><span class="summary-sig"><a href="lexenstein.generators.GlavasGenerator-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">w2vmodel</span>)</span><br />
+      Creates a GlavasGenerator instance.</td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="lexenstein.rankers-pysrc.html#BottRanker.__init__">source&nbsp;code</a></span>
+            <span class="codelink"><a href="lexenstein.generators-pysrc.html#GlavasGenerator.__init__">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -103,12 +103,15 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="getCandidateComplexity"></a><span class="summary-sig-name">getCandidateComplexity</span>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">word</span>,
-        <span class="summary-sig-arg">a1</span>,
-        <span class="summary-sig-arg">a2</span>)</span></td>
+          <td><span class="summary-sig"><a name="filterSubs"></a><span class="summary-sig-name">filterSubs</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">data</span>,
+        <span class="summary-sig-arg">subs</span>,
+        <span class="summary-sig-arg">candmap</span>,
+        <span class="summary-sig-arg">trgs</span>,
+        <span class="summary-sig-arg">trgsstems</span>,
+        <span class="summary-sig-arg">trgslemmas</span>)</span></td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="lexenstein.rankers-pysrc.html#BottRanker.getCandidateComplexity">source&nbsp;code</a></span>
+            <span class="codelink"><a href="lexenstein.generators-pysrc.html#GlavasGenerator.filterSubs">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -122,13 +125,65 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a href="lexenstein.rankers.BottRanker-class.html#getRankings" class="summary-sig-name">getRankings</a>(<span class="summary-sig-arg">self</span>,
+          <td><span class="summary-sig"><a name="getInitialSet"></a><span class="summary-sig-name">getInitialSet</span>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">victor_corpus</span>,
-        <span class="summary-sig-arg">a1</span>=<span class="summary-sig-default">1.0</span>,
-        <span class="summary-sig-arg">a2</span>=<span class="summary-sig-default">1.0</span>)</span><br />
-      Ranks candidates with respect to their simplicity.</td>
+        <span class="summary-sig-arg">amount</span>)</span></td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="lexenstein.rankers-pysrc.html#BottRanker.getRankings">source&nbsp;code</a></span>
+            <span class="codelink"><a href="lexenstein.generators-pysrc.html#GlavasGenerator.getInitialSet">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="lexenstein.generators.GlavasGenerator-class.html#getSubstitutions" class="summary-sig-name">getSubstitutions</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">victor_corpus</span>,
+        <span class="summary-sig-arg">amount</span>)</span><br />
+      Generates substitutions for the target words of a corpus in VICTOR 
+      format.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.generators-pysrc.html#GlavasGenerator.getSubstitutions">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="lemmatizeWords"></a><span class="summary-sig-name">lemmatizeWords</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">words</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.generators-pysrc.html#GlavasGenerator.lemmatizeWords">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="stemWords"></a><span class="summary-sig-name">stemWords</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">words</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.generators-pysrc.html#GlavasGenerator.stemWords">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -163,54 +218,52 @@
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr valign="top"><td>
   <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
-        <span class="sig-arg">simple_lm</span>)</span>
+        <span class="sig-arg">w2vmodel</span>)</span>
     <br /><em class="fname">(Constructor)</em>
   </h3>
   </td><td align="right" valign="top"
-    ><span class="codelink"><a href="lexenstein.rankers-pysrc.html#BottRanker.__init__">source&nbsp;code</a></span>&nbsp;
+    ><span class="codelink"><a href="lexenstein.generators-pysrc.html#GlavasGenerator.__init__">source&nbsp;code</a></span>&nbsp;
     </td>
   </tr></table>
   
-  <p>Creates an instance of the BottRanker class.</p>
+  <p>Creates a GlavasGenerator instance.</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>simple_lm</code></strong> - Path to a language model built over simple text. For more 
-          information on how to create the file, refer to the LEXenstein 
-          Manual.</li>
+        <li><strong class="pname"><code>w2vmodel</code></strong> - Binary parsed word vector model. For more information on how to 
+          produce the model, please refer to the LEXenstein Manual.</li>
     </ul></dd>
   </dl>
 </td></tr></table>
 </div>
-<a name="getRankings"></a>
+<a name="getSubstitutions"></a>
 <div>
 <table class="details" border="1" cellpadding="3"
        cellspacing="0" width="100%" bgcolor="white">
 <tr><td>
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr valign="top"><td>
-  <h3 class="epydoc"><span class="sig"><span class="sig-name">getRankings</span>(<span class="sig-arg">self</span>,
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">getSubstitutions</span>(<span class="sig-arg">self</span>,
         <span class="sig-arg">victor_corpus</span>,
-        <span class="sig-arg">a1</span>=<span class="sig-default">1.0</span>,
-        <span class="sig-arg">a2</span>=<span class="sig-default">1.0</span>)</span>
+        <span class="sig-arg">amount</span>)</span>
   </h3>
   </td><td align="right" valign="top"
-    ><span class="codelink"><a href="lexenstein.rankers-pysrc.html#BottRanker.getRankings">source&nbsp;code</a></span>&nbsp;
+    ><span class="codelink"><a href="lexenstein.generators-pysrc.html#GlavasGenerator.getSubstitutions">source&nbsp;code</a></span>&nbsp;
     </td>
   </tr></table>
   
-  <p>Ranks candidates with respect to their simplicity.</p>
+  <p>Generates substitutions for the target words of a corpus in VICTOR 
+  format.</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>victor_corpus</code></strong> - Path to a testing corpus in VICTOR format. For more information 
-          about the file's format, refer to the LEXenstein Manual.</li>
-        <li><strong class="pname"><code>a1</code></strong> - Weight of the word's length score.</li>
-        <li><strong class="pname"><code>a2</code></strong> - Weight of the word's frequency score.</li>
+        <li><strong class="pname"><code>victor_corpus</code></strong> - Path to a corpus in the VICTOR format. For more information about
+          the file's format, refer to the LEXenstein Manual.</li>
     </ul></dd>
     <dt>Returns:</dt>
-        <dd>A list of ranked candidates for each instance in the VICTOR 
-          corpus, from simplest to most complex.</dd>
+        <dd>A dictionary that assigns target complex words to sets of 
+          candidate substitutions. Example: substitutions['perched'] = 
+          {'sat', 'roosted'}</dd>
   </dl>
 </td></tr></table>
 </div>
