@@ -14,7 +14,7 @@ To install LEXenstein, you must:
 python setup.py install
 ```
 		
-If you don’t with to install the tool in your Python distribution, you can alternatively
+If you don’t wish to install the tool in your Python distribution, you can alternatively
 copy the “lexenstein” folder into the folder of your project.
 
 # Documentation:
