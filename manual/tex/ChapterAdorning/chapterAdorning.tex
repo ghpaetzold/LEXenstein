@@ -1,0 +1,63 @@
+\chapter{The Text Adorning Module}
+\label{adorning}
+
+LEXenstein's Text Adorning module (lexenstein.morphadorner) provides a Python interface to the Morph Adorner Toolkit \cite{Paetzold15mat}, a set of Java tools that facilitates the access to Morph Adorner's functionalities. The class MorphAdornerToolkit provides easy access to word lemmatization, word stemming, syllable splitting, noun inflection, verb tensing, verb conjugation and adjective/adverb inflection. Below is an example of how to create and use a MorphAdornerToolkit object:
+
+\begin{lstlisting}
+from lexenstein.morphadorner import MorphAdornerToolkit
+
+m = MorphAdornerToolkit('./morph/')
+
+lemmas = m.lemmatizeWords(['doing', 'geese'])
+print('Lemmas:')
+print(str(lemmas)+'\n')
+
+stems = m.stemWords(['doing', 'geese'])
+print('Stems:')
+print(str(stems)+'\n')
+
+tenses = m.tenseVerbs(['do'], ['doing'])
+print('Tenses:')
+print(str(tenses)+'\n')
+
+verbs = m.conjugateVerbs(['do', 'sit'], 'PRESENT_PARTICIPLE')
+print('Verbs:')
+print(str(verbs)+'\n')
+
+nouns = m.inflectNouns(['goose', 'chair'], 'plural')
+print('Nouns:')
+print(str(nouns)+'\n')
+
+syllables = m.splitSyllables(['persevere', 'sitting'])
+print('Syllables:')
+print(str(syllables)+'\n')
+
+adjectives = m.inflectAdjectives(['nice', 'pretty'], 'comparative')
+print('Adjectives:')
+print(str(adjectives)+'\n')
+\end{lstlisting}
+
+The output produced by the script above will be:
+
+\begin{lstlisting}
+Lemmas:
+['do', 'goose']
+
+Stems:
+['do', 'gees']
+
+Tenses:
+['PRESENT_PARTICIPLE']
+
+Verbs:
+['doing', 'sitting']
+
+Nouns:
+['geese', 'chairs']
+
+Syllables:
+['per-se-vere', 'sit-ting']
+
+Adjectives:
+['nicer', 'prettier']
+\end{lstlisting}

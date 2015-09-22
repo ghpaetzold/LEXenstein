@@ -1,0 +1,92 @@
+\chapter{The Complex Word Identification Module}
+\label{cwi}
+
+We define Complex Word Identification (CWI) as the task of deciding which words can be considered complex by a certain target audience. There are not many examples in literature of approaches for the task. In \cite{Shardlow2013cwi} the performance of three approaches are compared over the dataset introduced by \cite{cwcorpus}. The LS strategy of \cite{Horn2014} provides an implicit approach for the task.
+
+In the Complex Word Identification module of LEXenstein (lexenstein.identifiers), one has access to several Complex Word Identification methods. The module contains a series of classes, each representing a distinct method. Currently, it offers support for $5$ distinct approaches. The following Sections describe each one individually.
+
+\section{MachineLearningIdentifier}
+
+Uses Machine Learning techniques to train classifiers that distinguish between complex and simple words. The class allows for the user to train models with $4$ Machine Learning techniques: Support Vector Machines, Decision Trees and linear models estimated with Stochastic Gradient Descent and Passive Aggressive Learning. As input, it requires for a FeatureEstimator object. As output, it produces a vector containing a binary label for the target word of each of the $N$ instances in a dataset in VICTOR or CWICTOR format. The label will have value $1$ if the target word was predicted as complex, and $0$ otherwise.
+
+\subsection{Parameters}
+
+During instantiation, the MachineLearningIdentifier requires only for a FeatureEstimator object. The user can then use the ``calculateTrainingFeatures'' and ``calculateTestingFeatures'' functions to estimate features of training and testing datasets in VICTOR or CWICTOR formats, the ``selectKBestFeatures'' function to apply feature selection over the features estimated, the ``trainSVM'', ``trainDecisionTreeClassifier'', ``trainSGDClassifier'' and ``trainPassiveAggressiveClassifier'' functions to train CWI models, and finally the ``identifyComplexWords'' function to produce output labels. To know more about the parameters and recommended values of the aforementioned functions, please refer to LEXenstein's documentation.
+
+\subsection{Example}
+
+The code snippet below shows the MachineLearningIdentifier class being used:
+
+\begin{lstlisting}
+from lexenstein.identifiers import *
+from lexenstein.features import *
+
+fe = FeatureEstimator()
+fe.addLexiconFeature('lexicon.txt', 'Simplicity')
+fe.addLengthFeature('Complexity')
+fe.addSenseCountFeature('Simplicity')
+
+mli = MachineLearningIdentifier(fe)
+mli.calculateTrainingFeatures('train_cwictor_corpus.txt')
+mli.calculateTestingFeatures('test_victor_corpus.txt')
+mli.selectKBestFeatures(k=5)
+mli.trainDecisionTreeClassifier()
+
+labels = mli.identifyComplexWords()
+\end{lstlisting}
+
+
+
+
+
+\section{LexiconIdentifier}
+
+Uses a lexicon of complex/simple words in order to judge the complexity of a word: if it appears in the lexicon, then it is complex/simple. As input, it requires for a lexicon file of complex or simple words and expressions. As output, it produces a vector containing a binary label for the target word of each of the $N$ instances in a dataset in VICTOR or CWICTOR format. The label will have value $1$ if the lexicon classifies the word as complex, and $0$ otherwise.
+
+\subsection{Parameters}
+
+During instantiation, the LexiconIdentifier requires for a lexicon file and an indicator label. The lexicon file must be in plain text and contain one word/expression per line, and the value of the label must be either ``complex'' or ``simple''. If the label's value is ``complex'', then the lexicon will be interpreted as a vocabulary of complex words and expressions, otherwise it will be interpreted as a vocabulary of simple words.
+
+\subsection{Example}
+
+The code snippet below shows the LexiconIdentifier class being used:
+
+\begin{lstlisting}
+from lexenstein.identifiers import *
+
+li = LexiconIdentifier('lexicon.txt', 'simple')
+
+labels = li.identifyComplexWords('test_victor_corpus.txt')
+\end{lstlisting}
+
+
+
+\section{ThresholdIdentifier}
+
+Estimates the threshold $t$ over a given feature value that best separates complex and simple words. As input, it requires for a FeatureEstimator object. As output, it produces a vector containing a binary label for the target word of each of the $N$ instances in a dataset in VICTOR or CWICTOR format. The label will have value $1$ if the lexicon classifies the word as complex, and $0$ otherwise.
+
+\subsection{Parameters}
+
+During instantiation, the ThresholdIdentifier requires for a FeatureEstimator object. The user can then use the ``calculateTrainingFeatures'' and ``calculateTestingFeatures'' functions to estimate features of training and testing datasets in VICTOR or CWICTOR formats, the ``trainIdentifierBruteForce'' and ``trainIdentifierBinarySearch'' functions to train CWI models, and finally the ``identifyComplexWords'' function to produce output labels.
+
+The ``trainIdentifierBruteForce'' and ``trainIdentifierBinarySearch'' functions require for a feature index as input. It will determine over which feature of the ones included in the FeatureEstimator object the threshold $t$ will be estimated. To know more about the parameters and recommended values of the aforementioned functions, please refer to LEXenstein's documentation.
+
+\subsection{Example}
+
+The code snippet below shows the ThresholdIdentifier class being used:
+
+\begin{lstlisting}
+from lexenstein.identifiers import *
+from lexenstein.features import *
+
+fe = FeatureEstimator()
+fe.addLengthFeature('Complexity')
+fe.addSenseCountFeature('Simplicity')
+
+ti = ThresholdIdentifier(fe)
+ti.calculateTrainingFeatures('train_cwictor_corpus.txt')
+ti.calculateTestingFeatures('test_victor_corpus.txt')
+ti.trainIdentifierBruteForce(1)
+
+labels = ti.identifyComplexWords()
+\end{lstlisting}

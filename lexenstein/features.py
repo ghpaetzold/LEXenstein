@@ -1673,7 +1673,7 @@ class FeatureEstimator:
 		Each entry in the word vector model must be in the following format: <word>|||<tag>
 		To create a corpus for such model to be trained, one must tag each word in a corpus, and then concatenate words and tags using the aforementioned convention.
 	
-		@param model: Path to a binary word vector model.
+		@param model: Path to a binary tagged word vector model.
 		For instructions on how to create the model, please refer to the LEXenstein Manual.
 		@param pos_model: Path to a POS tagging model for the Stanford POS Tagger.
 		The models can be downloaded from the following link: http://nlp.stanford.edu/software/tagger.shtml
@@ -2540,10 +2540,12 @@ class FeatureEstimator:
 
 	def addTaggedWordVectorContextSimilarityFeature(self, model, pos_model, stanford_tagger, java_path, pos_type, orientation):
 		"""
-		Adds a word vector context similarity feature to the estimator.
+		Adds a tagged word vector context similarity feature to the estimator.
 		The value will be the average similarity between the word vector of a candidate and the vectors of all content word in the target word's context.
+		Each entry in the word vector model must be in the following format: <word>|||<tag>
+		To create a corpus for such model to be trained, one must tag each word in a corpus, and then concatenate words and tags using the aforementioned convention.
 	
-		@param model: Path to a binary word vector model.
+		@param model: Path to a binary tagged word vector model.
 		For instructions on how to create the model, please refer to the LEXenstein Manual.
 		@param pos_model: Path to a POS tagging model for the Stanford POS Tagger.
 		The models can be downloaded from the following link: http://nlp.stanford.edu/software/tagger.shtml

@@ -1,0 +1,168 @@
+\chapter{The Evaluation Module}
+
+Since one of the goals of LEXenstein is to facilitate the benchmarking LS approaches, it is crucial that it provides evaluation methods. LEXenstein's evaluation module (lexenstein.evaluators) includes functions for the evaluation of all sub-tasks, both individually and in combination. It contains $5$ classes, each designed for one form of evaluation. We discuss them in more detail in the following Sections.
+
+
+
+
+
+
+
+
+
+\section{IdentifierEvaluator}
+
+Provides evaluation metrics for CWI methods. It requires a gold-standard in the CWICTOR format and a set of binary word complexity labels. The labels must have value $1$ for complex words, and $0$ otherwise. It returns the Precision, Recall and F-measure, where Precision is the proportion of correctly labeled words, Recall the proportion of complex words identified, and F-measure their harmonic mean.
+
+The code snippet below shows the IdentifierEvaluator class being used:
+
+\begin{lstlisting}
+from lexenstein.identifiers import *
+from lexenstein.evaluators import *
+
+li = LexiconIdentifier('lexicon.txt', 'simple')
+labels = li.identifyComplexWords('cwictor_gold.txt')
+
+ie = IdentifierEvaluator()
+precision, recall, fmeasure = ie.evaluateIdentifier('cwictor_gold.txt', labels)
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{GeneratorEvaluator}
+
+Provides evaluation metrics for SG methods. It requires a gold-standard in the VICTOR format and a set of generated substitutions. It returns the Potential, Precision, Recall and F-measure, where Potential is the proportion of instances in which at least one of the substitutions generated is present in the gold-standard, Precision the proportion of generated instances which are present in the gold-standard, Recall the proportion of gold-standard candidates that were generated, and F-measure the harmonic mean between Precision and Recall.
+
+The code snippet below shows the GeneratorEvaluator class being used:
+
+\begin{lstlisting}
+from lexenstein.generators import *
+from lexenstein.evaluators import *
+from lexenstein.morphadorner import *
+
+m = MorphAdornerToolkit('./morph/')
+
+kg = WordnetGenerator(m)
+subs = kg.getSubstitutions('lexmturk.txt')
+
+ge = GeneratorEvaluator()
+potential, precision, recall, fmeasure = ge.evaluateGenerator('lexmturk.txt', subs)
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{SelectorEvaluator}
+
+Provides evaluation metrics for SS methods. It requires a gold-standard in the VICTOR format and a set of selected substitutions. It returns the Potential, Precision and F-measure of the SS approach, where Potential is the proportion of instances in which at least one of the substitutions selected is present in the gold-standard, Precision the proportion of selected candidates which are present in the gold-standard, Recall the proportion of gold-standard candidates that were selected, and F-measure the harmonic mean between Precision and Recall.
+
+The code snippet below shows the SelectorEvaluator class being used:
+
+\begin{lstlisting}
+from lexenstein.generators import *
+from lexenstein.selectors import *
+from lexenstein.evaluators import *
+from lexenstein.morphadorner import *
+
+m = MorphAdornerToolkit('./morph/')
+
+kg = WordnetGenerator(m)
+subs = kg.getSubstitutions('lexmturk.txt')
+
+biranselector = BiranSelector('cooc_model.txt')
+selected = biranselector.selectCandidates(subs, 'lexmturk.txt', 0.01, 0.75)
+
+se = SelectorEvaluator()
+potential, precision, recall, fmeasure = se.evaluateSelector('lexmturk.txt', selected)
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+\section{RankerEvaluator}
+
+Provides evaluation metrics for SR methods. It requires a gold-standard in the VICTOR format and a set of ranked substitutions. It returns the TRank-at-$1:3$ and Recall-at-$1:3$ metrics \cite{semeval}, where Trank-at-$i$ is the proportion of instances in which a candidate of gold-rank $r\leq i$ was ranked first, and Recall-at-$i$ the proportion of candidates of gold-rank $r\leq i$ that are ranked in positions $p\leq i$.
+
+The code snippet below shows the RankerEvaluator class being used:
+
+\begin{lstlisting}
+from lexenstein.rankers import *
+from lexenstein.features import *
+
+fe = FeatureEstimator()
+fe.addCollocationalFeature('lm.txt', 0, 0, 'Complexity')
+
+mr = MetricRanker(fe)
+rankings = mr.getRankings('lexmturk.txt', 0)
+
+re = RankerEvaluator()
+t1, t2, t3, r1, r2, r3 = re.evaluateRanker('lexmturk.txt', rankings)
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
+
+\section{PipelineEvaluator}
+
+Provides evaluation metrics for the entire LS pipeline. It requires as input a gold-standard in VICTOR format and a set of ranked substitutions which have been generated and selected by a given set of approaches. It returns the approaches' Precision, Accuracy and Change Proportion, where Precision is the proportion of instances in which the highest ranking substitution is not the target complex word itself and is in the gold-standard, Accuracy is the proportion of instances in which the highest ranking substitution is in the gold-standard, and Change Proportion is the proportion of instances in which the highest ranking substitution is not the target complex word itself.
+
+The code snippet below shows the PipelineEvaluator class being used:
+
+\begin{lstlisting}
+from lexenstein.generators import *
+from lexenstein.selectors import *
+from lexenstein.evaluators import *
+from lexenstein.rankers import *
+from lexenstein.features import *
+from lexenstein.morphadorner import *
+
+m = MorphAdornerToolkit('./morph/')
+
+kg = WordnetGenerator(m)
+subs = kg.getSubstitutions('lexmturk.txt')
+
+bs = BiranSelector('cooc_model.txt')
+selected = bs.selectCandidates(subs, 'lexmturk.txt', 0.01, 0.75)
+bs.toVictorFormat('lexmturk.txt', selected, 'victor.txt', addTargetAsCandidate=True)
+
+fe = FeatureEstimator()
+fe.addCollocationalFeature('lm.txt', 0, 0, 'Complexity')
+
+mr = MetricRanker(fe)
+rankings = mr.getRankings('victor.txt', 0)
+
+pe = PipelineEvaluator()
+precision, accuracy, changed = pe.evaluatePipeline('lexmturk.txt', rankings)
+\end{lstlisting}

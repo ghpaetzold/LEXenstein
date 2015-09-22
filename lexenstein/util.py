@@ -85,7 +85,7 @@ def createTaggedNgramsFile(ngrams_file, tagged_ngrams_file):
 	"""
 	Creates a tagged version of an annotated n-gram counts file.
 	
-	@param ngrams_file: File containing n-gram counts.
+	@param ngrams_file: File containing POS tag annotated n-gram counts.
 	The file must be in the format produced by the "-write" option of SRILM.
 	Each word in the corpus used must be in the following format: <word>|||<tag>
 	@param tagged_ngrams_file: File with tagged n-gram counts.
@@ -231,7 +231,7 @@ def addNgramCountsFileToShelve(ngrams_file, model_file):
 	"""
 	Adds a n-gram counts file to an either new, or existing shelve dictionary.
 	The shelve file can then be used for the calculation of several features.
-	The file must be in the format produced by the "-write" option of SRILM.
+	The file must be in the format produced by the "-write" option of SRILM ngram-count application.
 	
 	@param ngrams_file: File containing n-gram counts.
 	@param model_file: Shelve file in which to save the n-gram counts file.
