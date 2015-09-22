@@ -6,11 +6,11 @@ LEXenstein is a framework that allows for one to easily create full Lexical Simp
 
 To install LEXenstein, you must:
 
-	1) Download and unpack the LEXenstein's [latest release](https://github.com/ghpaetzold/LEXenstein/releases/tag/v1.0).
-	2) Navigate to the LEXenstein's root folder.
-	3) Run the following command line:
+* Download and unpack the LEXenstein's [latest release](https://github.com/ghpaetzold/LEXenstein/releases/tag/v1.0).
+* Navigate to the LEXenstein's root folder.
+* Run the following command line:
 	
-		python setup.py install
+	python setup.py install
 		
 If you don’t with to install the tool in your Python distribution, you can alternatively
 copy the “lexenstein” folder into the folder of your project.
