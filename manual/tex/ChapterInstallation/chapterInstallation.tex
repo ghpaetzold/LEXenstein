@@ -4,8 +4,15 @@
 LEXenstein is a library written entirely in Python. It hence requires for Python $2$.$7$.* to be installed in the user's machine. We have not yet tried to run LEXenstein over Python $3$.*. To install LEXenstein, please follow the steps below:
 
 \begin{enumerate}
-	\item Download the tool from \textbf{omitted for review}.
-	\item Copy the ``lexenstein'' folder included in the package into the folder of your project.
+	\item Download and unpack the tool from \url{http://ghpaetzold.github.io/LEXenstein/}.
+	\item Navigate to the tool's root folder.
+	\item Run the following command line:
+	
+	\begin{lstlisting}
+	python setup.py install
+	\end{lstlisting}
+	
+	\item If you don't with to install the tool in your Python distribution, you can alternatively copy the ``lexenstein'' folder into the folder of your project.
 	\item Access LEXenstein by importing its modules in the following fashion:
 	\begin{lstlisting}
 from lexenstein.morphadorner import *
@@ -20,14 +27,14 @@ from lexenstein.util import *
 \end{lstlisting}
 \end{enumerate}
 
-In the near future, we will allow for one to install LEXenstein by using standard installation routines, such as through a ``setup.py'' file, or pip. LEXenstein requires for several libraries and toolkits to be included in the user's Python $2$.$7$.* installation. The following Sections explain which libraries and toolkits are required, where to get them and how to install them.
+LEXenstein requires for several libraries and toolkits to be included in the user's Python $2$.$7$.* installation. The following Sections explain which libraries and toolkits are required, where to get them and how to install them.
 
 
 
 
 
 
-\section{Required Libraries}
+\section{Required Tools and Libraries}
 
 \subsection{Morph Adorner Toolkit}
 
