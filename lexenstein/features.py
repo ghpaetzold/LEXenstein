@@ -1678,7 +1678,7 @@ class FeatureEstimator:
 					backoff = 4.0
 				elif ngram1f in counts and ngram0t in counts:
 					backoff = 3.0
-				elif ngram0t in counts
+				elif ngram0t in counts:
 					backoff = 2.0
 				else:
 					backoff = 1.0
@@ -1694,8 +1694,8 @@ class FeatureEstimator:
 		return result
 		
 	def ngramNominalFeature(self, data, args):
-		spanl = args[1]
-		spanr = args[2]
+		spanl = args[0]
+		spanr = args[1]
 		result = []
 		for line in data:
 			sent = line[0].strip().split(' ')
@@ -1714,9 +1714,8 @@ class FeatureEstimator:
 	def candidatePOSNominalFeature(self, data, args):
 		result = []
 		
-		model = self.resources[args[0]]
-		tagger = self.resources[args[1]]
-		pos_type = args[2]
+		tagger = self.resources[args[0]]
+		pos_type = args[1]
 		
 		#Get tagged sentences:
 		tagged_sents = None
@@ -1751,9 +1750,8 @@ class FeatureEstimator:
 		
 		spanl = args[0]
 		spanr = args[1]
-		model = self.resources[args[2]]
-		tagger = self.resources[args[3]]
-		pos_type = args[4]
+		tagger = self.resources[args[2]]
+		pos_type = args[3]
 		
 		#Get tagged sentences:
 		tagged_sents = None
@@ -1794,9 +1792,8 @@ class FeatureEstimator:
 		
 		spanl = args[0]
 		spanr = args[1]
-		model = self.resources[args[2]]
-		tagger = self.resources[args[3]]
-		pos_type = args[4]
+		tagger = self.resources[args[2]]
+		pos_type = args[3]
 		
 		#Get tagged sentences:
 		tagged_sents = None
@@ -2845,7 +2842,7 @@ class FeatureEstimator:
 				self.resources[dependency_models] = parser
 				
 			self.features.append((self.nullLinkNominalFeature, [dependency_models]))
-			self.identifiers.append(('Null Link Nominal Feature (Models: '+dependency_models+')', orientation)
+			self.identifiers.append(('Null Link Nominal Feature (Models: '+dependency_models+')', orientation))
 			
 	def addBackoffBehaviorNominalFeature(self, ngram_file, orientation):
 		"""
