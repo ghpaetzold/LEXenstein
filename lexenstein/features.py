@@ -11,6 +11,8 @@ import pickle
 from sklearn.preprocessing import normalize
 import numpy
 import shelve
+import urllib2
+import json
 
 class FeatureEstimator:
 
@@ -1840,18 +1842,18 @@ class FeatureEstimator:
 			for subst in line[3:len(line)]:
 				word = subst.split(':')[1].strip()
 				imagecount = None
-				if word in self.temp_resources['image_counts']:
+				if word not in self.resources['image_counts']:
 					imagecount = self.getImageCount(word, key)
-					self.temp_resources['image_counts'][word] = imagecount
+					self.resources['image_counts'][word] = imagecount
 				else:
-					imagecount = self.temp_resources['image_counts'][word]
+					imagecount = self.resources['image_counts'][word]
 				result.append(imagecount)
 		return result
 		
 	def getImageCount(self, word, key):
 		headers = {}
 		headers['Api-Key'] = key
-		tokens = words.strip().split(' ')
+		tokens = word.strip().split(' ')
 		suffix = ''
 		for token in tokens:
 			suffix += token + '+'
