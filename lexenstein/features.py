@@ -1830,6 +1830,47 @@ class FeatureEstimator:
 				result.append(fngram[0:len(fngram)-3])
 		return result
 		
+	def imageSearchCountFeature(self, data, args):
+		result = []
+		
+		key = args[0]
+
+		for i in range(0, len(data)):
+			line = data[i]
+			for subst in line[3:len(line)]:
+				word = subst.split(':')[1].strip()
+				imagecount = None
+				if word in self.temp_resources['image_counts']:
+					imagecount = self.getImageCount(word, key)
+					self.temp_resources['image_counts'][word] = imagecount
+				else:
+					imagecount = self.temp_resources['image_counts'][word]
+				result.append(imagecount)
+		return result
+		
+	def getImageCount(self, word, key):
+		headers = {}
+		headers['Api-Key'] = key
+		tokens = words.strip().split(' ')
+		suffix = ''
+		for token in tokens:
+			suffix += token + '+'
+		suffix = suffix[0:len(suffix)-1]
+		
+		#Make HTTP request:
+		url = 'https://api.gettyimages.com/v3/search/images?fields=id&phrase='+suffix
+		req = urllib2.Request(url=url, headers=headers)
+		
+		#Send request:
+		count = None
+		try:
+			f = urllib2.urlopen(req)
+			data = json.loads(f.read())
+			count = int(data['result_count'])
+		except Exception:
+			count = 0
+		return count
+		
 	def readNgramFile(self, ngram_file):
 		counts = shelve.open(ngram_file, protocol=pickle.HIGHEST_PROTOCOL)
 		return counts
@@ -2861,6 +2902,28 @@ class FeatureEstimator:
 				
 			self.features.append((self.backoffBehaviorNominalFeature, [ngram_file]))
 			self.identifiers.append(('N-Gram Nominal Feature (N-Grams File: '+ngram_file+')', orientation))
+			
+	def addImageSearchCountFeature(self, key, orientation):
+		"""
+		Adds an image search count feature to the estimator.
+		The resulting value will be the number of distinct pictures retrieved by the Getty Images API.
+		This feature requires for a free "Connect Embed" key, which gives you access to 5 queries per second, and unlimited queries per day.
+		For more information on how to acquire a key, please visit their website at: https://developer.gettyimages.com
+	
+		@param key: Connect Embed key for the Getty Images API.
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Possible values: Complexity, Simplicity.
+		"""
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:
+			if key not in self.resources:
+				self.resources['GettyImagesKey'] = key
+			if 'image_counts' not in self.resources:
+				self.resources['image_counts'] = {}
+				
+			self.features.append((self.imageSearchCountFeature, [key]))
+			self.identifiers.append(('addImageSearchCountFeature (Key: '+key+')', orientation))
 			
 	# Nominal features:
 	
