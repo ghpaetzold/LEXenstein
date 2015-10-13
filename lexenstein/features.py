@@ -1850,6 +1850,22 @@ class FeatureEstimator:
 				result.append(imagecount)
 		return result
 		
+	def webSearchCountFeature(self, data, args):
+		result = []
+
+		for i in range(0, len(data)):
+			line = data[i]
+			for subst in line[3:len(line)]:
+				word = subst.split(':')[1].strip()
+				pagecount = None
+				if word not in self.resources['page_counts']:
+					pagecount = self.getPageCount(word)
+					self.resources['page_counts'][word] = pagecount
+				else:
+					pagecount = self.resources['page_counts'][word]
+				result.append(pagecount)
+		return result
+		
 	def getImageCount(self, word, key):
 		headers = {}
 		headers['Api-Key'] = key
@@ -1869,6 +1885,28 @@ class FeatureEstimator:
 			f = urllib2.urlopen(req)
 			data = json.loads(f.read())
 			count = int(data['result_count'])
+		except Exception:
+			count = 0
+		return count
+		
+	def getPageCount(self, word):
+		tokens = word.strip().split(' ')
+		suffix = ''
+		for token in tokens:
+			suffix += token + '+'
+		suffix = suffix[0:len(suffix)-1]
+		
+		#Make HTTP request:
+		url = 'https://www.bing.com/search?q='+suffix
+		req = urllib2.Request(url=url)
+		
+		#Send request:
+		count = None
+		try:
+			f = urllib2.urlopen(req)
+			data = f.read()
+			result = exp.findall(data)
+			count = int(result[0].strip().split(' ')[0].strip().replace(',', ''))
 		except Exception:
 			count = 0
 		return count
@@ -2925,7 +2963,24 @@ class FeatureEstimator:
 				self.resources['image_counts'] = {}
 				
 			self.features.append((self.imageSearchCountFeature, [key]))
-			self.identifiers.append(('addImageSearchCountFeature (Key: '+key+')', orientation))
+			self.identifiers.append(('Image Search Count Feature (Key: '+key+')', orientation))
+			
+	def addWebSearchCountFeature(self, orientation):
+		"""
+		Adds a web search count feature to the estimator.
+		The resulting value will be the number of websites retrieved by Bing.
+	
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Possible values: Complexity, Simplicity.
+		"""
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:
+			if 'page_counts' not in self.resources:
+				self.resources['page_counts'] = {}
+				
+			self.features.append((self.webSearchCountFeature, [key]))
+			self.identifiers.append((' Web Search Count Feature', orientation))
 			
 	# Nominal features:
 	
