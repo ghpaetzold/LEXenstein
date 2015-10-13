@@ -13,6 +13,7 @@ import numpy
 import shelve
 import urllib2
 import json
+import re
 
 class FeatureEstimator:
 
@@ -1897,6 +1898,7 @@ class FeatureEstimator:
 		suffix = suffix[0:len(suffix)-1]
 		
 		#Make HTTP request:
+		exp = re.compile('class=\"sb_count\"[^>]*>([^<]+)<')
 		url = 'https://www.bing.com/search?q='+suffix
 		req = urllib2.Request(url=url)
 		
@@ -2979,7 +2981,7 @@ class FeatureEstimator:
 			if 'page_counts' not in self.resources:
 				self.resources['page_counts'] = {}
 				
-			self.features.append((self.webSearchCountFeature, [key]))
+			self.features.append((self.webSearchCountFeature, []))
 			self.identifiers.append((' Web Search Count Feature', orientation))
 			
 	# Nominal features:
