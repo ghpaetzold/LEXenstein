@@ -1913,6 +1913,18 @@ class FeatureEstimator:
 			count = 0
 		return count
 		
+	def morphologicalFeature(self, data, args):
+		dictionary = args[0]
+		result = []
+		for line in data:
+			for subst in line[3:len(line)]:
+				words = subst.strip().split(':')[1].strip()
+				if word in dictionary:
+					result.append(dictionary[words])
+				else:
+					result.append(0.0)
+		return result
+		
 	def readNgramFile(self, ngram_file):
 		counts = shelve.open(ngram_file, protocol=pickle.HIGHEST_PROTOCOL)
 		return counts
@@ -2983,6 +2995,25 @@ class FeatureEstimator:
 				
 			self.features.append((self.webSearchCountFeature, []))
 			self.identifiers.append((' Web Search Count Feature', orientation))
+			
+	def addMorphologicalFeature(self, dictionary, description, orientation):
+		"""
+		Adds a generalized morphological feature to the estimator.
+		It requires for a dictionary that assigns words to their respective feature values.
+		For each word in a dataset, the value of this feature will be the one found in the dictionar provided, or 0 if it is not available.
+	
+		@param dictionary: A dictionary object assigning words to values.
+		Example: dictionary['chair'] = 45.33.
+		@param description: Description of the feature.
+		Example: "Age of Acquisition".
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Possible values: Complexity, Simplicity.
+		"""
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:				
+			self.features.append((self.morphologicalFeature, [dictionary]))
+			self.identifiers.append((description, orientation))
 			
 	# Nominal features:
 	
