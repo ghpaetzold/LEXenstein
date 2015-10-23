@@ -1919,7 +1919,7 @@ class FeatureEstimator:
 		for line in data:
 			for subst in line[3:len(line)]:
 				words = subst.strip().split(':')[1].strip()
-				if word in dictionary:
+				if words in dictionary:
 					result.append(dictionary[words])
 				else:
 					result.append(0.0)
