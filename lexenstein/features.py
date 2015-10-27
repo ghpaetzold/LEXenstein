@@ -822,6 +822,27 @@ class FeatureEstimator:
 				resultma.append(maxdepth)
 		return resultma
 		
+	def averageDepth(self, data, args):
+		resultma = []
+		for line in data:
+			for subst in line[3:len(line)]:
+				words = subst.strip().split(':')[1].strip()
+				avgdepth = 0
+				total = 0
+				for word in words.split(' '):
+					senses = None
+					try:
+						senses = wn.synsets(word)
+					except UnicodeDecodeError:
+						senses = []
+					for sense in senses:
+						auxmax = sense.max_depth()
+						avgdepth += auxmax
+					total += len(senses)
+				avgdepth /= total
+				resultma.append(avgdepth)
+		return resultma
+		
 	def subjectDependencyProbabilityFeature(self, data, args):
 		model = self.resources[args[0]]
 		parser = self.resources[args[1]]
@@ -2543,6 +2564,21 @@ class FeatureEstimator:
 		else:
 			self.features.append((self.maxDepth ,[]))
 			self.identifiers.append(('Maximal Sense Depth', orientation))
+			
+	def addAverageDepthFeature(self, orientation):
+		"""
+		Adds an average sense depth feature to the estimator.
+		Calculates the average distance between two senses of a given candidate.
+		
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Possible values: Complexity, Simplicity.
+		"""
+		
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:
+			self.features.append((self.averageDepth ,[]))
+			self.identifiers.append(('Average Sense Depth', orientation))
 			
 	def addSubjectDependencyProbabilityFeature(self, language_model, stanford_parser, dependency_models, java_path, orientation):
 		"""
