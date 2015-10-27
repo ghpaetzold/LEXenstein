@@ -839,7 +839,10 @@ class FeatureEstimator:
 						auxmax = sense.max_depth()
 						avgdepth += auxmax
 					total += len(senses)
-				avgdepth /= total
+				try:
+					avgdepth /= total
+				except Exception:
+					avgdepth = 0
 				resultma.append(avgdepth)
 		return resultma
 		
