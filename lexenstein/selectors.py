@@ -591,11 +591,12 @@ class BelderSelector:
 		f.close()
 		o.close()
 
-class NunesSelector:
+class POSProbSelector:
 
 	def __init__(self, condprob_model, pos_model, stanford_tagger, java_path):
 		"""
-		Creates a POSTagSelector instance.
+		Creates a POSProbSelector instance.
+		It selects only the candidate substitutions of which the most likely POS tag is that of the target word.
 	
 		@param condprob_model: Path to a binary conditional probability model.
 		For instructions on how to create the model, please refer to the LEXenstein Manual.
@@ -690,6 +691,133 @@ class NunesSelector:
 			except Exception:
 				pass
 			if cand_tag and cand_tag==target_pos:
+				result.add(candidate)
+		return result
+	
+	def toVictorFormat(self, victor_corpus, substitutions, output_path, addTargetAsCandidate=False):
+		"""
+		Saves a set of selected substitutions in a file in VICTOR format.
+	
+		@param victor_corpus: Path to the corpus in the VICTOR format to which the substitutions were selected.
+		@param substitutions: The vector of substitutions selected for the VICTOR corpus.
+		@param output_path: The path in which to save the resulting VICTOR corpus.
+		@param addTargetAsCandidate: If True, adds the target complex word of each instance as a candidate substitution.
+		"""
+		o = open(output_path, 'w')
+		f = open(victor_corpus)
+		for subs in substitutions:
+			data = f.readline().strip().split('\t')
+			sentence = data[0].strip()
+			target = data[1].strip()
+			head = data[2].strip()
+			
+			newline = sentence + '\t' + target + '\t' + head + '\t'
+			for sub in subs:
+				newline += '0:'+sub + '\t'
+			o.write(newline.strip() + '\n')
+		f.close()
+		o.close()
+		
+class AluisioSelector:
+
+	def __init__(self, condprob_model, pos_model, stanford_tagger, java_path):
+		"""
+		Creates an AluisioSelector instance.
+		It selects only candidate substitutions that can assume the same POS tag of the target word.
+	
+		@param condprob_model: Path to a binary conditional probability model.
+		For instructions on how to create the model, please refer to the LEXenstein Manual.
+		@param pos_model: Path to a POS tagging model for the Stanford POS Tagger.
+		The models can be downloaded from the following link: http://nlp.stanford.edu/software/tagger.shtml
+		@param stanford_tagger: Path to the "stanford-postagger.jar" file.
+		The tagger can be downloaded from the following link: http://nlp.stanford.edu/software/tagger.shtml
+		@param java_path: Path to the system's "java" executable.
+		Can be commonly found in "/usr/bin/java" in Unix/Linux systems, or in "C:/Program Files/Java/jdk_version/java.exe" in Windows systems.
+		"""
+		os.environ['JAVAHOME'] = java_path
+		self.tagger = StanfordPOSTagger(pos_model, stanford_tagger)
+		self.model = pickle.load(open(condprob_model, 'rb'))
+
+	def selectCandidates(self, substitutions, victor_corpus):
+		"""
+		Selects which candidates can replace the target complex words in each instance of a VICTOR corpus.
+	
+		@param substitutions: Candidate substitutions to be filtered.
+		It can be in two formats:
+		A dictionary produced by a Substitution Generator linking complex words to a set of candidate substitutions.
+		Example: substitutions['perched'] = {'sat', 'roosted'}
+		A list of candidate substitutions selected for the "victor_corpus" dataset by a Substitution Selector.
+		Example: [['sat', 'roosted'], ['easy', 'uncomplicated']]
+		@param victor_corpus: Path to a corpus in the VICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@return: Returns a vector of size N, containing a set of selected substitutions for each instance in the VICTOR corpus.
+		"""
+		selected_substitutions = []
+
+		substitution_candidates = []
+		if isinstance(substitutions, list):
+			substitution_candidates = substitutions
+		elif isinstance(substitutions, dict):
+			void = VoidSelector()
+			substitution_candidates = void.selectCandidates(substitutions, victor_corpus)
+		else:
+			print('ERROR: Substitutions are neither a dictionary or a list!')
+			return selected_substitutions
+		
+		#Read VICTOR corpus:
+		lexf = open(victor_corpus)
+		sents = []
+		targets = []
+		heads = []
+		c = -1
+		for line in lexf:
+			c += 1
+			data = line.strip().split('\t')
+			sent = data[0].strip().split(' ')
+			target = data[1].strip()
+			head = int(data[2].strip())
+			sents.append(sent)
+			targets.append(target)
+			heads.append(head)
+		lexf.close()
+		
+		#Tag sentences:
+		tagged_sents = self.tagger.tag_sents(sents)
+		
+		for i in range(0, len(sents)):
+			target = targets[i]
+			head = heads[i]
+			target_pos = str(tagged_sents[i][head][1])
+		
+			candidates = []
+			candidates = set(substitution_candidates[i])
+			candidates = self.getCandidatesWithSamePOS(candidates, target_pos)
+		
+			selected_substitutions.append(candidates)
+		lexf.close()
+		return selected_substitutions
+	
+	def getTargetPOS(self, sent, target, head):
+		pos_data = []
+		try:
+			pos_data = nltk.pos_tag(sent)
+			return pos_data[head][1]
+		except UnicodeDecodeError:
+			try:
+				pos_data = nltk.pos_tag(target)
+				return pos_data[0][1]
+			except UnicodeDecodeError:
+				return 'None'
+			
+	def getCandidatesWithSamePOS(self, candidates, target_pos):
+		result = set([])
+		for candidate in candidates:
+			tag_freq = 0
+			try:
+				tag_freq = self.model[candidate][target_pos]
+			except Exception:
+				pass
+			if tag_freq>0:
 				result.add(candidate)
 		return result
 	
