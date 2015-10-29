@@ -814,7 +814,7 @@ class AluisioSelector:
 		for candidate in candidates:
 			tag_freq = 0
 			try:
-				tag_freq = self.model[candidate][target_pos]
+				tag_freq = self.model[candidate].prob(target_pos)
 			except Exception:
 				pass
 			if tag_freq>0:
