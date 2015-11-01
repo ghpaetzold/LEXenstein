@@ -1168,11 +1168,13 @@ class SVMRanker:
 		os.system(comm)
 		print('Scored!')
 	
-	def getRankings(self, features_file, scores_file):
+	def getRankings(self, victor_corpus, features_file, scores_file):
 		"""
 		Produces ranking scores in SVM-Rank format.
 		The scores file produced can be used as the "scores_file" parameter of the getRankings function.
 	
+		@param victor_corpus: Path to a corpus in the VICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
 		@param features_file: Path to features file produced over a testing VICTOR corpus.
 		Should be produced by the getFeaturesFile function.
 		@param scores_file: Path to a scores file in SVM-Rank format.
@@ -1213,12 +1215,22 @@ class SVMRanker:
 			else:
 				ranking_data[id] = {word:score}
 		
+		#Get problems:
+		size = 0
+		f = open(victor_corpus)
+		for line in f:
+			size += 1
+		f.close()
+		
 		#Produce rankings:
 		result = []
-		for id in sorted(ranking_data.keys()):
-			candidates = ranking_data[id].keys()
-			candidates = sorted(candidates, key=ranking_data[id].__getitem__, reverse=False)
-			result.append(candidates)
+		for id in range(0, size):
+			if id not in ranking_data:
+				result.append([])
+			else:
+				candidates = ranking_data[id].keys()
+				candidates = sorted(candidates, key=ranking_data[id].__getitem__, reverse=False)
+				result.append(candidates)
 			
 		#Return rankings:
 		return result
