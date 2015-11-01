@@ -1224,7 +1224,7 @@ class SVMRanker:
 		
 		#Produce rankings:
 		result = []
-		for id in range(0, size):
+		for id in range(1, size+1):
 			if id not in ranking_data:
 				result.append([])
 			else:
