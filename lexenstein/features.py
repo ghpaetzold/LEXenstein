@@ -34,24 +34,38 @@ class FeatureEstimator:
 		#One-run resource list:
 		self.temp_resources = {}
 		
-	def calculateFeatures(self, corpus, format='victor'):
+	def calculateFeatures(self, corpus, format='victor', input='file'):
 		"""
 		Calculate the selected features over the candidates of a VICTOR or CWICTOR corpus.
 	
 		@param corpus: Path to a corpus in the VICTOR or CWICTOR format.
-		For more information about the file's format, refer to the LEXenstein Manual.
-		@param format: Input file format.
-		Values available: victor, cwictor
+		For more information about the input's format, refer to the LEXenstein Manual.
+		@param format: Input format.
+		Values available: victor, cwictor.
+		@param input: Type of input provided.
+		Values available: file, text.
 		@return: Returns a MxN matrix, where M is the number of substitutions of all instances in the VICTOR corpus, and N the number of selected features.
 		"""
 		data = []
 		if format.strip().lower()=='victor':
-			data = [line.strip().split('\t') for line in open(corpus)]
+			if input=='file':
+				data = [line.strip().split('\t') for line in open(corpus)]
+			elif input=='text':
+				data = [line.strip().split('\t') for line in corpus.split('\n')]
+			else:
+				print('Unrecognized format: must be file or text.')
 		elif format.strip().lower()=='cwictor':
-			f = open(corpus)
-			for line in f:
-				line_data = line.strip().split('\t')
-				data.append([line_data[0].strip(), line_data[1].strip(), line_data[2].strip(), '0:'+line_data[1].strip()])
+			if input=='file':
+				f = open(corpus)
+				for line in f:
+					line_data = line.strip().split('\t')
+					data.append([line_data[0].strip(), line_data[1].strip(), line_data[2].strip(), '0:'+line_data[1].strip()])
+			elif input=='text':
+				for line in corpus.split('\n'):
+					line_data = line.strip().split('\t')
+					data.append([line_data[0].strip(), line_data[1].strip(), line_data[2].strip(), '0:'+line_data[1].strip()])
+			else:
+				print('Unrecognized format: must be file or text.')
 		else:
 			print('Unknown input format during feature estimation!')
 			return []
