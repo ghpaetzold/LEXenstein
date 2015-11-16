@@ -477,7 +477,7 @@ class KauchakGenerator:
 							if leftp in substitutions_initial[leftw]:
 								substitutions_initial[leftw][leftp].add(rightw)
 							else:
-								substitutions_initial[leftw][leftp] = set(rightw)
+								substitutions_initial[leftw][leftp] = set([rightw])
 						else:
 							substitutions_initial[leftw] = {leftp:set([rightw])}
 		fparallel.close()
