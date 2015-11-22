@@ -345,6 +345,7 @@ class PipelineEvaluator:
 		#Initialize counting variables:
 		total = 0
 		totalc = 0
+		accurate = 0
 		precise = 0
 		
 		#Read victor corpus:
@@ -364,7 +365,10 @@ class PipelineEvaluator:
 			if first!=target:
 				totalc += 1
 				if first in gold_subs:
+					accurate += 1
 					precise += 1
+			else:
+				precise += 1
 		
 		#Return metrics:
-		return float(precise)/float(totalc), float(precise)/float(total), float(totalc)/float(total)
+		return float(precise)/float(total), float(accurate)/float(total), float(totalc)/float(total)
