@@ -7,7 +7,7 @@ class IdentifierEvaluator:
 		@param cwictor_corpus: Path to a training corpus in CWICTOR format.
 		For more information about the file's format, refer to the LEXenstein Manual.
 		@param predicted_labels: A vector containing the predicted binary labels of each instance in the CWICTOR corpus.
-		@return: Accuracy, Precision, Recall and F-1 for the substitutions provided as input with respect to the gold-standard in the VICTOR corpus.
+		@return: Accuracy, Precision, Recall and the F-score between Accuracy and Recall for the substitutions provided as input with respect to the gold-standard in the VICTOR corpus.
 		For more information on how the metrics are calculated, please refer to the LEXenstein Manual.
 		"""
 		
@@ -46,10 +46,10 @@ class IdentifierEvaluator:
 			precision = 0.0
 		recall = float(recallc)/float(recallt)
 		fmean = 0.0
-		if precision==0.0 and recall==0.0:
+		if accuracy==0.0 and recall==0.0:
 			fmean = 0.0
 		else:
-			fmean = 2*(precision*recall)/(precision+recall)
+			fmean = 2*(accuracy*recall)/(accuracy+recall)
 			
 		#Return measures:
 		return accuracy, precision, recall, fmean
