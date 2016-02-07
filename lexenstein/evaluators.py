@@ -10,17 +10,21 @@ class IdentifierEvaluator:
 		@return: Accuracy, Precision, Recall and the F-score between Accuracy and Recall for the substitutions provided as input with respect to the gold-standard in the VICTOR corpus.
 		For more information on how the metrics are calculated, please refer to the LEXenstein Manual.
 		"""
+
+		gold = [int(line.strip().split('\t')[3]) for line in open(cwictor_corpus)]
 		
 		#Initialize variables:
-		accuracyc = 0
-		accuracyt = 0
-		precisionc = 0
-		precisiont = 0
-		recallc = 0
-		recallt = 0
+		accuracyc = 0.0
+		accuracyt = 0.0
+		precisionc = 0.0
+		precisiont = 0.0
+		recallc = 0.0
+		recallt = 0.0
 		
 		#Calculate measures:
-		for gold_label, predicted_label in zip(gold, pred):
+		for i in range(0, len(gold)):
+			gold_label = gold[i]
+			predicted_label = predicted_labels[i]
 			if gold_label==predicted_label:
 				accuracyc += 1
 				if gold_label==1:
@@ -31,7 +35,7 @@ class IdentifierEvaluator:
 			if predicted_label==1:
 				precisiont += 1
 			accuracyt += 1
-		
+
 		try:
 			accuracy = accuracyc / accuracyt
 		except ZeroDivisionError:
