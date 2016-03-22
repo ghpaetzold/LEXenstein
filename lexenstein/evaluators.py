@@ -389,3 +389,140 @@ class PipelineEvaluator:
 		
 		#Return metrics:
 		return float(precise)/float(total), float(accurate)/float(total), float(totalc)/float(total)
+		
+class PLUMBErr:
+
+	def __init__(self, dataset, complex):
+		"""
+		Creates a PLUMBErr error categorizer.
+		This class implements the strategy introduced in:
+		Paetzold, G. H.; Specia, L. PLUMBErr: An Automatic Error Identification Framework for Lexical Simplification. Proceedings of the 1st QATS. 2016.
+		One can download BenchLS (dataset) and NNSVocab (complex) from http://ghpaetzold.github.io/data/PLUMBErr.zip
+	
+		@param dataset: Path to a data in VICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@param complex: Path to a file containing complex words.
+		Each line of the file must contain a single word.
+		"""
+		self.data = [line.strip().split('\t') for line in open(dataset)]
+		self.complex = set([line.strip() for line in open(complex)])
+		
+	def cumulativeAnalysis(self, identified, selected, ranked):
+		"""
+		Performs the cumulative error identification analysis of a simplifier.
+		In a cumulative analysis, the errors made during Complex Word Identification are carried onto the following steps of the pipeline.
+	
+		@param identified: A vector containing one binary value (0 for simple, 1 for complex) for each word in the dataset.
+		To produce the vector, one can run a Complex Word Identification approach from LEXenstein over the dataset.
+		@param selected: A vector containing the candidates selected for each instance in the dataset.
+		To produce the vector, one can pair a Substitution Generation and a Substitution Selection approach from LEXenstein.
+		@param ranked: A vector containing the selected candidates ranked in order of simplicity.
+		To produce the vector, one can run a Substitution Ranking approach from LEXenstein over the selected candidates provided.
+		"""
+		
+		#Create CWI gold-standard:
+		gold = []
+		for line in self.data:
+			if self.data[2] in self.complex:
+				gold.append(1)
+			else:
+				gold.append(0)
+				
+		#Find errors of type 2:
+		error2a = 0
+		error2b = 0
+		for i in range(0, len(gold)):
+			g = gold[i]
+			p = identified[i]
+			if p==0 and g==1:
+				error2a += 1
+			elif p==1 and g==0:
+				error2b += 1
+				
+		#Find errors of type 3:
+		error3a = 0
+		error3b = 0
+		
+		f = open(dataset)
+		goldcands = []
+		simplecands = []
+		for line in f:
+				data = line.strip().split('\t')
+				cs = set([cand.strip().split(':')[1].strip() for cand in data[3:]])
+				goldcands.append(cs)
+				simplecands.append(cs.difference(self.complex))
+		f.close()
+		
+		cands = []
+		for vec in selected:
+			cands.append(set(vec))
+		
+		control = []
+		for i in range(0, len(data)):
+			gold_label = gold[i]
+			pred_label = identified[i]
+			ac = goldcands[i]
+			sc = simplecands[i]
+			cs = cands[i]
+			if gold_label==0:
+				sc = set([])
+			else:
+				if pred_label==0:
+					cs = set([])
+			ainter = ac.intersection(cs)
+			sinter = sc.intersection(cs)
+
+			if gold_label==1:
+				if len(ainter)==0:
+					error3a += 1
+					control.append('Error')
+				elif len(sinter)==0:
+					error3b += 1
+					control.append('Error')
+				else:
+					control.append('Ok')
+			else:
+				control.append('Ignore')
+		
+		#Find errors of type 4 and 5:
+		error4 = 0
+		error5 = 0
+		noerror = 0
+		for i in range(0, len(allcands)):
+			gold_label = gold[i]
+			pred_label = identified[i]
+			ac = goldcands[i]
+			sc = simplecands[i]
+			cs = ranked[i]
+			if gold_label==0:
+				sc = set([])
+			else:
+				if pred_label==0:
+					cs = set([])
+
+			sub = ''
+			if len(cs)>0:
+				sub = cs[0]
+
+			if indicators[i]=='Ok':
+				if sub not in ac:
+					error4 += 1
+				elif sub not in sc:
+					error5 += 1
+				else:
+					noerror += 1
+					
+		return error2a, error2b, error3a, error3b, error4, error5, noerror
+		
+	def nonCumulativeAnalysis(self, identified, selected, ranked):
+		"""
+		Performs the non-cumulative error identification analysis of a simplifier.
+		In a non-cumulative analysis, the errors made during Complex Word Identification are not carried onto the following steps of the pipeline.
+	
+		@param identified: A vector containing one binary value (0 for simple, 1 for complex) for each word in the dataset.
+		To produce the vector, one can run a Complex Word Identification approach from LEXenstein over the dataset.
+		@param selected: A vector containing the candidates selected for each instance in the dataset.
+		To produce the vector, one can pair a Substitution Generation and a Substitution Selection approach from LEXenstein.
+		@param ranked: A vector containing the selected candidates ranked in order of simplicity.
+		To produce the vector, one can run a Substitution Ranking approach from LEXenstein over the selected candidates provided.
+		"""
