@@ -564,11 +564,6 @@ class PLUMBErr:
 			ac = goldcands[i]
 			sc = simplecands[i]
 			cs = cands[i]
-			if gold_label==0:
-				sc = set([])
-			else:
-				if pred_label==0:
-					cs = set([])
 			ainter = ac.intersection(cs)
 			sinter = sc.intersection(cs)
 
@@ -588,11 +583,6 @@ class PLUMBErr:
 			ac = goldcands[i]
 			sc = simplecands[i]
 			cs = ranked[i]
-			if gold_label==0:
-				sc = set([])
-			else:
-				if pred_label==0:
-					cs = set([])
 
 			sub = ''
 			if len(cs)>0:
