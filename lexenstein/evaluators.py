@@ -423,7 +423,7 @@ class PLUMBErr:
 		#Create CWI gold-standard:
 		gold = []
 		for line in self.data:
-			if self.data[2] in self.complex:
+			if line[1] in self.complex:
 				gold.append(1)
 			else:
 				gold.append(0)
@@ -443,22 +443,19 @@ class PLUMBErr:
 		error3a = 0
 		error3b = 0
 		
-		f = open(dataset)
 		goldcands = []
 		simplecands = []
-		for line in f:
-				data = line.strip().split('\t')
-				cs = set([cand.strip().split(':')[1].strip() for cand in data[3:]])
+		for line in self.data:
+				cs = set([cand.strip().split(':')[1].strip() for cand in line[3:]])
 				goldcands.append(cs)
 				simplecands.append(cs.difference(self.complex))
-		f.close()
 		
 		cands = []
 		for vec in selected:
 			cands.append(set(vec))
 		
 		control = []
-		for i in range(0, len(data)):
+		for i in range(0, len(self.data)):
 			gold_label = gold[i]
 			pred_label = identified[i]
 			ac = goldcands[i]
@@ -488,7 +485,7 @@ class PLUMBErr:
 		error4 = 0
 		error5 = 0
 		noerror = 0
-		for i in range(0, len(allcands)):
+		for i in range(0, len(self.data)):
 			gold_label = gold[i]
 			pred_label = identified[i]
 			ac = goldcands[i]
@@ -504,7 +501,7 @@ class PLUMBErr:
 			if len(cs)>0:
 				sub = cs[0]
 
-			if indicators[i]=='Ok':
+			if control[i]=='Ok':
 				if sub not in ac:
 					error4 += 1
 				elif sub not in sc:
