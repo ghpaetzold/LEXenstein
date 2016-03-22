@@ -523,3 +523,87 @@ class PLUMBErr:
 		@param ranked: A vector containing the selected candidates ranked in order of simplicity.
 		To produce the vector, one can run a Substitution Ranking approach from LEXenstein over the selected candidates provided.
 		"""
+		
+		#Create CWI gold-standard:
+		gold = []
+		for line in self.data:
+			if line[1] in self.complex:
+				gold.append(1)
+			else:
+				gold.append(0)
+				
+		#Find errors of type 2:
+		error2a = 0
+		error2b = 0
+		for i in range(0, len(gold)):
+			g = gold[i]
+			p = identified[i]
+			if p==0 and g==1:
+				error2a += 1
+			elif p==1 and g==0:
+				error2b += 1
+				
+		#Find errors of type 3:
+		error3a = 0
+		error3b = 0
+		
+		goldcands = []
+		simplecands = []
+		for line in self.data:
+				cs = set([cand.strip().split(':')[1].strip() for cand in line[3:]])
+				goldcands.append(cs)
+				simplecands.append(cs.difference(self.complex))
+		
+		cands = []
+		for vec in selected:
+			cands.append(set(vec))
+		
+		for i in range(0, len(self.data)):
+			gold_label = gold[i]
+			pred_label = identified[i]
+			ac = goldcands[i]
+			sc = simplecands[i]
+			cs = cands[i]
+			if gold_label==0:
+				sc = set([])
+			else:
+				if pred_label==0:
+					cs = set([])
+			ainter = ac.intersection(cs)
+			sinter = sc.intersection(cs)
+
+			if gold_label==1:
+				if len(ainter)==0:
+					error3a += 1
+				elif len(sinter)==0:
+					error3b += 1
+		
+		#Find errors of type 4 and 5:
+		error4 = 0
+		error5 = 0
+		noerror = 0
+		for i in range(0, len(self.data)):
+			gold_label = gold[i]
+			pred_label = identified[i]
+			ac = goldcands[i]
+			sc = simplecands[i]
+			cs = ranked[i]
+			if gold_label==0:
+				sc = set([])
+			else:
+				if pred_label==0:
+					cs = set([])
+
+			sub = ''
+			if len(cs)>0:
+				sub = cs[0]
+
+			if gold_label==1:
+				if sub not in ac:
+					error4 += 1
+				elif sub not in sc:
+					error5 += 1
+				else:
+					noerror += 1
+					
+		return error2a, error2b, error3a, error3b, error4, error5, noerror
