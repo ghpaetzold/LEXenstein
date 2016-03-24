@@ -519,6 +519,7 @@ class PLUMBErr:
 					report[i].add('5')
 				else:
 					noerror += 1
+					report[i].add('1')
 					
 		#Create error count map:
 		counts = {}
