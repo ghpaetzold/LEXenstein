@@ -420,6 +420,9 @@ class PLUMBErr:
 		To produce the vector, one can run a Substitution Ranking approach from LEXenstein over the selected candidates provided.
 		"""
 		
+		#Initialize report:
+		report = []
+		
 		#Create CWI gold-standard:
 		gold = []
 		for line in self.data:
@@ -432,12 +435,16 @@ class PLUMBErr:
 		error2a = 0
 		error2b = 0
 		for i in range(0, len(gold)):
+			errors = set([])
 			g = gold[i]
 			p = identified[i]
 			if p==0 and g==1:
 				error2a += 1
+				errors.add('2A')
 			elif p==1 and g==0:
 				error2b += 1
+				errors.add('2B')
+			report.append(errors)
 				
 		#Find errors of type 3:
 		error3a = 0
@@ -472,9 +479,11 @@ class PLUMBErr:
 			if gold_label==1:
 				if len(ainter)==0:
 					error3a += 1
+					report[i].add('3A')
 					control.append('Error')
 				elif len(sinter)==0:
 					error3b += 1
+					report[i].add('3B')
 					control.append('Error')
 				else:
 					control.append('Ok')
@@ -504,12 +513,24 @@ class PLUMBErr:
 			if control[i]=='Ok':
 				if sub not in ac:
 					error4 += 1
+					report[i].add('4')
 				elif sub not in sc:
 					error5 += 1
+					report[i].add('5')
 				else:
 					noerror += 1
 					
-		return error2a, error2b, error3a, error3b, error4, error5, noerror
+		#Create error count map:
+		counts = {}
+		counts['2A'] = error2a
+		counts['2B'] = error2b
+		counts['3A'] = error3a
+		counts['3B'] = error2b
+		counts['4'] = error4
+		counts['5'] = error5
+		counts['1'] = noerror
+		
+		return report, counts
 		
 	def nonCumulativeAnalysis(self, identified, selected, ranked):
 		"""
@@ -522,7 +543,11 @@ class PLUMBErr:
 		To produce the vector, one can pair a Substitution Generation and a Substitution Selection approach from LEXenstein.
 		@param ranked: A vector containing the selected candidates ranked in order of simplicity.
 		To produce the vector, one can run a Substitution Ranking approach from LEXenstein over the selected candidates provided.
+		@return: A report vector containing the errors made in each instance of the dataset, as well as a map containing total error counts for the entire dataset.
 		"""
+		
+		#Initialize report:
+		report = []
 		
 		#Create CWI gold-standard:
 		gold = []
@@ -536,12 +561,16 @@ class PLUMBErr:
 		error2a = 0
 		error2b = 0
 		for i in range(0, len(gold)):
+			errors = set([])
 			g = gold[i]
 			p = identified[i]
 			if p==0 and g==1:
 				error2a += 1
+				errors.add('2A')
 			elif p==1 and g==0:
 				error2b += 1
+				errors.add('2B')
+			report.append(errors)
 				
 		#Find errors of type 3:
 		error3a = 0
@@ -570,8 +599,10 @@ class PLUMBErr:
 			if gold_label==1:
 				if len(ainter)==0:
 					error3a += 1
+					report[i].add('3A')
 				elif len(sinter)==0:
 					error3b += 1
+					report[i].add('3B')
 		
 		#Find errors of type 4 and 5:
 		error4 = 0
@@ -591,9 +622,22 @@ class PLUMBErr:
 			if gold_label==1:
 				if sub not in ac:
 					error4 += 1
+					report[i].add('4')
 				elif sub not in sc:
 					error5 += 1
+					report[i].add('5')
 				else:
 					noerror += 1
-					
-		return error2a, error2b, error3a, error3b, error4, error5, noerror
+					report[i].add('1')
+		
+		#Create error count map:
+		counts = {}
+		counts['2A'] = error2a
+		counts['2B'] = error2b
+		counts['3A'] = error3a
+		counts['3B'] = error2b
+		counts['4'] = error4
+		counts['5'] = error5
+		counts['1'] = noerror
+		
+		return report, counts
