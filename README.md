@@ -22,3 +22,7 @@ copy the “lexenstein” folder into the folder of your project.
 For instructions, and examples, take a look at the [LEXenstein Manual](https://github.com/ghpaetzold/LEXenstein/raw/master/manual/LEXenstein%20Manual.pdf).
 
 You can also access [LEXenstein's API](http://ghpaetzold.github.io/lexenstein/documentation/).
+
+# Resources:
+
+Download the [resources](http://www.quest.dcs.shef.ac.uk/lexenstein/LEXenstein_resources.tar.gz) used in the examples from the LEXenstein Manual!

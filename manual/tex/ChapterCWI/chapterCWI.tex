@@ -28,8 +28,8 @@ fe.addSenseCountFeature('Simplicity')
 
 mli = MachineLearningIdentifier(fe)
 mli.calculateTrainingFeatures('train_cwictor_corpus.txt')
-mli.calculateTestingFeatures('test_victor_corpus.txt')
-mli.selectKBestFeatures(k=5)
+mli.calculateTestingFeatures('test_cwictor_corpus.txt')
+mli.selectKBestFeatures(k=2)
 mli.trainDecisionTreeClassifier()
 
 labels = mli.identifyComplexWords()
@@ -56,7 +56,7 @@ from lexenstein.identifiers import *
 
 li = LexiconIdentifier('lexicon.txt', 'simple')
 
-labels = li.identifyComplexWords('test_victor_corpus.txt')
+labels = li.identifyComplexWords('test_cwictor_corpus.txt')
 \end{lstlisting}
 
 
@@ -85,7 +85,7 @@ fe.addSenseCountFeature('Simplicity')
 
 ti = ThresholdIdentifier(fe)
 ti.calculateTrainingFeatures('train_cwictor_corpus.txt')
-ti.calculateTestingFeatures('test_victor_corpus.txt')
+ti.calculateTestingFeatures('test_cwictor_corpus.txt')
 ti.trainIdentifierBruteForce(1)
 
 labels = ti.identifyComplexWords()

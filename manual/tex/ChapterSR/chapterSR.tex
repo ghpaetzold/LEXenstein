@@ -26,14 +26,14 @@ During instantiation, the MetricRanker requires only a configured FeatureEstimat
 
 \subsection{Example}
 
-The code snippet below shows the WSDSelector class being used:
+The code snippet below shows the MetricRanker class being used:
 
 \begin{lstlisting}
 from lexenstein.features import *
 from lexenstein.rankers import *
 
 fe = FeatureEstimator()
-fe.addCollocationalFeature('lm.txt', 0, 0, 'Complexity')
+fe.addCollocationalFeature('lm.bin', 0, 0, 'Complexity')
 fe.addLengthFeature('Complexity')
 fe.addSenseCountFeature('Simplicity')
 
@@ -69,7 +69,7 @@ from lexenstein.features import *
 from lexenstein.rankers import *
 
 fe = FeatureEstimator()
-fe.addCollocationalFeature('lm.txt', 0, 0, 'Complexity')
+fe.addCollocationalFeature('lm.bin', 0, 0, 'Complexity')
 fe.addLengthFeature('Complexity')
 fe.addSenseCountFeature('Simplicity')
 
@@ -115,7 +115,7 @@ from lexenstein.features import *
 from lexenstein.rankers import *
 
 fe = FeatureEstimator()
-fe.addCollocationalFeature('lm.txt', 0, 0, 'Complexity')
+fe.addCollocationalFeature('lm.bin', 0, 0, 'Complexity')
 fe.addLengthFeature('Complexity')
 fe.addSenseCountFeature('Simplicity')
 
@@ -155,7 +155,7 @@ from lexenstein.features import *
 from lexenstein.rankers import *
 
 fe = FeatureEstimator()
-fe.addCollocationalFeature('lm.txt', 0, 0, 'Complexity')
+fe.addCollocationalFeature('lm.bin', 0, 0, 'Complexity')
 fe.addLengthFeature('Complexity')
 fe.addSenseCountFeature('Simplicity')
 
@@ -198,7 +198,7 @@ The code snippet below shows the BiranRanker class being used:
 \begin{lstlisting}
 from lexenstein.rankers import *
 
-br = BiranRanker('lmc.bin', 'lms.bin')
+br = BiranRanker('lm_complex.bin', 'lm_simple.bin')
 rankings = br.getRankings('lexmturk.txt')
 \end{lstlisting}
 
@@ -261,7 +261,7 @@ The code snippet below shows the YamamotoRanker class being used:
 \begin{lstlisting}
 from lexenstein.rankers import *
 
-yr = YamamotoRanker('lms.bin', 'cooc_model.txt')
+yr = YamamotoRanker('lm_simple.bin', 'cooc_model.txt')
 rankings = yr.getRankings('lexmturk.txt')
 \end{lstlisting}
 
@@ -303,7 +303,7 @@ The code snippet below shows the BottRanker class being used:
 \begin{lstlisting}
 from lexenstein.rankers import *
 
-br = BottRanker('lms.bin')
+br = BottRanker('lm_simple.bin')
 rankings = br.getRankings('lexmturk.txt')
 \end{lstlisting}
 
@@ -334,7 +334,7 @@ from lexenstein.features import *
 from lexenstein.rankers import *
 
 fe = FeatureEstimator()
-fe.addCollocationalFeature('lm.txt', 0, 0, 'Complexity')
+fe.addCollocationalFeature('lm.bin', 0, 0, 'Complexity')
 fe.addLengthFeature('Complexity')
 fe.addSenseCountFeature('Simplicity')
 

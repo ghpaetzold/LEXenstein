@@ -12,7 +12,7 @@ Since one of the goals of LEXenstein is to facilitate the benchmarking LS approa
 
 \section{IdentifierEvaluator}
 
-Provides evaluation metrics for CWI methods. It requires a gold-standard in the CWICTOR format and a set of binary word complexity labels. The labels must have value $1$ for complex words, and $0$ otherwise. It returns the Precision, Recall and F-measure, where Precision is the proportion of correctly labeled words, Recall the proportion of complex words identified, and F-measure their harmonic mean.
+Provides evaluation metrics for CWI methods. It requires a gold-standard in the CWICTOR format and a set of binary word complexity labels. The labels must have value $1$ for complex words, and $0$ otherwise. It returns the Accuracy, Precision, Recall, F-score and G-score, which is the harmonic mean between Accuracy and Recall.
 
 The code snippet below shows the IdentifierEvaluator class being used:
 
@@ -21,10 +21,10 @@ from lexenstein.identifiers import *
 from lexenstein.evaluators import *
 
 li = LexiconIdentifier('lexicon.txt', 'simple')
-labels = li.identifyComplexWords('cwictor_gold.txt')
+labels = li.identifyComplexWords('test_cwictor_corpus.txt')
 
 ie = IdentifierEvaluator()
-precision, recall, fmeasure = ie.evaluateIdentifier('cwictor_gold.txt', labels)
+accuracy, precision, recall, fmean, gmean = ie.evaluateIdentifier('test_cwictor_corpus.txt', labels)
 \end{lstlisting}
 
 
@@ -46,14 +46,17 @@ Provides evaluation metrics for SG methods. It requires a gold-standard in the V
 The code snippet below shows the GeneratorEvaluator class being used:
 
 \begin{lstlisting}
+from lexenstein.spelling import *
 from lexenstein.generators import *
 from lexenstein.evaluators import *
 from lexenstein.morphadorner import *
 
 m = MorphAdornerToolkit('./morph/')
 
-kg = WordnetGenerator(m)
-subs = kg.getSubstitutions('lexmturk.txt')
+nc = NorvigCorrector('spelling_model.bin', format='bin')
+
+wg = WordnetGenerator(m, nc, 'pos_model.tagger', 'stanford-postagger.jar', '/usr/bin/java')
+subs = wg.getSubstitutions('lexmturk.txt')
 
 ge = GeneratorEvaluator()
 potential, precision, recall, fmeasure = ge.evaluateGenerator('lexmturk.txt', subs)
@@ -85,8 +88,8 @@ from lexenstein.morphadorner import *
 
 m = MorphAdornerToolkit('./morph/')
 
-kg = WordnetGenerator(m)
-subs = kg.getSubstitutions('lexmturk.txt')
+wg = WordnetGenerator(m, nc, 'pos_model.tagger', 'stanford-postagger.jar', '/usr/bin/java')
+subs = wg.getSubstitutions('lexmturk.txt')
 
 biranselector = BiranSelector('cooc_model.txt')
 selected = biranselector.selectCandidates(subs, 'lexmturk.txt', 0.01, 0.75)
@@ -114,7 +117,7 @@ from lexenstein.rankers import *
 from lexenstein.features import *
 
 fe = FeatureEstimator()
-fe.addCollocationalFeature('lm.txt', 0, 0, 'Complexity')
+fe.addCollocationalFeature('lm.bin', 0, 0, 'Complexity')
 
 mr = MetricRanker(fe)
 rankings = mr.getRankings('lexmturk.txt', 0)
@@ -150,15 +153,15 @@ from lexenstein.morphadorner import *
 
 m = MorphAdornerToolkit('./morph/')
 
-kg = WordnetGenerator(m)
-subs = kg.getSubstitutions('lexmturk.txt')
+wg = WordnetGenerator(m, nc, 'pos_model.tagger', 'stanford-postagger.jar', '/usr/bin/java')
+subs = wg.getSubstitutions('lexmturk.txt')
 
 bs = BiranSelector('cooc_model.txt')
 selected = bs.selectCandidates(subs, 'lexmturk.txt', 0.01, 0.75)
 bs.toVictorFormat('lexmturk.txt', selected, 'victor.txt', addTargetAsCandidate=True)
 
 fe = FeatureEstimator()
-fe.addCollocationalFeature('lm.txt', 0, 0, 'Complexity')
+fe.addCollocationalFeature('lm.bin', 0, 0, 'Complexity')
 
 mr = MetricRanker(fe)
 rankings = mr.getRankings('victor.txt', 0)

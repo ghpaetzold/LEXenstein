@@ -100,23 +100,62 @@ from lexenstein.morphadorner import MorphAdornerToolkit
 from lexenstein.features import *
 
 m = MorphAdornerToolkit('./morph/')
+
+#Numerical features:
 fe = FeatureEstimator(norm=False)
 fe.addLexiconFeature('lexicon.txt', 'Simplicity')
-fe.addWordVectorValues('model.bin', 300, 'Simplicity')
 fe.addLengthFeature('Complexity')
 fe.addSyllableFeature(m, 'Complexity')
 fe.addCollocationalFeature('lm.bin', 2, 2, 'Simplicity')
+fe.addFrequencyCollocationalFeature('ngrams.bin', 2, 2, 'Simplicity')
+fe.addTaggedFrequencyCollocationalFeature('pos_ngrams.bin', 2, 2, './pos_model.tagger', './stanford-postagger.jar', '/usr/bin/java', pos_tag='treebank', 'Simplicity')
+fe.addBinaryTaggedFrequencyCollocationalFeature('pos_ngrams.bin', 2, 2, './pos_model.tagger', './stanford-postagger.jar', '/usr/bin/java', pos_tag='treebank', 'Simplicity')
+fe.addPopCollocationalFeature('lm.bin', 2, 2, 'Simplicity')
+fe.addNGramProbabilityFeature('lm.bin', 2, 2, 'Simplicity')
+fe.addNGramFrequencyFeature('ngrams.bin', 2, 2, 'Simplicity')
+fe.addBinaryNGramFrequencyFeature('ngrams.bin', 2, 2, 'Simplicity')
+fe.addPopNGramProbabilityFeature('lm.bin', 2, 2, 'Simplicity')
+fe.addPopNGramFrequencyFeature('ngrams.bin', 2, 2, 'Simplicity')
 fe.addNGramFrequencyFeature('lm.bin', 3, 0, 'Simplicity')
 fe.addSentenceProbabilityFeature('lm.bin', 'Simplicity')
 fe.addSenseCountFeature('Simplicity')
 fe.addSynonymCountFeature('Simplicity')
+fe.addIsSynonymFeature('Simplicity')
 fe.addHypernymCountFeature('Simplicity')
+fe.addIsHypernymFeature('Simplicity')
 fe.addHyponymCountFeature('Simplicity')
+fe.addIsHyponymFeature('Simplicity')
 fe.addMinDepthFeature('Complexity')
 fe.addMaxDepthFeature('Complexity')
+fe.addAverageDepthFeature('Complexity')
 fe.addTranslationProbabilityFeature('translation_probs.bin', 'Simplicity')
-fe.addWordVectorSimilarityFeature('word_vectors.bin', 'Simplicity')
-fe.addTargetPOSTagProbability('cond_prob.bin', 'pos_model.bin', 'stanford-postagger.jar', '/usr/bin/java', 'Simplicity')
+fe.addWordVectorValues('embeddings_model.bin', 100, 'Simplicity')
+fe.addWordVectorSimilarityFeature('embeddings_model.bin', 'Simplicity')
+fe.addTaggedWordVectorSimilarityFeature('tagged_embeddings_model.bin', './pos_model.tagger', './stanford-postagger.jar', '/usr/bin/java', 'paetzold', 'Simplicity')
+fe.addWordVectorContextSimilarityFeature('embeddings_model.bin', './pos_model.tagger', './stanford-postagger.jar', '/usr/bin/java', 'Simplicity')
+fe.addTaggedWordVectorContextSimilarityFeature('tagged_embeddings_model.bin', './pos_model.tagger', './stanford-postagger.jar', '/usr/bin/java', 'paetzold', 'Simplicity')
+fe.addTargetPOSTagProbability('cond_prob.bin', './pos_model.tagger', './stanford-postagger.jar', '/usr/bin/java', 'Simplicity')
+fe.addSubjectDependencyProbabilityFeature('dep_lm.bin', './stanford-parser.jar', './dep_models.jar', '/usr/bin/java', 'Simplicity')
+fe.addObjectDependencyProbabilityFeature('dep_lm.bin', './stanford-parser.jar', './dep_models.jar', '/usr/bin/java', 'Simplicity')
+fe.addAllDependencyProbabilityFeature('dep_lm.bin', './stanford-parser.jar', './dep_models.jar', '/usr/bin/java', 'Simplicity')
+fe.addBinarySubjectDependencyFeature('dep_counts.bin', './stanford-parser.jar', './dep_models.jar', '/usr/bin/java', 'Simplicity')
+fe.addBinaryObjectDependencyFeature('dep_counts.bin', './stanford-parser.jar', './dep_models.jar', '/usr/bin/java', 'Simplicity')
+fe.addBinaryAllDependencyFeature('dep_counts.bin', './stanford-parser.jar', './dep_models.jar', '/usr/bin/java', 'Simplicity')
+fe.addSubjectDependencyFrequencyFeature('dep_counts.bin', './stanford-parser.jar', './dep_models.jar', '/usr/bin/java', 'Simplicity')
+fe.addObjectDependencyFrequencyFeature('dep_counts.bin', './stanford-parser.jar', './dep_models.jar', '/usr/bin/java', 'Simplicity')
+fe.addAllDependencyFrequencyFeature('dep_counts.bin', './stanford-parser.jar', './dep_models.jar', '/usr/bin/java', 'Simplicity')
+fe.addBackoffBehaviorNominalFeature('ngrams.bin', 'Simplicity')
+fe.addImageSearchCountFeature(00000, 'Simplicity')
+fe.addMorphologicalFeature(my_dict, 'my_feature', 'Simplicity')
+
+#Nominal features:
+fe.addNullLinkNominalFeature('./stanford-parser.jar', './dep_models.jar', '/usr/bin/java', 'Simplicity')
+fe.addCandidateNominalFeature()
+fe.addNgramNominalFeature(2, 2)
+fe.addCandidatePOSNominalFeature('./pos_model.tagger', './stanford-postagger.jar', '/usr/bin/java', pos_type='treebank')
+fe.addPOSNgramNominalFeature(2, 2, './pos_model.tagger', './stanford-postagger.jar', '/usr/bin/java', pos_type='treebank')
+fe.addPOSNgramWithCandidateNominalFeature(2, 2, './pos_model.tagger', './stanford-postagger.jar', '/usr/bin/java', pos_type='treebank')
+
 feats = fe.calculateFeatures('lexmturk.txt', format='victor')
 \end{lstlisting}
 
@@ -133,6 +172,7 @@ In the Section that follows, we elaborate on how to produce the resources requir
 
 
 \section{Producing Feature Resources}
+\label{prodfeatures}
 
 In this Section, we provide tutorials on how to produce several resources required by LEXenstein's features. They are:
 
@@ -176,7 +216,7 @@ In this Section, we provide tutorials on how to produce several resources requir
 			
 	\item \textbf{Translation Probability Files}: Must be a Python shelve file created with the ``addTranslationProbabilitiesFileToShelve'' function in the Utilities module of LEXenstein (lexenstein.util). For more detailed instructions, please refer to the documentation of the ``addTranslationProbabilitiesFileToShelve'' function.
 	
-	\item \textbf{Word Vector Models}: Must be a binary file created through the use of word$2$vec. For more information on how to create them, please follow the instructions on the website of the application at \url{https://code.google.com/p/word2vec/}.
+	\item \textbf{Word Embedding Models}: Must be a binary file created through the use of word$2$vec. For more information on how to create them, please follow the instructions on the website of the application at \url{https://code.google.com/p/word2vec/}.
 	
 	\item \textbf{Tagged Word Vector Models}: To create a tagged word vector model, you must:
 	

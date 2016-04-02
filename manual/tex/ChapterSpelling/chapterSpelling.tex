@@ -7,12 +7,11 @@ LEXenstein's Spelling Correction module (lexenstein.spelling) allows for one to 
 from lexenstein.spelling import *
 
 nc = NorvigCorrector('corpus.txt', format='text')
-nc.saveBinaryModel('model.bin')
-nc = NorvigCorrector('model.bin', format='bin')
+nc.saveBinaryModel('spelling_model.bin')
+nc = NorvigCorrector('spelling_model.bin', format='bin')
 print(nc.correct('mystake'))
 print(nc.correct('speling'))
-print(nc.correct('beatiful'))
-
+print(nc.correct('beauriful'))
 \end{lstlisting}
 
 The output produced by the script above will be:

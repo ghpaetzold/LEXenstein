@@ -46,13 +46,16 @@ To learn how to use word$2$vec, please refer to their documentation at \url{http
 
 \subsection{Example}
 
-The code snippet below shows the GlavasGenerator class being used:
+The code snippet below shows the PaetzoldGenerator class being used:
 
 \begin{lstlisting}
 from lexenstein.generators import *
+from lexenstein.spelling import *
 
-kg = GlavasGenerator('model.bin')
-subs = kg.getSubstitutions('lexmturk.txt', 10)
+nc = NorvigCorrector('spelling_model.bin', format='bin')
+
+pg = PaetzoldGenerator('tagged_embeddings_model.bin', nc, 'pos_model.tagger', 'stanford-postagger.jar', '/usr/bin/java')
+subs = pg.getSubstitutions('lexmturk.txt', 10)
 \end{lstlisting}
 
 
@@ -82,7 +85,7 @@ The code snippet below shows the GlavasGenerator class being used:
 \begin{lstlisting}
 from lexenstein.generators import *
 
-kg = GlavasGenerator('model.bin')
+kg = GlavasGenerator('embeddings_model.bin')
 subs = kg.getSubstitutions('lexmturk.txt', 10)
 \end{lstlisting}
 
@@ -131,7 +134,7 @@ from lexenstein.morphadorner import MorphAdornerToolkit
 from lexenstein.generators import *
 from lexenstein.spelling import *
 
-nc = NorvigCorrector('corpus.txt')
+nc = NorvigCorrector('spelling_model.bin', format='bin')
 
 m = MorphAdornerToolkit('./morph/')
 
@@ -197,7 +200,7 @@ from lexenstein.morphadorner import MorphAdornerToolkit
 from lexenstein.generators import *
 from lexenstein.spelling import *
 
-nc = NorvigCorrector('corpus.txt')
+nc = NorvigCorrector('spelling_model.bin', format='bin')
 
 m = MorphAdornerToolkit('./morph/')
 
@@ -243,7 +246,7 @@ from lexenstein.morphadorner import MorphAdornerToolkit
 from lexenstein.generators import *
 from lexenstein.spelling import *
 
-nc = NorvigCorrector('corpus.txt')
+nc = NorvigCorrector('spelling_model.bin', format='bin')
 
 m = MorphAdornerToolkit('./morph/')
 
@@ -282,11 +285,11 @@ from lexenstein.morphadorner import MorphAdornerToolkit
 from lexenstein.generators import *
 from lexenstein.spelling import *
 
-nc = NorvigCorrector('corpus.txt')
+nc = NorvigCorrector('spelling_model.bin', format='bin')
 
 m = MorphAdornerToolkit('./morph/')
 
-wg = WordnetGenerator(m, nc, 'english-left3words-distsim.tagger', 'stanford-postagger.jar', '/usr/bin/java')
+wg = WordnetGenerator(m, nc, 'pos_model.tagger', 'stanford-postagger.jar', '/usr/bin/java')
 subs = wg.getSubstitutions('lexmturk.txt')
 \end{lstlisting}
 
@@ -330,10 +333,10 @@ from lexenstein.morphadorner import MorphAdornerToolkit
 from lexenstein.generators import *
 from lexenstein.spelling import *
 
-nc = NorvigCorrector('corpus.txt')
+nc = NorvigCorrector('spelling_model.bin', format='bin')
 
 m = MorphAdornerToolkit('./morph/')
 
-bg = BiranGenerator(m, 'vocabc.txt', 'vocabs.txt', 'lmc.bin', 'lms.bin', nc, 'english-left3words-distsim.tagger', 'stanford-postagger.jar', '/usr/bin/java')
+bg = BiranGenerator(m, 'vocab_complex.txt', 'vocab_simple.txt', 'lm_complex.bin', 'lm_simple.bin', nc, 'pos_model.tagger', 'stanford-postagger.jar', '/usr/bin/java')
 subs = bg.getSubstitutions('lexmturk.txt')
 \end{lstlisting}

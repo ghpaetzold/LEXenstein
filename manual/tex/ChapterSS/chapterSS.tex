@@ -40,13 +40,16 @@ The code snippet below shows the WordVectorSelector class being used:
 from lexenstein.morphadorner import MorphAdornerToolkit
 from lexenstein.generators import *
 from lexenstein.selectors import *
+from lexenstein.spelling import *
+
+nc = NorvigCorrector('spelling_model.bin', format='bin')
 
 m = MorphAdornerToolkit('./morph/')
 
-kg = KauchakGenerator(m, 'parallel.txt', 'alignments.txt', 'stop_words.txt')
-subs = kg.getSubstitutions('lexmturk.txt')
+wg = WordnetGenerator(m, nc, 'pos_model.tagger', 'stanford-postagger.jar', '/usr/bin/java')
+subs = wg.getSubstitutions('lexmturk.txt')
 
-wordvecselector = WordVectorSelector('word_vector_model.bin')
+wordvecselector = WordVectorSelector('embeddings_model.bin', 'pos_model.tagger', 'stanford-postagger.jar', '/usr/bin/java')
 selected = wordvecselector.selectCandidates(subs, 'lexmturk.txt', proportion=0.75, stop_words_file='stop_words.txt', onlyInformative=True, keepTarget=True, onePerWord=True)
 \end{lstlisting}
 
@@ -96,14 +99,17 @@ The code snippet below shows the BiranSelector class being used:
 from lexenstein.morphadorner import MorphAdornerToolkit
 from lexenstein.generators import *
 from lexenstein.selectors import *
+from lexenstein.spelling import *
+
+nc = NorvigCorrector('spelling_model.bin', format='bin')
 
 m = MorphAdornerToolkit('./morph/')
 
-kg = KauchakGenerator(m, 'parallel.txt', 'alignments.txt', 'stop_words.txt')
-subs = kg.getSubstitutions('lexmturk.txt')
+wg = WordnetGenerator(m, nc, 'pos_model.tagger', 'stanford-postagger.jar', '/usr/bin/java')
+subs = wg.getSubstitutions('lexmturk.txt')
 
 biranselector = BiranSelector('cooc_model.txt')
-selected = biranselector.selectCandidates(subs, 'lexmturk.txt', 0.01, 0.75)
+selected = biranselector.selectCandidates(subs, 'lexmturk.txt', common_distance=0.01, candidate_distance=0.9)
 \end{lstlisting}
 
 
@@ -135,11 +141,14 @@ The code snippet below shows the WSDSelector class being used:
 from lexenstein.morphadorner import MorphAdornerToolkit
 from lexenstein.generators import *
 from lexenstein.selectors import *
+from lexenstein.spelling import *
+
+nc = NorvigCorrector('spelling_model.bin', format='bin')
 
 m = MorphAdornerToolkit('./morph/')
 
-kg = KauchakGenerator(m, 'parallel.txt', 'alignments.txt', 'stop_words.txt')
-subs = kg.getSubstitutions('lexmturk.txt')
+wg = WordnetGenerator(m, nc, 'pos_model.tagger', 'stanford-postagger.jar', '/usr/bin/java')
+subs = wg.getSubstitutions('lexmturk.txt')
 
 wsdselector = WSDSelector('lesk')
 selected = wsdselector.selectCandidates(subs, 'lexmturk.txt')
@@ -160,32 +169,35 @@ selected = wsdselector.selectCandidates(subs, 'lexmturk.txt')
 
 
 
-\section{NunesSelector}
+\section{AluisioSelector}
 
-Employs an SS strategy similar to the one introduced by \cite{Nunes2013}. It selects only those candidates of which the most likely POS tag is that of the target word. The selector initially parses a given sentence, and retrieves the POS tag of the target word. Using a POS tag conditional probability model, it then retrieves the most likely tag of each candidate, and checks to see if it matches with the target's tag.
+Employs an SS strategy similar to the one introduced by \cite{Aluisio09}. It selects only those candidates which can assume the same POS tag as the target word. The selector initially parses a given sentence, and retrieves the POS tag of the target word. Using a POS tag conditional probability model, it then retrieves the set of possible tags of each candidate, and checks to see if the target's tag is in it.
 
 \subsection{Parameters}
 
-During instantiation, the NunesSelector class requires for a POS tag conditional probability model, a binary POS tagging model, the path to a compiled version of the Stanford Tagger, and the path to the user's java installation.
+During instantiation, the AluisioSelector class requires for a POS tag conditional probability model, a binary POS tagging model, the path to a compiled version of the Stanford Tagger, and the path to the user's java installation.
 
 The tagging model and tagger can both be downloaded from \url{http://nlp.stanford.edu/software/tagger.shtml}. The conditional probability model required must be created by the ``createConditionalProbabilityModel'' function from LEXenstein's Utilities module (lexenstein.utilities). For detailed instructions, please refer to the documentation of the ``createConditionalProbabilityModel'' function.
 
 \subsection{Example}
 
-The code snippet below shows the NunesSelector class being used:
+The code snippet below shows the AluisioSelector class being used:
 
 \begin{lstlisting}
 from lexenstein.morphadorner import MorphAdornerToolkit
 from lexenstein.generators import *
 from lexenstein.selectors import *
+from lexenstein.spelling import *
+
+nc = NorvigCorrector('spelling_model.bin', format='bin')
 
 m = MorphAdornerToolkit('./morph/')
 
-kg = KauchakGenerator(m, 'parallel.txt', 'alignments.txt', 'stop_words.txt')
-subs = kg.getSubstitutions('lexmturk.txt')
+wg = WordnetGenerator(m, nc, 'pos_model.tagger', 'stanford-postagger.jar', '/usr/bin/java')
+subs = wg.getSubstitutions('lexmturk.txt')
 
-nunesselector = NunesSelector('cond_prob.bin', 'pos_model.bin', 'stanford-tagger.jar', '/usr/bin/java')
-selected = nunesselector.selectCandidates(subs, 'lexmturk.txt')
+aluisioselector = AluisioSelector('cond_prob.bin', 'pos_model.tagger', 'stanford-postagger.jar', '/usr/bin/java')
+selected = aluisioselector.selectCandidates(subs, 'lexmturk.txt')
 \end{lstlisting}
 
 
@@ -230,11 +242,14 @@ The code snippet below shows the BelderSelector class being used:
 from lexenstein.morphadorner import MorphAdornerToolkit
 from lexenstein.generators import *
 from lexenstein.selectors import *
+from lexenstein.spelling import *
+
+nc = NorvigCorrector('spelling_model.bin', format='bin')
 
 m = MorphAdornerToolkit('./morph/')
 
-kg = KauchakGenerator(m, 'parallel.txt', 'alignments.txt', 'stop_words.txt')
-subs = kg.getSubstitutions('lexmturk.txt')
+wg = WordnetGenerator(m, nc, 'pos_model.tagger', 'stanford-postagger.jar', '/usr/bin/java')
+subs = wg.getSubstitutions('lexmturk.txt')
 
 belderselector = BelderSelector('clusters.txt')
 selected = belderselector.selectCandidates(subs, 'lexmturk.txt')
@@ -265,7 +280,10 @@ from lexenstein.morphadorner import MorphAdornerToolkit
 from lexenstein.generators import *
 from lexenstein.selectors import *
 from lexenstein.features import *
+from lexenstein.spelling import *
 from lexenstein.rankers import *
+
+nc = NorvigCorrector('spelling_model.bin', format='bin')
 
 fe = FeatureEstimator()
 fe.addCollocationalFeature('lm.txt', 0, 0, 'Complexity')
@@ -273,8 +291,8 @@ fe.addSenseCountFeature('Simplicity')
 
 m = MorphAdornerToolkit('./morph/')
 
-kg = KauchakGenerator(m, 'parallel.txt', 'alignments.txt', 'stop_words.txt')
-subs = kg.getSubstitutions('lexmturk.txt')
+wg = WordnetGenerator(m, nc, 'pos_model.tagger', 'stanford-postagger.jar', '/usr/bin/java')
+subs = wg.getSubstitutions('lexmturk.txt')
 
 br = BoundaryRanker(fe)
 bs = BoundarySelector(br)
@@ -308,16 +326,19 @@ from lexenstein.morphadorner import MorphAdornerToolkit
 from lexenstein.generators import *
 from lexenstein.selectors import *
 from lexenstein.features import *
+from lexenstein.spelling import *
 from lexenstein.rankers import *
 
-fe = FeatureEstimator()
-fe.addCollocationalFeature('lm.txt', 0, 0, 'Complexity')
-fe.addSenseCountFeature('Simplicity')
+nc = NorvigCorrector('spelling_model.bin', format='bin')
 
 m = MorphAdornerToolkit('./morph/')
 
-kg = KauchakGenerator(m, 'parallel.txt', 'alignments.txt', 'stop_words.txt')
-subs = kg.getSubstitutions('lexmturk.txt')
+wg = WordnetGenerator(m, nc, 'pos_model.tagger', 'stanford-postagger.jar', '/usr/bin/java')
+subs = wg.getSubstitutions('lexmturk.txt')
+
+fe = FeatureEstimator()
+fe.addCollocationalFeature('lm.bin', 0, 0, 'Complexity')
+fe.addSenseCountFeature('Simplicity')
 
 br = SVMBoundaryRanker(fe)
 sbs = SVMBoundarySelector(br)
@@ -351,21 +372,24 @@ from lexenstein.morphadorner import MorphAdornerToolkit
 from lexenstein.generators import *
 from lexenstein.selectors import *
 from lexenstein.features import *
+from lexenstein.spelling import *
 from lexenstein.rankers import *
 
-fe = FeatureEstimator()
-fe.addCollocationalFeature('lm.txt', 0, 0, 'Complexity')
-fe.addSenseCountFeature('Simplicity')
+nc = NorvigCorrector('spelling_model.bin', format='bin')
 
 m = MorphAdornerToolkit('./morph/')
 
-kg = KauchakGenerator(m, 'parallel.txt', 'alignments.txt', 'stop_words.txt')
-subs = kg.getSubstitutions('lexmturk.txt')
+wg = WordnetGenerator(m, nc, 'pos_model.tagger', 'stanford-postagger.jar', '/usr/bin/java')
+subs = wg.getSubstitutions('lexmturk.txt')
 
-sr = SVMRanker(fe, './svm-rank/'
-ss = SVMRankSelector(br)
+fe = FeatureEstimator()
+fe.addCollocationalFeature('lm.bin', 0, 0, 'Complexity')
+fe.addSenseCountFeature('Simplicity')
+
+sr = SVMRanker(fe, './svm-rank/')
+ss = SVMRankSelector(sr)
 ss.trainSelectorWithCrossValidation('lexmturk.txt', 'f1.txt', 'm.txt', 5, 0.25, './temp/', 0)
-selected = bs.selectCandidates(subs, 'lexmturk.txt', 'f2.txt', 's1.txt', 'temp.txt', 0.25)
+selected = ss.selectCandidates(subs, 'lexmturk.txt', 'f2.txt', 's1.txt', 'temp.txt', 0.25)
 \end{lstlisting}
 
 
@@ -392,11 +416,14 @@ The code snippet below shows the VoidSelector class being used:
 \begin{lstlisting}
 from lexenstein.generators import *
 from lexenstein.selectors import *
+from lexenstein.spelling import *
+
+nc = NorvigCorrector('spelling_model.bin', format='bin')
 
 m = MorphAdornerToolkit('./morph/')
 
-kg = KauchakGenerator(m, 'parallel.txt', 'alignments.txt', 'stop_words.txt')
-subs = kg.getSubstitutions('lexmturk.txt')
+wg = WordnetGenerator(m, nc, 'pos_model.tagger', 'stanford-postagger.jar', '/usr/bin/java')
+subs = wg.getSubstitutions('lexmturk.txt')
 
 voidselector = VoidSelector()
 selected = voidselector.selectCandidates(subs, 'lexmturk.txt')
