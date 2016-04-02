@@ -169,3 +169,50 @@ rankings = mr.getRankings('victor.txt', 0)
 pe = PipelineEvaluator()
 precision, accuracy, changed = pe.evaluatePipeline('lexmturk.txt', rankings)
 \end{lstlisting}
+
+
+
+
+
+
+
+\section{PLUMBErr}
+
+Performs an error identification analysis of a simplifier. It uses the strategy described in \cite{paetzold2016plumberr} to identify and categorize the errors made by a simplifier. It requires for two resources: BenchLS and NNSVocab, both of which can be downloaded from \url{http://ghpaetzold.github.io/data/PLUMBErr.zip}.
+
+The code snippet below shows the PLUMBErr class being used:
+
+\begin{lstlisting}
+from lexenstein.generators import *
+from lexenstein.selectors import *
+from lexenstein.evaluators import *
+from lexenstein.rankers import *
+from lexenstein.features import *
+from lexenstein.morphadorner import *
+from lexenstein.identifiers import *
+from lexenstein.spelling import *
+
+nc = NorvigCorrector('spelling_model.bin', format='bin')
+
+m = MorphAdornerToolkit('./morph/')
+
+fe = FeatureEstimator()
+fe.addCollocationalFeature('lm.bin', 0, 0, 'Complexity')
+
+li = LexiconIdentifier('lexicon.txt', 'simple')
+identified = li.identifyComplexWords('BenchLS.txt')
+
+wg = WordnetGenerator(m, nc, './pos_model.tagger', './stanford-postagger.jar', '/usr/bin/java')
+subs = wg.getSubstitutions('BenchLS.txt')
+
+vs = VoidSelector()
+selected = vs.selectCandidates(subs, 'BenchLS.txt')
+vs.toVictorFormat('BenchLS.txt', selected, 'victor.txt', addTargetAsCandidate=True)
+
+mr = MetricRanker(fe)
+ranked = mr.getRankings('victor.txt', 0)
+
+pl = PLUMBErr('BenchLS.txt', 'NNSVocab.txt')
+report, counts = pl.cumulativeAnalysis(identified, selected, ranked)
+report, counts = pl.nonCumulativeAnalysis(identified, selected, ranked)
+\end{lstlisting}
