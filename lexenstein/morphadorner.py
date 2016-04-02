@@ -127,7 +127,7 @@ class MorphAdornerToolkit:
 		proc = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=False)
 		(out, err) = proc.communicate(input)
 
-		result = out.strip().split('\n')
+		result = [line.strip().split(' ') for line in out.strip().split('\n')]
 		return result
 
 

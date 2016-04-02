@@ -85,6 +85,42 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
+          <td><span class="summary-sig"><a name="POSNgramNominalFeature"></a><span class="summary-sig-name">POSNgramNominalFeature</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">data</span>,
+        <span class="summary-sig-arg">args</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.POSNgramNominalFeature">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="POSNgramWithCandidateNominalFeature"></a><span class="summary-sig-name">POSNgramWithCandidateNominalFeature</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">data</span>,
+        <span class="summary-sig-arg">args</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.POSNgramWithCandidateNominalFeature">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
           <td><span class="summary-sig"><a href="lexenstein.features.FeatureEstimator-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">norm</span>=<span class="summary-sig-default">False</span>)</span><br />
       Creates an instance of the FeatureEstimator class.</td>
@@ -134,6 +170,44 @@
       Adds a dependency probability feature to the estimator.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.addAllDependencyProbabilityFeature">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="lexenstein.features.FeatureEstimator-class.html#addAverageDepthFeature" class="summary-sig-name">addAverageDepthFeature</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">orientation</span>)</span><br />
+      Adds an average sense depth feature to the estimator.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.addAverageDepthFeature">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="lexenstein.features.FeatureEstimator-class.html#addBackoffBehaviorNominalFeature" class="summary-sig-name">addBackoffBehaviorNominalFeature</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">ngram_file</span>,
+        <span class="summary-sig-arg">orientation</span>)</span><br />
+      Adds a nominal language model backoff behavior nominal feature to the
+      estimator.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.addBackoffBehaviorNominalFeature">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -260,6 +334,44 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
+          <td><span class="summary-sig"><a name="addCandidateNominalFeature"></a><span class="summary-sig-name">addCandidateNominalFeature</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Adds a candidate nominal feature to the estimator.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.addCandidateNominalFeature">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="lexenstein.features.FeatureEstimator-class.html#addCandidatePOSNominalFeature" class="summary-sig-name">addCandidatePOSNominalFeature</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">pos_model</span>,
+        <span class="summary-sig-arg">stanford_tagger</span>,
+        <span class="summary-sig-arg">java_path</span>,
+        <span class="summary-sig-arg">pos_type</span>)</span><br />
+      Adds a candidate POS tag nominal feature to the estimator.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.addCandidatePOSNominalFeature">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
           <td><span class="summary-sig"><a href="lexenstein.features.FeatureEstimator-class.html#addCollocationalFeature" class="summary-sig-name">addCollocationalFeature</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">language_model</span>,
         <span class="summary-sig-arg">leftw</span>,
@@ -325,6 +437,25 @@
       Adds a hyponym count feature to the estimator.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.addHyponymCountFeature">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="lexenstein.features.FeatureEstimator-class.html#addImageSearchCountFeature" class="summary-sig-name">addImageSearchCountFeature</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">key</span>,
+        <span class="summary-sig-arg">orientation</span>)</span><br />
+      Adds an image search count feature to the estimator.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.addImageSearchCountFeature">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -465,6 +596,26 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
+          <td><span class="summary-sig"><a href="lexenstein.features.FeatureEstimator-class.html#addMorphologicalFeature" class="summary-sig-name">addMorphologicalFeature</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">dictionary</span>,
+        <span class="summary-sig-arg">description</span>,
+        <span class="summary-sig-arg">orientation</span>)</span><br />
+      Adds a generalized morphological feature to the estimator.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.addMorphologicalFeature">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
           <td><span class="summary-sig"><a href="lexenstein.features.FeatureEstimator-class.html#addNGramFrequencyFeature" class="summary-sig-name">addNGramFrequencyFeature</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">ngram_file</span>,
         <span class="summary-sig-arg">leftw</span>,
@@ -494,6 +645,48 @@
       Adds a n-gram probability feature to the estimator.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.addNGramProbabilityFeature">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="lexenstein.features.FeatureEstimator-class.html#addNgramNominalFeature" class="summary-sig-name">addNgramNominalFeature</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">leftw</span>,
+        <span class="summary-sig-arg">rightw</span>)</span><br />
+      Adds a n-gram nominal feature to the estimator.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.addNgramNominalFeature">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="lexenstein.features.FeatureEstimator-class.html#addNullLinkNominalFeature" class="summary-sig-name">addNullLinkNominalFeature</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">stanford_parser</span>,
+        <span class="summary-sig-arg">dependency_models</span>,
+        <span class="summary-sig-arg">java_path</span>,
+        <span class="summary-sig-arg">orientation</span>)</span><br />
+      Adds a null link nominal feature to the estimator The value will be 1
+      if there is at least one dependency link of which the candidate is 
+      part of, and 0 otherwise.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.addNullLinkNominalFeature">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -538,6 +731,53 @@
       Adds an object dependency probability feature to the estimator.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.addObjectDependencyProbabilityFeature">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="lexenstein.features.FeatureEstimator-class.html#addPOSNgramNominalFeature" class="summary-sig-name">addPOSNgramNominalFeature</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">leftw</span>,
+        <span class="summary-sig-arg">rightw</span>,
+        <span class="summary-sig-arg">pos_model</span>,
+        <span class="summary-sig-arg">stanford_tagger</span>,
+        <span class="summary-sig-arg">java_path</span>,
+        <span class="summary-sig-arg">pos_type</span>)</span><br />
+      Adds a POS n-gram nominal feature to the estimator.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.addPOSNgramNominalFeature">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="lexenstein.features.FeatureEstimator-class.html#addPOSNgramWithCandidateNominalFeature" class="summary-sig-name">addPOSNgramWithCandidateNominalFeature</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">leftw</span>,
+        <span class="summary-sig-arg">rightw</span>,
+        <span class="summary-sig-arg">pos_model</span>,
+        <span class="summary-sig-arg">stanford_tagger</span>,
+        <span class="summary-sig-arg">java_path</span>,
+        <span class="summary-sig-arg">pos_type</span>)</span><br />
+      Adds a candidate centered POS n-gram nominal feature to the 
+      estimator.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.addPOSNgramWithCandidateNominalFeature">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -847,6 +1087,24 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
+          <td><span class="summary-sig"><a href="lexenstein.features.FeatureEstimator-class.html#addWebSearchCountFeature" class="summary-sig-name">addWebSearchCountFeature</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">orientation</span>)</span><br />
+      Adds a web search count feature to the estimator.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.addWebSearchCountFeature">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
           <td><span class="summary-sig"><a href="lexenstein.features.FeatureEstimator-class.html#addWordVectorContextSimilarityFeature" class="summary-sig-name">addWordVectorContextSimilarityFeature</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">model</span>,
         <span class="summary-sig-arg">pos_model</span>,
@@ -931,6 +1189,42 @@
         <span class="summary-sig-arg">args</span>)</span></td>
           <td align="right" valign="top">
             <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.allDependencyProbabilityFeature">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="averageDepth"></a><span class="summary-sig-name">averageDepth</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">data</span>,
+        <span class="summary-sig-arg">args</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.averageDepth">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="backoffBehaviorNominalFeature"></a><span class="summary-sig-name">backoffBehaviorNominalFeature</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">data</span>,
+        <span class="summary-sig-arg">args</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.backoffBehaviorNominalFeature">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -1036,7 +1330,8 @@
         <tr>
           <td><span class="summary-sig"><a href="lexenstein.features.FeatureEstimator-class.html#calculateFeatures" class="summary-sig-name">calculateFeatures</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">corpus</span>,
-        <span class="summary-sig-arg">format</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">victor</code><code class="variable-quote">'</code></span>)</span><br />
+        <span class="summary-sig-arg">format</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">victor</code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">input</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">file</code><code class="variable-quote">'</code></span>)</span><br />
       Calculate the selected features over the candidates of a VICTOR or 
       CWICTOR corpus.</td>
           <td align="right" valign="top">
@@ -1062,6 +1357,42 @@
       Calculate the selected features over an instance of a VICTOR corpus.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.calculateInstanceFeatures">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="candidateNominalFeature"></a><span class="summary-sig-name">candidateNominalFeature</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">data</span>,
+        <span class="summary-sig-arg">args</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.candidateNominalFeature">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="candidatePOSNominalFeature"></a><span class="summary-sig-name">candidatePOSNominalFeature</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">data</span>,
+        <span class="summary-sig-arg">args</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.candidatePOSNominalFeature">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -1129,6 +1460,24 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
+          <td><span class="summary-sig"><a name="getImageCount"></a><span class="summary-sig-name">getImageCount</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">word</span>,
+        <span class="summary-sig-arg">key</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.getImageCount">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
           <td><span class="summary-sig"><a name="getNgram"></a><span class="summary-sig-name">getNgram</span>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">cand</span>,
         <span class="summary-sig-arg">tokens</span>,
@@ -1137,6 +1486,23 @@
         <span class="summary-sig-arg">configr</span>)</span></td>
           <td align="right" valign="top">
             <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.getNgram">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="getPageCount"></a><span class="summary-sig-name">getPageCount</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">word</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.getPageCount">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -1212,6 +1578,24 @@
         <span class="summary-sig-arg">args</span>)</span></td>
           <td align="right" valign="top">
             <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.hyponymCount">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="imageSearchCountFeature"></a><span class="summary-sig-name">imageSearchCountFeature</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">data</span>,
+        <span class="summary-sig-arg">args</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.imageSearchCountFeature">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -1369,6 +1753,24 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
+          <td><span class="summary-sig"><a name="morphologicalFeature"></a><span class="summary-sig-name">morphologicalFeature</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">data</span>,
+        <span class="summary-sig-arg">args</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.morphologicalFeature">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
           <td><span class="summary-sig"><a name="ngramFrequencyFeature"></a><span class="summary-sig-name">ngramFrequencyFeature</span>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">data</span>,
         <span class="summary-sig-arg">args</span>)</span></td>
@@ -1387,11 +1789,47 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
+          <td><span class="summary-sig"><a name="ngramNominalFeature"></a><span class="summary-sig-name">ngramNominalFeature</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">data</span>,
+        <span class="summary-sig-arg">args</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.ngramNominalFeature">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
           <td><span class="summary-sig"><a name="ngramProbabilityFeature"></a><span class="summary-sig-name">ngramProbabilityFeature</span>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">data</span>,
         <span class="summary-sig-arg">args</span>)</span></td>
           <td align="right" valign="top">
             <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.ngramProbabilityFeature">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="nullLinkNominalFeature"></a><span class="summary-sig-name">nullLinkNominalFeature</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">data</span>,
+        <span class="summary-sig-arg">args</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.nullLinkNominalFeature">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -1710,6 +2148,24 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
+          <td><span class="summary-sig"><a name="webSearchCountFeature"></a><span class="summary-sig-name">webSearchCountFeature</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">data</span>,
+        <span class="summary-sig-arg">args</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.webSearchCountFeature">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
           <td><span class="summary-sig"><a name="wordVectorContextSimilarityFeature"></a><span class="summary-sig-name">wordVectorContextSimilarityFeature</span>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">data</span>,
         <span class="summary-sig-arg">args</span>)</span></td>
@@ -1898,6 +2354,60 @@
           found in &quot;/usr/bin/java&quot; in Unix/Linux systems, or in 
           &quot;C:/Program Files/Java/jdk_version/java.exe&quot; in Windows
           systems.</li>
+        <li><strong class="pname"><code>orientation</code></strong> - Whether the feature is a simplicity of complexity measure. 
+          Possible values: Complexity, Simplicity.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="addAverageDepthFeature"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">addAverageDepthFeature</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">orientation</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.addAverageDepthFeature">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Adds an average sense depth feature to the estimator. Calculates the 
+  average distance between two senses of a given candidate.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>orientation</code></strong> - Whether the feature is a simplicity of complexity measure. 
+          Possible values: Complexity, Simplicity.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="addBackoffBehaviorNominalFeature"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">addBackoffBehaviorNominalFeature</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">ngram_file</span>,
+        <span class="sig-arg">orientation</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.addBackoffBehaviorNominalFeature">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Adds a nominal language model backoff behavior nominal feature to the 
+  estimator.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>ngram_file</code></strong> - Path to a shelve file containing n-gram frequency counts.</li>
         <li><strong class="pname"><code>orientation</code></strong> - Whether the feature is a simplicity of complexity measure. 
           Possible values: Complexity, Simplicity.</li>
     </ul></dd>
@@ -2151,6 +2661,44 @@
   </dl>
 </td></tr></table>
 </div>
+<a name="addCandidatePOSNominalFeature"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">addCandidatePOSNominalFeature</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">pos_model</span>,
+        <span class="sig-arg">stanford_tagger</span>,
+        <span class="sig-arg">java_path</span>,
+        <span class="sig-arg">pos_type</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.addCandidatePOSNominalFeature">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Adds a candidate POS tag nominal feature to the estimator.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>pos_model</code></strong> - Path to a POS tagging model for the Stanford POS Tagger. The 
+          models can be downloaded from the following link: 
+          http://nlp.stanford.edu/software/tagger.shtml</li>
+        <li><strong class="pname"><code>stanford_tagger</code></strong> - Path to the &quot;stanford-postagger.jar&quot; file. The tagger 
+          can be downloaded from the following link: 
+          http://nlp.stanford.edu/software/tagger.shtml</li>
+        <li><strong class="pname"><code>java_path</code></strong> - Path to the system's &quot;java&quot; executable. Can be commonly
+          found in &quot;/usr/bin/java&quot; in Unix/Linux systems, or in 
+          &quot;C:/Program Files/Java/jdk_version/java.exe&quot; in Windows
+          systems.</li>
+        <li><strong class="pname"><code>pos_type</code></strong> - The type of POS tags to be used. Values supported: treebank, 
+          paetzold</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
 <a name="addCollocationalFeature"></a>
 <div>
 <table class="details" border="1" cellpadding="3"
@@ -2272,6 +2820,38 @@
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>orientation</code></strong> - Whether the feature is a simplicity of complexity measure. 
+          Possible values: Complexity, Simplicity.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="addImageSearchCountFeature"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">addImageSearchCountFeature</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">key</span>,
+        <span class="sig-arg">orientation</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.addImageSearchCountFeature">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Adds an image search count feature to the estimator. The resulting 
+  value will be the number of distinct pictures retrieved by the Getty 
+  Images API. This feature requires for a free &quot;Connect Embed&quot; 
+  key, which gives you access to 5 queries per second, and unlimited 
+  queries per day. For more information on how to acquire a key, please 
+  visit their website at: https://developer.gettyimages.com</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>key</code></strong> - Connect Embed key for the Getty Images API.</li>
         <li><strong class="pname"><code>orientation</code></strong> - Whether the feature is a simplicity of complexity measure. 
           Possible values: Complexity, Simplicity.</li>
     </ul></dd>
@@ -2466,6 +3046,40 @@
   </dl>
 </td></tr></table>
 </div>
+<a name="addMorphologicalFeature"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">addMorphologicalFeature</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">dictionary</span>,
+        <span class="sig-arg">description</span>,
+        <span class="sig-arg">orientation</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.addMorphologicalFeature">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Adds a generalized morphological feature to the estimator. It requires
+  for a dictionary that assigns words to their respective feature values. 
+  For each word in a dataset, the value of this feature will be the one 
+  found in the dictionar provided, or 0 if it is not available.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>dictionary</code></strong> - A dictionary object assigning words to values. Example: 
+          dictionary['chair'] = 45.33.</li>
+        <li><strong class="pname"><code>description</code></strong> - Description of the feature. Example: &quot;Age of 
+          Acquisition&quot;.</li>
+        <li><strong class="pname"><code>orientation</code></strong> - Whether the feature is a simplicity of complexity measure. 
+          Possible values: Complexity, Simplicity.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
 <a name="addNGramFrequencyFeature"></a>
 <div>
 <table class="details" border="1" cellpadding="3"
@@ -2531,6 +3145,72 @@
         <li><strong class="pname"><code>language_model</code></strong> - Path to the language model from which to extract probabilities.</li>
         <li><strong class="pname"><code>leftw</code></strong> - Number of tokens to the left.</li>
         <li><strong class="pname"><code>rightw</code></strong> - Number of tokens to the right.</li>
+        <li><strong class="pname"><code>orientation</code></strong> - Whether the feature is a simplicity of complexity measure. 
+          Possible values: Complexity, Simplicity.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="addNgramNominalFeature"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">addNgramNominalFeature</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">leftw</span>,
+        <span class="sig-arg">rightw</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.addNgramNominalFeature">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Adds a n-gram nominal feature to the estimator.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>leftw</code></strong> - Number of tokens to the left.</li>
+        <li><strong class="pname"><code>rightw</code></strong> - Number of tokens to the right.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="addNullLinkNominalFeature"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">addNullLinkNominalFeature</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">stanford_parser</span>,
+        <span class="sig-arg">dependency_models</span>,
+        <span class="sig-arg">java_path</span>,
+        <span class="sig-arg">orientation</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.addNullLinkNominalFeature">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Adds a null link nominal feature to the estimator The value will be 1 
+  if there is at least one dependency link of which the candidate is part 
+  of, and 0 otherwise.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>stanford_parser</code></strong> - Path to the &quot;stanford-parser.jar&quot; file. The parser can 
+          be downloaded from the following link: 
+          http://nlp.stanford.edu/software/lex-parser.shtml</li>
+        <li><strong class="pname"><code>dependency_models</code></strong> - Path to a JAR file containing parsing models. The models can be 
+          downloaded from the following link: 
+          http://nlp.stanford.edu/software/lex-parser.shtml</li>
+        <li><strong class="pname"><code>java_path</code></strong> - Path to the system's &quot;java&quot; executable. Can be commonly
+          found in &quot;/usr/bin/java&quot; in Unix/Linux systems, or in 
+          &quot;C:/Program Files/Java/jdk_version/java.exe&quot; in Windows
+          systems.</li>
         <li><strong class="pname"><code>orientation</code></strong> - Whether the feature is a simplicity of complexity measure. 
           Possible values: Complexity, Simplicity.</li>
     </ul></dd>
@@ -2634,6 +3314,94 @@
           systems.</li>
         <li><strong class="pname"><code>orientation</code></strong> - Whether the feature is a simplicity of complexity measure. 
           Possible values: Complexity, Simplicity.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="addPOSNgramNominalFeature"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">addPOSNgramNominalFeature</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">leftw</span>,
+        <span class="sig-arg">rightw</span>,
+        <span class="sig-arg">pos_model</span>,
+        <span class="sig-arg">stanford_tagger</span>,
+        <span class="sig-arg">java_path</span>,
+        <span class="sig-arg">pos_type</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.addPOSNgramNominalFeature">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Adds a POS n-gram nominal feature to the estimator. The n-gram will 
+  contain the candidate's POS tag surrounded by the POS tags of neighboring
+  words.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>leftw</code></strong> - Number of tokens to the left.</li>
+        <li><strong class="pname"><code>rightw</code></strong> - Number of tokens to the right.</li>
+        <li><strong class="pname"><code>pos_model</code></strong> - Path to a POS tagging model for the Stanford POS Tagger. The 
+          models can be downloaded from the following link: 
+          http://nlp.stanford.edu/software/tagger.shtml</li>
+        <li><strong class="pname"><code>stanford_tagger</code></strong> - Path to the &quot;stanford-postagger.jar&quot; file. The tagger 
+          can be downloaded from the following link: 
+          http://nlp.stanford.edu/software/tagger.shtml</li>
+        <li><strong class="pname"><code>java_path</code></strong> - Path to the system's &quot;java&quot; executable. Can be commonly
+          found in &quot;/usr/bin/java&quot; in Unix/Linux systems, or in 
+          &quot;C:/Program Files/Java/jdk_version/java.exe&quot; in Windows
+          systems.</li>
+        <li><strong class="pname"><code>pos_type</code></strong> - The type of POS tags to be used. Values supported: treebank, 
+          paetzold</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="addPOSNgramWithCandidateNominalFeature"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">addPOSNgramWithCandidateNominalFeature</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">leftw</span>,
+        <span class="sig-arg">rightw</span>,
+        <span class="sig-arg">pos_model</span>,
+        <span class="sig-arg">stanford_tagger</span>,
+        <span class="sig-arg">java_path</span>,
+        <span class="sig-arg">pos_type</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.addPOSNgramWithCandidateNominalFeature">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Adds a candidate centered POS n-gram nominal feature to the estimator.
+  The n-gram will contain the candidate surrounded by the POS tags of 
+  neighboring words.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>leftw</code></strong> - Number of tokens to the left.</li>
+        <li><strong class="pname"><code>rightw</code></strong> - Number of tokens to the right.</li>
+        <li><strong class="pname"><code>pos_model</code></strong> - Path to a POS tagging model for the Stanford POS Tagger. The 
+          models can be downloaded from the following link: 
+          http://nlp.stanford.edu/software/tagger.shtml</li>
+        <li><strong class="pname"><code>stanford_tagger</code></strong> - Path to the &quot;stanford-postagger.jar&quot; file. The tagger 
+          can be downloaded from the following link: 
+          http://nlp.stanford.edu/software/tagger.shtml</li>
+        <li><strong class="pname"><code>java_path</code></strong> - Path to the system's &quot;java&quot; executable. Can be commonly
+          found in &quot;/usr/bin/java&quot; in Unix/Linux systems, or in 
+          &quot;C:/Program Files/Java/jdk_version/java.exe&quot; in Windows
+          systems.</li>
+        <li><strong class="pname"><code>pos_type</code></strong> - The type of POS tags to be used. Values supported: treebank, 
+          paetzold</li>
     </ul></dd>
   </dl>
 </td></tr></table>
@@ -3194,6 +3962,32 @@
   </dl>
 </td></tr></table>
 </div>
+<a name="addWebSearchCountFeature"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">addWebSearchCountFeature</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">orientation</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.addWebSearchCountFeature">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Adds a web search count feature to the estimator. The resulting value 
+  will be the number of websites retrieved by Bing.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>orientation</code></strong> - Whether the feature is a simplicity of complexity measure. 
+          Possible values: Complexity, Simplicity.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
 <a name="addWordVectorContextSimilarityFeature"></a>
 <div>
 <table class="details" border="1" cellpadding="3"
@@ -3307,7 +4101,8 @@
   <tr valign="top"><td>
   <h3 class="epydoc"><span class="sig"><span class="sig-name">calculateFeatures</span>(<span class="sig-arg">self</span>,
         <span class="sig-arg">corpus</span>,
-        <span class="sig-arg">format</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string">victor</code><code class="variable-quote">'</code></span>)</span>
+        <span class="sig-arg">format</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string">victor</code><code class="variable-quote">'</code></span>,
+        <span class="sig-arg">input</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string">file</code><code class="variable-quote">'</code></span>)</span>
   </h3>
   </td><td align="right" valign="top"
     ><span class="codelink"><a href="lexenstein.features-pysrc.html#FeatureEstimator.calculateFeatures">source&nbsp;code</a></span>&nbsp;
@@ -3320,9 +4115,10 @@
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
         <li><strong class="pname"><code>corpus</code></strong> - Path to a corpus in the VICTOR or CWICTOR format. For more 
-          information about the file's format, refer to the LEXenstein 
+          information about the input's format, refer to the LEXenstein 
           Manual.</li>
-        <li><strong class="pname"><code>format</code></strong> - Input file format. Values available: victor, cwictor</li>
+        <li><strong class="pname"><code>format</code></strong> - Input format. Values available: victor, cwictor.</li>
+        <li><strong class="pname"><code>input</code></strong> - Type of input provided. Values available: file, text.</li>
     </ul></dd>
     <dt>Returns:</dt>
         <dd>Returns a MxN matrix, where M is the number of substitutions of 
@@ -3397,7 +4193,7 @@
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Tue Sep 22 13:04:54 2015
+    Generated by Epydoc 3.0.1 on Sat Apr  2 13:02:23 2016
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

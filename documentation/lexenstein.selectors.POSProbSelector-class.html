@@ -3,7 +3,7 @@
           "DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>lexenstein.selectors.BiranSelector</title>
+  <title>lexenstein.selectors.POSProbSelector</title>
   <link rel="stylesheet" href="epydoc.css" type="text/css" />
   <script type="text/javascript" src="epydoc.js"></script>
 </head>
@@ -44,7 +44,7 @@
       <span class="breadcrumbs">
         <a href="lexenstein-module.html">Package&nbsp;lexenstein</a> ::
         <a href="lexenstein.selectors-module.html">Module&nbsp;selectors</a> ::
-        Class&nbsp;BiranSelector
+        Class&nbsp;POSProbSelector
       </span>
     </td>
     <td>
@@ -54,14 +54,14 @@
     onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
         <tr><td align="right"><span class="options"
             >[<a href="frames.html" target="_top">frames</a
-            >]&nbsp;|&nbsp;<a href="lexenstein.selectors.BiranSelector-class.html"
+            >]&nbsp;|&nbsp;<a href="lexenstein.selectors.POSProbSelector-class.html"
             target="_top">no&nbsp;frames</a>]</span></td></tr>
       </table>
     </td>
   </tr>
 </table>
 <!-- ==================== CLASS DESCRIPTION ==================== -->
-<h1 class="epydoc">Class BiranSelector</h1><p class="nomargin-top"><span class="codelink"><a href="lexenstein.selectors-pysrc.html#BiranSelector">source&nbsp;code</a></span></p>
+<h1 class="epydoc">Class POSProbSelector</h1><p class="nomargin-top"><span class="codelink"><a href="lexenstein.selectors-pysrc.html#POSProbSelector">source&nbsp;code</a></span></p>
 <!-- ==================== INSTANCE METHODS ==================== -->
 <a name="section-InstanceMethods"></a>
 <table class="summary" border="1" cellpadding="3"
@@ -85,11 +85,14 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a href="lexenstein.selectors.BiranSelector-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">cooc_model</span>)</span><br />
-      Creates an instance of the BiranSelector class.</td>
+          <td><span class="summary-sig"><a href="lexenstein.selectors.POSProbSelector-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">condprob_model</span>,
+        <span class="summary-sig-arg">pos_model</span>,
+        <span class="summary-sig-arg">stanford_tagger</span>,
+        <span class="summary-sig-arg">java_path</span>)</span><br />
+      Creates a POSProbSelector instance.</td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="lexenstein.selectors-pysrc.html#BiranSelector.__init__">source&nbsp;code</a></span>
+            <span class="codelink"><a href="lexenstein.selectors-pysrc.html#POSProbSelector.__init__">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -103,12 +106,11 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="getCandidateSentence"></a><span class="summary-sig-name">getCandidateSentence</span>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">sentence</span>,
-        <span class="summary-sig-arg">candidate</span>,
-        <span class="summary-sig-arg">head</span>)</span></td>
+          <td><span class="summary-sig"><a name="getCandidatesWithSamePOS"></a><span class="summary-sig-name">getCandidatesWithSamePOS</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">candidates</span>,
+        <span class="summary-sig-arg">target_pos</span>)</span></td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="lexenstein.selectors-pysrc.html#BiranSelector.getCandidateSentence">source&nbsp;code</a></span>
+            <span class="codelink"><a href="lexenstein.selectors-pysrc.html#POSProbSelector.getCandidatesWithSamePOS">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -122,64 +124,12 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="getCommonVec"></a><span class="summary-sig-name">getCommonVec</span>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">target</span>,
-        <span class="summary-sig-arg">candidate</span>)</span></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="lexenstein.selectors-pysrc.html#BiranSelector.getCommonVec">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a name="getCosine"></a><span class="summary-sig-name">getCosine</span>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">vec1</span>,
-        <span class="summary-sig-arg">vec2</span>)</span></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="lexenstein.selectors-pysrc.html#BiranSelector.getCosine">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a name="getModel"></a><span class="summary-sig-name">getModel</span>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">path</span>)</span></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="lexenstein.selectors-pysrc.html#BiranSelector.getModel">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a name="getSentVec"></a><span class="summary-sig-name">getSentVec</span>(<span class="summary-sig-arg">self</span>,
+          <td><span class="summary-sig"><a name="getTargetPOS"></a><span class="summary-sig-name">getTargetPOS</span>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">sent</span>,
+        <span class="summary-sig-arg">target</span>,
         <span class="summary-sig-arg">head</span>)</span></td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="lexenstein.selectors-pysrc.html#BiranSelector.getSentVec">source&nbsp;code</a></span>
+            <span class="codelink"><a href="lexenstein.selectors-pysrc.html#POSProbSelector.getTargetPOS">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -193,49 +143,13 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="getVec"></a><span class="summary-sig-name">getVec</span>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">word</span>)</span></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="lexenstein.selectors-pysrc.html#BiranSelector.getVec">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a name="isNumeral"></a><span class="summary-sig-name">isNumeral</span>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">text</span>)</span></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="lexenstein.selectors-pysrc.html#BiranSelector.isNumeral">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a href="lexenstein.selectors.BiranSelector-class.html#selectCandidates" class="summary-sig-name">selectCandidates</a>(<span class="summary-sig-arg">self</span>,
+          <td><span class="summary-sig"><a href="lexenstein.selectors.POSProbSelector-class.html#selectCandidates" class="summary-sig-name">selectCandidates</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">substitutions</span>,
-        <span class="summary-sig-arg">victor_corpus</span>,
-        <span class="summary-sig-arg">common_distance</span>=<span class="summary-sig-default">0.01</span>,
-        <span class="summary-sig-arg">candidate_distance</span>=<span class="summary-sig-default">0.9</span>)</span><br />
+        <span class="summary-sig-arg">victor_corpus</span>)</span><br />
       Selects which candidates can replace the target complex words in each
       instance of a VICTOR corpus.</td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="lexenstein.selectors-pysrc.html#BiranSelector.selectCandidates">source&nbsp;code</a></span>
+            <span class="codelink"><a href="lexenstein.selectors-pysrc.html#POSProbSelector.selectCandidates">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -249,14 +163,14 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a href="lexenstein.selectors.BiranSelector-class.html#toVictorFormat" class="summary-sig-name">toVictorFormat</a>(<span class="summary-sig-arg">self</span>,
+          <td><span class="summary-sig"><a href="lexenstein.selectors.POSProbSelector-class.html#toVictorFormat" class="summary-sig-name">toVictorFormat</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">victor_corpus</span>,
         <span class="summary-sig-arg">substitutions</span>,
         <span class="summary-sig-arg">output_path</span>,
         <span class="summary-sig-arg">addTargetAsCandidate</span>=<span class="summary-sig-default">False</span>)</span><br />
       Saves a set of selected substitutions in a file in VICTOR format.</td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="lexenstein.selectors-pysrc.html#BiranSelector.toVictorFormat">source&nbsp;code</a></span>
+            <span class="codelink"><a href="lexenstein.selectors-pysrc.html#POSProbSelector.toVictorFormat">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -291,20 +205,36 @@
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr valign="top"><td>
   <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
-        <span class="sig-arg">cooc_model</span>)</span>
+        <span class="sig-arg">condprob_model</span>,
+        <span class="sig-arg">pos_model</span>,
+        <span class="sig-arg">stanford_tagger</span>,
+        <span class="sig-arg">java_path</span>)</span>
     <br /><em class="fname">(Constructor)</em>
   </h3>
   </td><td align="right" valign="top"
-    ><span class="codelink"><a href="lexenstein.selectors-pysrc.html#BiranSelector.__init__">source&nbsp;code</a></span>&nbsp;
+    ><span class="codelink"><a href="lexenstein.selectors-pysrc.html#POSProbSelector.__init__">source&nbsp;code</a></span>&nbsp;
     </td>
   </tr></table>
   
-  <p>Creates an instance of the BiranSelector class.</p>
+  <p>Creates a POSProbSelector instance. It selects only the candidate 
+  substitutions of which the most likely POS tag is that of the target 
+  word.</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>cooc_model</code></strong> - Path to a word co-occurrence model. For instructions on how to 
-          create the model, please refer to the LEXenstein Manual.</li>
+        <li><strong class="pname"><code>condprob_model</code></strong> - Path to a binary conditional probability model. For instructions 
+          on how to create the model, please refer to the LEXenstein 
+          Manual.</li>
+        <li><strong class="pname"><code>pos_model</code></strong> - Path to a POS tagging model for the Stanford POS Tagger. The 
+          models can be downloaded from the following link: 
+          http://nlp.stanford.edu/software/tagger.shtml</li>
+        <li><strong class="pname"><code>stanford_tagger</code></strong> - Path to the &quot;stanford-postagger.jar&quot; file. The tagger 
+          can be downloaded from the following link: 
+          http://nlp.stanford.edu/software/tagger.shtml</li>
+        <li><strong class="pname"><code>java_path</code></strong> - Path to the system's &quot;java&quot; executable. Can be commonly
+          found in &quot;/usr/bin/java&quot; in Unix/Linux systems, or in 
+          &quot;C:/Program Files/Java/jdk_version/java.exe&quot; in Windows
+          systems.</li>
     </ul></dd>
   </dl>
 </td></tr></table>
@@ -318,12 +248,10 @@
   <tr valign="top"><td>
   <h3 class="epydoc"><span class="sig"><span class="sig-name">selectCandidates</span>(<span class="sig-arg">self</span>,
         <span class="sig-arg">substitutions</span>,
-        <span class="sig-arg">victor_corpus</span>,
-        <span class="sig-arg">common_distance</span>=<span class="sig-default">0.01</span>,
-        <span class="sig-arg">candidate_distance</span>=<span class="sig-default">0.9</span>)</span>
+        <span class="sig-arg">victor_corpus</span>)</span>
   </h3>
   </td><td align="right" valign="top"
-    ><span class="codelink"><a href="lexenstein.selectors-pysrc.html#BiranSelector.selectCandidates">source&nbsp;code</a></span>&nbsp;
+    ><span class="codelink"><a href="lexenstein.selectors-pysrc.html#POSProbSelector.selectCandidates">source&nbsp;code</a></span>&nbsp;
     </td>
   </tr></table>
   
@@ -341,13 +269,6 @@
           ['easy', 'uncomplicated']]</li>
         <li><strong class="pname"><code>victor_corpus</code></strong> - Path to a corpus in the VICTOR format. For more information about
           the file's format, refer to the LEXenstein Manual.</li>
-        <li><strong class="pname"><code>common_distance</code></strong> - The cutoff minimum distance from the sentence's co-occurrence 
-          vector and the common vector between the target complex word and 
-          the candidate. We recommend using very small values, such as 
-          0.01, or even 0.0.</li>
-        <li><strong class="pname"><code>candidate_distance</code></strong> - The cutoff maximum distance from the sentence's co-occurrence 
-          vector and the candidate vector. We recommend using values close 
-          to 1.0, such as 0.8, or 0.9.</li>
     </ul></dd>
     <dt>Returns:</dt>
         <dd>Returns a vector of size N, containing a set of selected 
@@ -369,7 +290,7 @@
         <span class="sig-arg">addTargetAsCandidate</span>=<span class="sig-default">False</span>)</span>
   </h3>
   </td><td align="right" valign="top"
-    ><span class="codelink"><a href="lexenstein.selectors-pysrc.html#BiranSelector.toVictorFormat">source&nbsp;code</a></span>&nbsp;
+    ><span class="codelink"><a href="lexenstein.selectors-pysrc.html#POSProbSelector.toVictorFormat">source&nbsp;code</a></span>&nbsp;
     </td>
   </tr></table>
   

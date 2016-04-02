@@ -3,7 +3,7 @@
           "DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>lexenstein.rankers.BiranRanker</title>
+  <title>lexenstein.evaluators.PLUMBErr</title>
   <link rel="stylesheet" href="epydoc.css" type="text/css" />
   <script type="text/javascript" src="epydoc.js"></script>
 </head>
@@ -43,8 +43,8 @@
     <td width="100%">
       <span class="breadcrumbs">
         <a href="lexenstein-module.html">Package&nbsp;lexenstein</a> ::
-        <a href="lexenstein.rankers-module.html">Module&nbsp;rankers</a> ::
-        Class&nbsp;BiranRanker
+        <a href="lexenstein.evaluators-module.html">Module&nbsp;evaluators</a> ::
+        Class&nbsp;PLUMBErr
       </span>
     </td>
     <td>
@@ -54,14 +54,14 @@
     onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
         <tr><td align="right"><span class="options"
             >[<a href="frames.html" target="_top">frames</a
-            >]&nbsp;|&nbsp;<a href="lexenstein.rankers.BiranRanker-class.html"
+            >]&nbsp;|&nbsp;<a href="lexenstein.evaluators.PLUMBErr-class.html"
             target="_top">no&nbsp;frames</a>]</span></td></tr>
       </table>
     </td>
   </tr>
 </table>
 <!-- ==================== CLASS DESCRIPTION ==================== -->
-<h1 class="epydoc">Class BiranRanker</h1><p class="nomargin-top"><span class="codelink"><a href="lexenstein.rankers-pysrc.html#BiranRanker">source&nbsp;code</a></span></p>
+<h1 class="epydoc">Class PLUMBErr</h1><p class="nomargin-top"><span class="codelink"><a href="lexenstein.evaluators-pysrc.html#PLUMBErr">source&nbsp;code</a></span></p>
 <!-- ==================== INSTANCE METHODS ==================== -->
 <a name="section-InstanceMethods"></a>
 <table class="summary" border="1" cellpadding="3"
@@ -85,12 +85,12 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a href="lexenstein.rankers.BiranRanker-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">complex_lm</span>,
-        <span class="summary-sig-arg">simple_lm</span>)</span><br />
-      Creates an instance of the BiranRanker class.</td>
+          <td><span class="summary-sig"><a href="lexenstein.evaluators.PLUMBErr-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">dataset</span>,
+        <span class="summary-sig-arg">complex</span>)</span><br />
+      Creates a PLUMBErr error categorizer.</td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="lexenstein.rankers-pysrc.html#BiranRanker.__init__">source&nbsp;code</a></span>
+            <span class="codelink"><a href="lexenstein.evaluators-pysrc.html#PLUMBErr.__init__">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -104,10 +104,14 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="getCandidateComplexity"></a><span class="summary-sig-name">getCandidateComplexity</span>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">word</span>)</span></td>
+          <td><span class="summary-sig"><a href="lexenstein.evaluators.PLUMBErr-class.html#cumulativeAnalysis" class="summary-sig-name">cumulativeAnalysis</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">identified</span>,
+        <span class="summary-sig-arg">selected</span>,
+        <span class="summary-sig-arg">ranked</span>)</span><br />
+      Performs the cumulative error identification analysis of a 
+      simplifier.</td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="lexenstein.rankers-pysrc.html#BiranRanker.getCandidateComplexity">source&nbsp;code</a></span>
+            <span class="codelink"><a href="lexenstein.evaluators-pysrc.html#PLUMBErr.cumulativeAnalysis">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -121,11 +125,14 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a href="lexenstein.rankers.BiranRanker-class.html#getRankings" class="summary-sig-name">getRankings</a>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">victor_corpus</span>)</span><br />
-      Ranks candidates with respect to their simplicity.</td>
+          <td><span class="summary-sig"><a href="lexenstein.evaluators.PLUMBErr-class.html#nonCumulativeAnalysis" class="summary-sig-name">nonCumulativeAnalysis</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">identified</span>,
+        <span class="summary-sig-arg">selected</span>,
+        <span class="summary-sig-arg">ranked</span>)</span><br />
+      Performs the non-cumulative error identification analysis of a 
+      simplifier.</td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="lexenstein.rankers-pysrc.html#BiranRanker.getRankings">source&nbsp;code</a></span>
+            <span class="codelink"><a href="lexenstein.evaluators-pysrc.html#PLUMBErr.nonCumulativeAnalysis">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -160,54 +167,109 @@
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr valign="top"><td>
   <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
-        <span class="sig-arg">complex_lm</span>,
-        <span class="sig-arg">simple_lm</span>)</span>
+        <span class="sig-arg">dataset</span>,
+        <span class="sig-arg">complex</span>)</span>
     <br /><em class="fname">(Constructor)</em>
   </h3>
   </td><td align="right" valign="top"
-    ><span class="codelink"><a href="lexenstein.rankers-pysrc.html#BiranRanker.__init__">source&nbsp;code</a></span>&nbsp;
+    ><span class="codelink"><a href="lexenstein.evaluators-pysrc.html#PLUMBErr.__init__">source&nbsp;code</a></span>&nbsp;
     </td>
   </tr></table>
   
-  <p>Creates an instance of the BiranRanker class.</p>
+  <p>Creates a PLUMBErr error categorizer. This class implements the 
+  strategy introduced in: Paetzold, G. H.; Specia, L. PLUMBErr: An 
+  Automatic Error Identification Framework for Lexical Simplification. 
+  Proceedings of the 1st QATS. 2016. One can download BenchLS (dataset) and
+  NNSVocab (complex) from http://ghpaetzold.github.io/data/PLUMBErr.zip</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>complex_lm</code></strong> - Path to a language model built over complex text. For more 
-          information on how to create the file, refer to the LEXenstein 
-          Manual.</li>
-        <li><strong class="pname"><code>simple_lm</code></strong> - Path to a language model built over simple text. For more 
-          information on how to create the file, refer to the LEXenstein 
-          Manual.</li>
+        <li><strong class="pname"><code>dataset</code></strong> - Path to a data in VICTOR format. For more information about the 
+          file's format, refer to the LEXenstein Manual.</li>
+        <li><strong class="pname"><code>complex</code></strong> - Path to a file containing complex words. Each line of the file 
+          must contain a single word.</li>
     </ul></dd>
   </dl>
 </td></tr></table>
 </div>
-<a name="getRankings"></a>
+<a name="cumulativeAnalysis"></a>
 <div>
 <table class="details" border="1" cellpadding="3"
        cellspacing="0" width="100%" bgcolor="white">
 <tr><td>
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr valign="top"><td>
-  <h3 class="epydoc"><span class="sig"><span class="sig-name">getRankings</span>(<span class="sig-arg">self</span>,
-        <span class="sig-arg">victor_corpus</span>)</span>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">cumulativeAnalysis</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">identified</span>,
+        <span class="sig-arg">selected</span>,
+        <span class="sig-arg">ranked</span>)</span>
   </h3>
   </td><td align="right" valign="top"
-    ><span class="codelink"><a href="lexenstein.rankers-pysrc.html#BiranRanker.getRankings">source&nbsp;code</a></span>&nbsp;
+    ><span class="codelink"><a href="lexenstein.evaluators-pysrc.html#PLUMBErr.cumulativeAnalysis">source&nbsp;code</a></span>&nbsp;
     </td>
   </tr></table>
   
-  <p>Ranks candidates with respect to their simplicity.</p>
+  <p>Performs the cumulative error identification analysis of a simplifier.
+  In a cumulative analysis, the errors made during Complex Word 
+  Identification are carried onto the following steps of the pipeline.</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>victor_corpus</code></strong> - Path to a testing corpus in VICTOR format. For more information 
-          about the file's format, refer to the LEXenstein Manual.</li>
+        <li><strong class="pname"><code>identified</code></strong> - A vector containing one binary value (0 for simple, 1 for 
+          complex) for each word in the dataset. To produce the vector, one
+          can run a Complex Word Identification approach from LEXenstein 
+          over the dataset.</li>
+        <li><strong class="pname"><code>selected</code></strong> - A vector containing the candidates selected for each instance in 
+          the dataset. To produce the vector, one can pair a Substitution 
+          Generation and a Substitution Selection approach from LEXenstein.</li>
+        <li><strong class="pname"><code>ranked</code></strong> - A vector containing the selected candidates ranked in order of 
+          simplicity. To produce the vector, one can run a Substitution 
+          Ranking approach from LEXenstein over the selected candidates 
+          provided.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="nonCumulativeAnalysis"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">nonCumulativeAnalysis</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">identified</span>,
+        <span class="sig-arg">selected</span>,
+        <span class="sig-arg">ranked</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="lexenstein.evaluators-pysrc.html#PLUMBErr.nonCumulativeAnalysis">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Performs the non-cumulative error identification analysis of a 
+  simplifier. In a non-cumulative analysis, the errors made during Complex 
+  Word Identification are not carried onto the following steps of the 
+  pipeline.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>identified</code></strong> - A vector containing one binary value (0 for simple, 1 for 
+          complex) for each word in the dataset. To produce the vector, one
+          can run a Complex Word Identification approach from LEXenstein 
+          over the dataset.</li>
+        <li><strong class="pname"><code>selected</code></strong> - A vector containing the candidates selected for each instance in 
+          the dataset. To produce the vector, one can pair a Substitution 
+          Generation and a Substitution Selection approach from LEXenstein.</li>
+        <li><strong class="pname"><code>ranked</code></strong> - A vector containing the selected candidates ranked in order of 
+          simplicity. To produce the vector, one can run a Substitution 
+          Ranking approach from LEXenstein over the selected candidates 
+          provided.</li>
     </ul></dd>
     <dt>Returns:</dt>
-        <dd>A list of ranked candidates for each instance in the VICTOR 
-          corpus, from simplest to most complex.</dd>
+        <dd>A report vector containing the errors made in each instance of 
+          the dataset, as well as a map containing total error counts for 
+          the entire dataset.</dd>
   </dl>
 </td></tr></table>
 </div>
