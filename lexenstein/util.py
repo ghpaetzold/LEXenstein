@@ -353,7 +353,7 @@ def produceWordCooccurrenceModel(text_file, window, model_file):
 	c = 0
 	for line in inp:
 		c += 1
-		print(str(c))
+		print('At line: ' + str(c))
 		tokens = line.strip().lower().split(' ')
 		for i in range(0, len(tokens)):
 			target = tokens[i]
