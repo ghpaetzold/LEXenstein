@@ -1,59 +1,83 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>LEXenstein by ghpaetzold</title>
-
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/github-light.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-dark.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+    <title>LEXenstein by ghpaetzold</title>
   </head>
+
   <body>
-    <div class="wrapper">
-      <header>
-        <h1>LEXenstein</h1>
-        <p>A framework for Lexical Simplification.</p>
+    <div id="container">
+      <div class="inner">
 
-        <p class="view"><a href="https://github.com/ghpaetzold/LEXenstein">View the Project on GitHub <small>ghpaetzold/LEXenstein</small></a></p>
+        <header>
+          <h1>LEXenstein</h1>
+          <h2>A framework for Lexical Simplification.</h2>
+        </header>
 
+        <section id="downloads" class="clearfix">
+          <a href="https://github.com/ghpaetzold/LEXenstein/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+          <a href="https://github.com/ghpaetzold/LEXenstein/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+          <a href="https://github.com/ghpaetzold/LEXenstein" id="view-on-github" class="button"><span>View on GitHub</span></a>
+        </section>
 
-        <ul>
-          <li><a href="https://github.com/ghpaetzold/LEXenstein/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/ghpaetzold/LEXenstein/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/ghpaetzold/LEXenstein">View On <strong>GitHub</strong></a></li>
-        </ul>
-      </header>
-      <section>
-        <h3>
-<a id="introduction" class="anchor" href="#introduction" aria-hidden="true"><span class="octicon octicon-link"></span></a>Introduction</h3>
+        <hr>
 
-<p>LEXenstein is a framework for Lexical Simplification. It has several modules that allow for the user to create entire simplification systems.</p>
+        <section id="main_content">
+          <h1>
+<a id="introduction" class="anchor" href="#introduction" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Introduction:</h1>
 
-<h3>
-<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h3>
+<p>LEXenstein is a framework that allows for one to easily create full Lexical Simplification systems.</p>
 
-<p>To learn how to install and use LEXenstein, please read the <a href="https://github.com/ghpaetzold/LEXenstein/raw/master/manual/LEXenstein%20Manual.pdf">PDF manual</a>.</p>
+<h1>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation:</h1>
 
-<h3>
-<a id="documentation" class="anchor" href="#documentation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Documentation</h3>
+<p>To install LEXenstein, you must:</p>
 
-<p>To access LEXenstein's API, please visit the <a href="http://ghpaetzold.github.io/lexenstein/documentation/">online documentation page</a>.</p>
+<ol>
+<li>Download and unpack the LEXenstein's <a href="https://github.com/ghpaetzold/LEXenstein/releases/latest">latest release</a>.</li>
+<li>Navigate to the LEXenstein's root folder.</li>
+<li>Run the following command line:</li>
+</ol>
 
-<h3>
-<a id="support" class="anchor" href="#support" aria-hidden="true"><span class="octicon octicon-link"></span></a>Support</h3>
+<pre><code>python setup.py install
+</code></pre>
 
-<p>If you have any problems or questions about the toolkit, simply report it in the issues section of the project's Github page.</p>
-      </section>
-      <footer>
-        <p>This project is maintained by <a href="https://github.com/ghpaetzold">ghpaetzold</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
-      </footer>
+<p>If you don’t wish to install the tool in your Python distribution, you can alternatively
+copy the “lexenstein” folder into the folder of your project.</p>
+
+<h1>
+<a id="documentation" class="anchor" href="#documentation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Documentation:</h1>
+
+<p>For instructions, and examples, take a look at the <a href="https://github.com/ghpaetzold/LEXenstein/raw/master/manual/LEXenstein%20Manual.pdf">LEXenstein Manual</a>.</p>
+
+<p>You can also access <a href="http://ghpaetzold.github.io/lexenstein/documentation/">LEXenstein's API</a>.</p>
+
+<h1>
+<a id="resources" class="anchor" href="#resources" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Resources:</h1>
+
+<p>Download the <a href="http://www.quest.dcs.shef.ac.uk/lexenstein/LEXenstein_resources.tar.gz">resources</a> used in the examples from the LEXenstein Manual!</p>
+
+<h1>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>License:</h1>
+
+<p>LEXenstein is distributed under the LGPL v3.0 license.</p>
+        </section>
+
+        <footer>
+          LEXenstein is maintained by <a href="https://github.com/ghpaetzold">ghpaetzold</a><br>
+          This page was generated by <a href="https://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
+
+        
+      </div>
     </div>
-    <script src="javascripts/scale.fix.js"></script>
-    
   </body>
 </html>
