@@ -1,0 +1,148 @@
+\chapter{Resources}
+\label{chapterresources}
+
+Throughout the following Chapters, you will find usage examples of all classes and functions in LEXenstein. These examples will refer to various sample resources, such as:
+
+\begin{itemize}
+	\item \textbf{corpus.txt}: A corpus of text. We recommend for the corpus to be tokenized and truecased.
+	
+	\item \textbf{spelling\_model.bin}: A binary spelling model trained with the NorvigCorrector class from the Spelling Correction module.
+	
+	\item \textbf{morph}: The Morph Adorner Toolkit \cite{Paetzold15mat}.
+	
+	\item \textbf{lexicon.txt}: A vocabulary. It must contain one word per line.
+	
+	\item \textbf{embeddings\_model.bin}: A binary word embeddings model trained with word2vec \cite{mikolov2013efficient}. For more information on how to create them, please follow the instructions on the website of the application at \url{https://code.google.com/p/word2vec/}.
+	
+	\item \textbf{tagged\_embeddings\_model.bin}: A binary word embedding models trained with word2vec \cite{mikolov2013efficient} over a corpus annotated with generalized POS tags following the convention used by the ``getGeneralisedPOS'' function from the Utilities model.
+	
+	To create your own tagged word vector model, you must:
+	
+		\begin{enumerate}
+			\item Produce POS tags for a large corpus of text.
+			\item Concatenate the POS tags to each word in the corpus using the format of Example~\ref{eq:taggedw2v}, where $w_{i}$ is the $i$th word in a sentence, and $p_{i}$ its POS tag.
+			
+			\begin{equation}
+				\label{eq:taggedw2v}
+				w_{1}|||p_{1}\; w_{2}|||p_{2}\;  ...\; w_{n-1}|||p_{n-1}\; w_{n}|||p_{n}
+				\end{equation}
+				
+			\item Train a binary word vector model over the resulting corpus using word$2$vec.
+		\end{enumerate}
+		
+		LEXenstein supports two POS tag conventions:
+		
+			\begin{enumerate}
+				\item Treebank: POS tags in the Penn Treebank format \cite{Marcus1993}. They can be produced by any modern POS tagger, such as the Stanford Tagger \cite{stanfordparser}.
+				
+				\item Paetzold: Generalized versions of Treebank tags. They can be derived from Treebank tags using the ``getGeneralisedPOS'' from the LEXenstein's Utilities module (lexenstein.util).
+			\end{enumerate}
+	
+	\item \textbf{lm.bin}: A binary language model trained with KenLM \cite{kenlm}. Language models used by LEXenstein can be produced with the following command lines:
+
+			\begin{lstlisting}
+			lmplz -o [order] <[corpus_of_text] >[language_model]
+			\end{lstlisting}
+			\begin{lstlisting}
+			build_binary [language_model] [binary_language_model]
+			\end{lstlisting}
+			
+		The user can also use other language modeling tools, such as SRILM, to produce a language model in ARPA format, and then binarize it with KenLM.
+		
+	
+	\item \textbf{lm\_complex.bin}: A binary language model trained with KenLM \cite{kenlm} over texts of complex nature.
+	
+	\item \textbf{lm\_simple.bin}: A binary language model trained with KenLM \cite{kenlm} over texts of simple nature.
+	
+	
+	\item \textbf{translation\_probs.bin}: A binary translation probabilities file produced with the ``addTranslationProbabilitiesFileToShelve'' function from the Utilities module.
+	
+	\item \textbf{cond\_prob.bin}: A binary POS tag conditional probability model trained with the ``createConditionalProbabilityModel'' function from the Utilities module.
+	
+	\item \textbf{pos\_model.tagger}: A POS tagging model in the format used by the Stanford Tagger \cite{stanfordparser}. You can find Stanford Tagger models in the tool's webpage\footnote{http://nlp.stanford.edu/software/tagger.shtml}, inside the ``models'' folder. They will have a ``.tagger'' extension.
+	
+	\item \textbf{stanford-postagger.jar}: The Stanford Tagger \cite{stanfordparser}. You can find the Stanford Tagger in the tool's webpage\footnote{http://nlp.stanford.edu/software/tagger.shtml}.
+	
+	\item \textbf{lexmturk.txt}: A sample of the LexMTurk dataset \cite{Horn2014} in VICTOR format.
+	
+	\item \textbf{train\_cwictor\_corpus.txt}: A sample of the training set from the Complex Word Identification task of SemEval 2016 \cite{Paetzold2016SemEval} in CWICTOR format.
+	
+	\item \textbf{test\_cwictor\_corpus.txt}:  A sample of the test set from the Complex Word Identification task of SemEval 2016 \cite{Paetzold2016SemEval} in CWICTOR format.
+	
+	\item \textbf{parallel.txt}: A file containing complex-to-simple POS tagged aligned sentences. Each line of the parsed parallel document must be in the format described in Example~\ref{parsedparallel}, where $w_{i}^{s}$ is a word in position $i$ of a source sentence $s$, $p_{i}^{s}$ its POS tag, $w_{j}^{t}$ is a word in position $j$ of a target sentence $t$, and $p_{j}^{t}$ its POS tag.
+
+\begin{equation}
+\label{parsedparallel}
+\left \langle w_{0}^{s} \right \rangle\! |||\! \left \langle p_{0}^{s} \right \rangle\cdots\left \langle w_{n}^{s} \right \rangle\!|||\!\left \langle p_{n}^{s} \right \rangle \;\; \left \langle w_{0}^{t} \right \rangle\! |||\! \left \langle p_{0}^{t} \right \rangle\cdots\left \langle w_{n}^{t} \right \rangle\!|||\!\left \langle p_{n}^{t} \right \rangle
+\end{equation}
+
+All tokens of form $\left \langle w_{i}^{s} \right \rangle\! |||\! \left \langle p_{i}^{s} \right \rangle$ are separated by a blank space, and the two set of source and target tokens $\left \langle w_{0}^{s} \right \rangle\! |||\! \left \langle p_{0}^{s} \right \rangle\cdots\left \langle w_{n}^{s} \right \rangle\!|||\!\left \langle p_{n}^{s} \right \rangle$ are separated by a tabulation marker.
+	
+	\item \textbf{alignments.txt}: A file containing word alignments between the sentences in ``parallel.txt''. The alignments must be in Pharaoh format, and can be produced easily with the help of fast-align\footnote{https://github.com/clab/fast\_align}. Each line of the alignments file must be structured as illustrated in Example~\ref{pharaoh}, where $\left \langle i_{h}^{s} \right \rangle$ is an index $i$ in source sentence $s$, and $\left \langle j_{h}^{t} \right \rangle$ is the index $j$ in source sentence $t$ aligned to it.
+
+\begin{equation}
+\label{pharaoh}
+\left \langle i_{0}^{s} \right \rangle\! -\! \left \langle j_{0}^{t} \right \rangle\; \left \langle i_{1}^{s} \right \rangle\! -\! \left \langle j_{1}^{t} \right \rangle\cdots\left \langle i_{n-1}^{s} \right \rangle\! -\! \left \langle j_{n-1}^{t} \right \rangle\; \left \langle i_{n}^{s} \right \rangle\! -\! \left \langle j_{n}^{t} \right \rangle
+\end{equation}
+
+All tokens of form $\left \langle i_{h}^{s} \right \rangle\! -\! \left \langle j_{h}^{t} \right \rangle$ are separated by a blank space.
+	
+	\item \textbf{stop\_words.txt}: A list of stop words. Each line must contain a single word.
+	
+	\item \textbf{vocab\_complex.txt}: A vocabulary extracted from texts of complex nature. Each line must contain a single word.
+	
+	\item \textbf{vocab\_simple.txt}: A vocabulary extracted from texts of simple nature. Each line must contain a single word.
+	
+	\item \textbf{cooc\_model.txt}: A word co-occurrence model. The model must be in plain text format, and each line must follow the format illustrated in Example~\ref{cooc}, where $\left\langle w_{i} \right\rangle$ is a word, $\left\langle c_{i}^{j} \right\rangle$ a co-occurring word and $\left\langle f_{i}^{j} \right\rangle$ its frequency of appearance.
+
+\begin{equation}
+\label{cooc}
+\left\langle w_{i} \right\rangle\; \left\langle c_{i}^{0} \right\rangle\!:\!\left\langle f_{i}^{0} \right\rangle\;\left\langle c_{i}^{1} \right\rangle\!:\!\left\langle f_{i}^{1} \right\rangle\cdots\left\langle c_{i}^{n-1} \right\rangle\!:\!\left\langle f_{i}^{n-1} \right\rangle \; \left\langle c_{i}^{n} \right\rangle\!:\!\left\langle f_{i}^{n} \right\rangle
+\end{equation}
+
+Each component in the format above must be separated by a tabulation marker. To create a co-occurrence model, either create a script that does so, or use the ``produceWordCooccurrenceModel'' function from the utilities module (lexenstein.util).
+	
+	\item \textbf{clusters.txt}: A list of word clusters. The file must be in plain text format, and each line must follow the format illustrated in Example~\ref{clusterfile}, which is the one adopted by the Brown Clusters implementation of \cite{brownclusters}. In the Example~\ref{clusterfile}, $c_{i}$ is a class identifier, $w_{i}$ a word, and $f_{i}$ an optional frequency of occurrence of word $w_{i}$ in the corpus over which the word classes were estimated.
+
+\begin{equation}
+\label{clusterfile}
+\left\langle c_{i} \right\rangle\; \left\langle w_{i} \right\rangle \left\langle f_{i} \right\rangle
+\end{equation}
+
+Each component in the format above must be separated by a tabulation marker. To create the file, one can use the software provided at \url{https://github.com/percyliang/brown-cluster}. Once the tool is installed, run the following command line:
+
+\begin{lstlisting}
+./wcluster --text <corpus_of_sentences> --c <number_of_clusters>
+\end{lstlisting}
+
+The clusters file will be placed at \textbf{input-c50-p1.out/paths}.
+	
+	\item \textbf{ngrams.bin}: A binary n-gram count file produced with the ``addNgramCountsFileToShelve'' function fro the Utilities module.
+	
+	\item \textbf{pos\_ngrams.bin}: A POS tagged binary n-gram count file. Must be a Python shelve file created with the ``addNgramCountsFileToShelve'' function in the Utilities module of LEXenstein (lexenstein.util). To create a tagged n-grams file using SRILM, use the ``createTaggedNgramsFile'' function in the Utilities module. For more detailed instructions, please refer to the documentation of the ``addNgramCountsFileToShelve'' and ``createTaggedNgramsFile'' functions.
+	
+	\item \textbf{dep\_models.jar}: A JAR library containing parsing models trained with the Stanford Parser \cite{stanfordparser}. They can be downloaded from Stanford Parser's webpage\footnote{http://nlp.stanford.edu/software/lex-parser.shtml}.
+	
+	\item \textbf{stanford-parser.jar}: The Stanford Parser \cite{stanfordparser}. It can be downloaded from Stanford Parser's webpage\footnote{http://nlp.stanford.edu/software/lex-parser.shtml}.
+	
+	\item \textbf{dep\_counts.bin}: A binary shelve file containing dependency link counts. To create such a file, you must:
+	
+		\begin{enumerate}
+			\item Produce a large corpus of dependency parsed sentences.
+			\item Transform each and every dependency link to the format of Example~\ref{eq:deplm}, where each token is space-separated.
+			
+				\begin{equation}
+				\label{eq:deplm}
+				<\!\textup{type\_of\_dependency\_link}\!>\; <\!\textup{subject\_word}\!>\; <\!\textup{object\_word}\!>
+				\end{equation}
+				
+			\item Place all dependency links in a plain text file.
+			\item Run SRILM using the ``-write'' option to obtain occurrence counts of all dependency links.
+			\item Save it into a shelve file using the ``addNgramCountsFileToShelve'' function from the Utilities file.
+		\end{enumerate}
+		
+		Dependency links can be produced with the ``dependencyParseSentences'' function from the Utilities file.
+
+\end{itemize}
+
+You can download a package containing all of these resources from \url{http://www.quest.dcs.shef.ac.uk/lexenstein/LEXenstein_resources.tar.gz}. For more instructions on how to create these resources, please refer to LEXenstein's API documentation and the tutorials in Section~\ref{prodfeatures}.

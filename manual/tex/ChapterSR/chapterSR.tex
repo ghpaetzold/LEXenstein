@@ -18,7 +18,7 @@ LEXenstein's SR module (lexenstein.rankers) provides access to $6$ approaches, e
 
 \section{MetricRanker}
 
-Employs a simple ranking strategy based on the values of a single feature provided by the user. By configuring the input FeatureEstimator object, the user can calculate values of several features for the candidates in a given dataset, and easily rank the candidates according to each of these features.
+Employs a simple ranking strategy based on the values of a single feature provided by the user.
 
 \subsection{Parameters}
 
@@ -176,20 +176,11 @@ rankings = sbr.getRankings('lexmturk.txt')
 
 \section{BiranRanker}
 
-Employs the strategy of \cite{Biran2011}, which models complexity as a function of a word's length and frequency in corpora of complex and simple content. As input, it requires for a language model trained over complex data, and a language model trained over simple data.
+Employs the strategy of \cite{Biran2011}, which models complexity as a function of a word's length and frequency in corpora of complex and simple content. 
 
 \subsection{Parameters}
 
-The language models required by the BiranRanker must be binary, and must be produced by KenLM with the following command lines:
-
-\begin{lstlisting}
-lmplz -o [order] <[corpus_of_text] >[language_model_name]
-\end{lstlisting}
-\begin{lstlisting}
-build_binary [language_model_name] [binary_language_model_name]
-\end{lstlisting}
-
-Complex and simple data can be downloaded fro David Kauchak's page\footnote{http://www.cs.pomona.edu/~dkauchak/simplification/}, or extracted from other sources.
+As input, it requires for a language model trained over complex data, and a language model trained over simple data. To learn more on how to obtain these resources, please refer to Chapter~\ref{chapterresources}.
 
 \subsection{Example}
 
@@ -218,41 +209,11 @@ rankings = br.getRankings('lexmturk.txt')
 
 \section{YamamotoRanker}
 
-Employs the strategy of \cite{Yamamoto2013}, which ranks words according to a weighted function that considers their frequency in a corpus of simple content, co-occurrence frequency with a target complex word, sense distance, point-wise mutual information and trigram frequencies. As input, it requires for a language model trained over a corpus of simple data and a co-occurrence model.
+Employs the strategy of \cite{Yamamoto2013}, which ranks words according to a weighted function that considers their frequency in a corpus of simple content, co-occurrence frequency with a target complex word, sense distance, point-wise mutual information and trigram frequencies.
 
 \subsection{Parameters}
 
-The language model required by the YamamotoRanker must be binary, and must be produced by KenLM with the following command lines:
-
-\begin{lstlisting}
-lmplz -o [order] <[corpus_of_text] >[language_model_name]
-\end{lstlisting}
-\begin{lstlisting}
-build_binary [language_model_name] [binary_language_model_name]
-\end{lstlisting}
-
-Complex and simple data can be downloaded fro David Kauchak's page\footnote{http://www.cs.pomona.edu/~dkauchak/simplification/}, or extracted from other sources. The co-occurrence model must be in plain text format, and each line must follow the format illustrated in Example~\ref{cooc}, where $\left\langle w_{i} \right\rangle$ is a word, $\left\langle c_{i}^{j} \right\rangle$ a co-occurring word and $\left\langle f_{i}^{j} \right\rangle$ its frequency of appearance.
-
-\begin{equation}
-\label{cooc}
-\left\langle w_{i} \right\rangle\; \left\langle c_{i}^{0} \right\rangle\!:\!\left\langle f_{i}^{0} \right\rangle\;\left\langle c_{i}^{1} \right\rangle\!:\!\left\langle f_{i}^{1} \right\rangle\cdots\left\langle c_{i}^{n-1} \right\rangle\!:\!\left\langle f_{i}^{n-1} \right\rangle \; \left\langle c_{i}^{n} \right\rangle\!:\!\left\langle f_{i}^{n} \right\rangle
-\end{equation}
-
-Each component in the format above must be separated by a tabulation marker. To create a co-occurrence model, either create a script that does so, or follow the steps below:
-
-\begin{enumerate}
-\item Gather a corpus of text composed of one tokenized and truecased sentence per line.
-\item Run the script \url{resources/scripts/Produce_Co-occurrence_Model.py} with the following command line:
-
-\begin{lstlisting}
-python Produce_Co-occurrence_Model.py <corpus> <window> <model_path>
-\end{lstlisting}
-
-Where ``<window>'' is the number of tokens to the left and right of a word to be included as a co-occurring word.
-
-\end{enumerate}
-
-To produce models faster, you can split your corpus in various small portions, run parallel processes to produce various small models, and then join them. For more information on the parameters of each function of the YamamotoRanker class, please refer to the LEXenstein documentation.
+As input, it requires for a language model trained over a corpus of simple data and a co-occurrence model. To learn more on how to obtain these resources, please refer to Chapter~\ref{chapterresources}.
 
 \subsection{Example}
 
@@ -281,20 +242,11 @@ rankings = yr.getRankings('lexmturk.txt')
 
 \section{BottRanker}
 
-Employs the strategy of \cite{Bott2012}, which ranks words according to a weighted function that considers their length and frequency in a corpus of simple content. As input, it requires for a language model trained over a corpus of simple data.
+Employs the strategy of \cite{Bott2012}, which ranks words according to a weighted function that considers their length and frequency in a corpus of simple content.
 
 \subsection{Parameters}
 
-The language model required by the BottRanker must be binary, and must be produced by KenLM with the following command lines:
-
-\begin{lstlisting}
-lmplz -o [order] <[corpus_of_text] >[language_model_name]
-\end{lstlisting}
-\begin{lstlisting}
-build_binary [language_model_name] [binary_language_model_name]
-\end{lstlisting}
-
-Complex and simple data can be downloaded fro David Kauchak's page\footnote{http://www.cs.pomona.edu/~dkauchak/simplification/}, or extracted from other sources.
+As input, it requires for a language model trained over a corpus of simple data. To learn more on how to obtain this resource, please refer to Chapter~\ref{chapterresources}.
 
 \subsection{Example}
 
@@ -319,11 +271,11 @@ rankings = br.getRankings('lexmturk.txt')
 
 \section{GlavasRanker}
 
-Employs the strategy of \cite{glavas2015}, which ranks words according to their average ranking, as determined by a given set of features. As input, it requires for a configured FeatureEstimator object.
+Employs the strategy of \cite{glavas2015}, which ranks words according to their average ranking, as determined by a given set of features.
 
 \subsection{Parameters}
 
-The FeatureEstimator object required must contain each and every feature that the user wishes to rank candidates with.
+As input, it requires for a configured FeatureEstimator object. The FeatureEstimator object required must contain each and every feature that the user wishes to rank candidates with.
 
 \subsection{Example}
 

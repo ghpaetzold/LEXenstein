@@ -12,13 +12,13 @@ MaxPos.y=-1
 NormalPos.left=4
 NormalPos.top=26
 NormalPos.right=1128
-NormalPos.bottom=485
+NormalPos.bottom=437
 Class=LaTeXView
-Document=ChapterSS\chapterSS.tex
+Document=ChapterResources\chapterResources.tex
 
 [Frame0_View0,0]
-TopLine=101
-Cursor=5364
+TopLine=0
+Cursor=44
 
 [Frame1]
 Flags=0
@@ -30,13 +30,13 @@ MaxPos.y=-1
 NormalPos.left=4
 NormalPos.top=26
 NormalPos.right=1128
-NormalPos.bottom=485
+NormalPos.bottom=437
 Class=LaTeXView
-Document=ChapterSR\chapterSR.tex
+Document=manual.tex
 
 [Frame1_View0,0]
-TopLine=272
-Cursor=7030
+TopLine=0
+Cursor=191
 
 [SessionInfo]
 FrameCount=2
