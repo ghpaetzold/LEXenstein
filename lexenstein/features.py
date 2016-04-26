@@ -654,7 +654,59 @@ class FeatureEstimator:
 				word = subst.split(':')[1].strip()
 				ngram, bosv, eosv = self.getNgram(word, sent, head, 9999, 9999)
 				aux = model.score(ngram, bos=bosv, eos=eosv)
-				#aux = model.score(ngram)
+				result.append(aux)
+		return result
+		
+	def reverseSentenceProbabilityFeature(self, data, args):
+		lm = args[0]
+		result = []
+		model = self.resources[lm]
+		for line in data:
+			sent = line[0].strip().split(' ')
+			invsent = []
+			for i in range(0, len(sent)):
+				invsent.append(sent[len(sent)-1-i])
+			target = line[1]
+			head = len(sent)-1-int(line[2])
+			for subst in line[3:len(line)]:
+				word = subst.split(':')[1].strip()
+				ngram, bosv, eosv = self.getNgram(word, invsent, head, 9999, 9999)
+				aux = model.score(ngram, bos=bosv, eos=eosv)
+				result.append(aux)
+		return result
+		
+	def prefixProbabilityFeature(self, data, args):
+		lm = args[0]
+		result = []
+		model = self.resources[lm]
+		for line in data:
+			sent = line[0].strip().split(' ')
+			target = line[1]
+			head = int(line[2])
+			sent = sent[0:head+1]
+			for subst in line[3:len(line)]:
+				word = subst.split(':')[1].strip()
+				ngram, bosv, eosv = self.getNgram(word, sent, head, 9999, 9999)
+				aux = model.score(ngram, bos=bosv, eos=eosv)
+				result.append(aux)
+		return result
+		
+	def reversePrefixProbabilityFeature(self, data, args):
+		lm = args[0]
+		result = []
+		model = self.resources[lm]
+		for line in data:
+			sent = line[0].strip().split(' ')
+			invsent = []
+			for i in range(0, len(sent)):
+				invsent.append(sent[len(sent)-1-i])
+			target = line[1]
+			head = len(sent)-1-int(line[2])
+			invsent = invsent[0:head+1]
+			for subst in line[3:len(line)]:
+				word = subst.split(':')[1].strip()
+				ngram, bosv, eosv = self.getNgram(word, invsent, head, 9999, 9999)
+				aux = model.score(ngram, bos=bosv, eos=eosv)
 				result.append(aux)
 		return result
 		
@@ -2446,6 +2498,62 @@ class FeatureEstimator:
 				self.resources[language_model] = model
 			self.features.append((self.sentenceProbabilityFeature, [language_model]))
 			self.identifiers.append(('Sentence Probability (LM: '+language_model+')', orientation))
+			
+	def addReverseSentenceProbabilityFeature(self, language_model, orientation):
+		"""
+		Adds a reverse sentence probability feature to the estimator.
+		The value will be the language model probability of each inverted sentence in the VICTOR corpus with its target complex word replaced by a candidate.
+	
+		@param language_model: Path to the language model from which to extract probabilities.
+		This language model must be trained over a corpus composed of inverted sentences (Ex: ". sentence a is This").
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Possible values: Complexity, Simplicity.
+		"""
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:
+			if language_model not in self.resources:
+				model = kenlm.LanguageModel(language_model)
+				self.resources[language_model] = model
+			self.features.append((self.reverseSentenceProbabilityFeature, [language_model]))
+			self.identifiers.append(('Reverse Sentence Probability (LM: '+language_model+')', orientation))
+			
+	def addPrefixProbabilityFeature(self, language_model, orientation):
+		"""
+		Adds a prefix probability feature to the estimator.
+		The value will be the language model probability of all words in each sentence in the VICTOR corpus until the target complex word, while replaced by a candidate.
+	
+		@param language_model: Path to the language model from which to extract probabilities.
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Possible values: Complexity, Simplicity.
+		"""
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:
+			if language_model not in self.resources:
+				model = kenlm.LanguageModel(language_model)
+				self.resources[language_model] = model
+			self.features.append((self.prefixProbabilityFeature, [language_model]))
+			self.identifiers.append(('Prefix Probability (LM: '+language_model+')', orientation))
+			
+	def addReversePrefixProbabilityFeature(self, language_model, orientation):
+		"""
+		Adds a reverse prefix probability feature to the estimator.
+		The value will be the language model probability of all words in each inverted sentence in the VICTOR corpus until the target complex word, while replaced by a candidate.
+	
+		@param language_model: Path to the language model from which to extract probabilities.
+		This language model must be trained over a corpus composed of inverted sentences (Ex: ". sentence a is This").
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Possible values: Complexity, Simplicity.
+		"""
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:
+			if language_model not in self.resources:
+				model = kenlm.LanguageModel(language_model)
+				self.resources[language_model] = model
+			self.features.append((self.reversePrefixProbabilityFeature, [language_model]))
+			self.identifiers.append(('Reverse Prefix Probability (LM: '+language_model+')', orientation))
 		
 	def addSenseCountFeature(self, orientation):
 		"""
