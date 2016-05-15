@@ -27,6 +27,8 @@ You can also access [LEXenstein's API](http://ghpaetzold.github.io/lexenstein/do
 
 Download the [resources](http://www.quest.dcs.shef.ac.uk/lexenstein/LEXenstein_resources.tar.gz) used in the examples from the LEXenstein Manual!
 
+You can also download a lighter, but limited, pack of resources [here](http://www.quest.dcs.shef.ac.uk/lexenstein/LEXenstein_resources_lite.tar.gz).
+
 # License:
 
 LEXenstein is distributed under the LGPL v3.0 license.
