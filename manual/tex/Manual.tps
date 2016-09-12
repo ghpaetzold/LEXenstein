@@ -11,8 +11,8 @@ MaxPos.x=-1
 MaxPos.y=-1
 NormalPos.left=4
 NormalPos.top=26
-NormalPos.right=1128
-NormalPos.bottom=437
+NormalPos.right=1089
+NormalPos.bottom=472
 Class=LaTeXView
 Document=ChapterResources\chapterResources.tex
 
@@ -29,16 +29,34 @@ MaxPos.x=-1
 MaxPos.y=-1
 NormalPos.left=4
 NormalPos.top=26
-NormalPos.right=1128
-NormalPos.bottom=437
+NormalPos.right=1089
+NormalPos.bottom=472
 Class=LaTeXView
 Document=manual.tex
 
 [Frame1_View0,0]
-TopLine=0
+TopLine=3
 Cursor=191
 
+[Frame2]
+Flags=0
+ShowCmd=1
+MinPos.x=-1
+MinPos.y=-1
+MaxPos.x=-1
+MaxPos.y=-1
+NormalPos.left=4
+NormalPos.top=26
+NormalPos.right=1089
+NormalPos.bottom=472
+Class=LaTeXView
+Document=ChapterEvaluation\chapterEvaluation.tex
+
+[Frame2_View0,0]
+TopLine=189
+Cursor=6585
+
 [SessionInfo]
-FrameCount=2
-ActiveFrame=1
+FrameCount=3
+ActiveFrame=2
 

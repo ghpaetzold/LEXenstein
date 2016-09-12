@@ -636,7 +636,7 @@ class PLUMBErr:
 		counts['2A'] = error2a
 		counts['2B'] = error2b
 		counts['3A'] = error3a
-		counts['3B'] = error2b
+		counts['3B'] = error3b
 		counts['4'] = error4
 		counts['5'] = error5
 		counts['1'] = noerror
