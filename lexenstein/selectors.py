@@ -91,7 +91,7 @@ class HeuristicSelector:
 			for cand in scoremap:
 				proportion = scoremap[cand]/total_features
 				if proportion>=minimum_proportion:
-					finalcandidates.append(cand)
+					final_candidates.append(cand)
 			selected_substitutions.append(final_candidates)
 			
 		lexf.close()
