@@ -18,7 +18,7 @@ class HeuristicSelector:
 		"""
 		self.fe = fe
 
-	def selectCandidates(self, substitutions, victor_corpus):
+	def selectCandidates(self, substitutions, victor_corpus, minimum_proportion):
 		"""
 		Selects which candidates can replace the target complex words in each instance of a VICTOR corpus.
 	
@@ -30,6 +30,8 @@ class HeuristicSelector:
 		Example: [['sat', 'roosted'], ['easy', 'uncomplicated']]
 		@param victor_corpus: Path to a corpus in the VICTOR format.
 		For more information about the file's format, refer to the LEXenstein Manual.
+		@param minimum_proportion: The minimum proportion of features that indicate that a candidate is suitable necessary for it not to be discarded.
+		Must be a number between 0.0 and 1.0.
 		@return: Returns a vector of size N, containing a set of selected substitutions for each instance in the VICTOR corpus.
 		"""
 		selected_substitutions = []
@@ -61,10 +63,37 @@ class HeuristicSelector:
 			#Calculate feature values:
 			features = self.fe.calculateFeatures(input, format='victor', input='text')
 			
-			print 'Candidates: ' + str(len(candidates))
-			print 'Features: ' + str(len(features))
-		
-			selected_substitutions.append(candidates)
+			#Calculate score map:
+			scoremap = {}
+			if len(candidates)==1:
+				selected_substitutions.append([])
+			else:
+				tgtfeatures = features[0]
+				for i, cand in enumerate(candidates[1:]):
+					scoremap[cand] = 0.0
+					candfeatures = features[i+1]
+					for j, identifier in enumerate(self.fe.identifiers):
+						ftype = identifier[1]
+						tgtvalue = tgtfeatures[j]
+						candvalue = candfeatures[j]
+						if ftype=='Complexity':
+							if candvalue<tgtvalue:
+								scoremap[cand] += 1.0
+						elif ftype=='Simplicity':
+							if candvalue>tgtvalue:
+								scoremap[cand] += 1.0
+						else:
+							print('Feature has an invalid Complexity/Simplicity identifier!')
+							
+			#Filter candidates:
+			final_candidates = []
+			total_features = float(len(self.fe.identifiers))
+			for cand in scoremap:
+				proportion = scoremap[cand]/total_features
+				if proportion>=minimum_proportion:
+					finalcandidates.append(cand)
+			selected_substitutions.append(final_candidates)
+			
 		lexf.close()
 		return selected_substitutions
 		
