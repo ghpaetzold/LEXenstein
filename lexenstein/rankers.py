@@ -8,13 +8,153 @@ from sklearn import linear_model
 from sklearn.svm import SVC
 from sklearn.cross_validation import train_test_split
 from sklearn.feature_selection import SelectKBest
-from sklearn.feature_selection import f_classif
+
+class NNRegressionRanker:
+
+	def __init__(self, fe, model=None):
+		"""
+		Creates an instance of the NNRegressionRanker class.
+		This ranker was introduced by "Lexical Simplification with Neural Ranking, Proceedings of the 15th EACL, 2017".
+	
+		@param fe: A configured FeatureEstimator object.
+		@param model: A trained neural ranking model. If provided, it must be an instance created by the ranker itself, and the features provided must be the same used for its training.
+		"""
+		self.fe = fe
+		self.model = model
+		
+	def createRanker(self, layers, hidden_size):
+		"""
+		Creates a new neural ranker based on the architecture specifications provided.
+	
+		@param layers: number of hidden layers of the neural ranker.
+		@param hidden_size: size of the hidden layers of the neural ranker.
+		"""
+		model = Sequential()
+		model.add(Dense(output_dim=hidden_size, input_dim=len(self.fe.features)*2, init="glorot_uniform"))
+		model.add(Activation("tanh"))
+		model.add(Dropout(0.25))
+		for i in range(0, layers):
+			model.add(Dense(output_dim=hidden_size, init="glorot_uniform"))
+			model.add(Activation("tanh"))
+			model.add(Dropout(0.10))
+		model.add(Dense(output_dim=1))
+		model.add(Activation("linear"))
+		self.model.compile(loss='mean_squared_error', optimizer='adam')
+		self.model = model
+		return model
+		
+	def saveRanker(self, json_path, h5_path):
+		"""
+		Saves the ranker's neural model.
+	
+		@param json_path: Path in which to save the JSON file containing the structure of the neural network.
+		@param h5_path: Path in which to save the H5 file containing the weights of the neural network.
+		"""
+		json_string = model.to_json()
+		open(json_path, 'w').write(json_string)
+		model.save_weights(h5_path, overwrite=True)
+		
+	def loadRanker(self, json_path, h5_path):
+		"""
+		Loads the ranker's neural model.
+	
+		@param json_path: Path of JSON file from which to load the structure of the neural network.
+		@param h5_path: Path of H5 file from which to load the weights of the neural network.
+		"""
+		model = model_from_json(open(json_path).read())
+		model.load_weights(h5_path)
+		model.compile(loss='mean_squared_error', optimizer='adam')
+		self.model = model
+		return model
+		
+	def trainRanker(self, victor_corpus, epochs, batch_size):
+		features = fe.calculateFeatures(victor_corpus)
+		Xtr = []
+		Ytr = []
+		f = open(victor_corpus)
+		c = -1
+		for line in f:
+			data = line.strip().split('\t')
+			cands = [cand.strip().split(':')[1] for cand in data[3:]]
+			indexes = [int(cand.strip().split(':')[0]) for cand in data[3:]]
+			featmap = {}
+			for cand in cands:
+				c += 1
+				featmap[cand] = features[c]
+			for i in range(0, len(cands)-1):
+				for j in range(i+1, len(cands)):
+					indexi = indexes[i]
+					indexj = indexes[j]
+					indexdiffji = indexj-indexi
+					indexdiffij = indexi-indexj
+					positive = featmap[cands[i]]
+					negative = featmap[cands[j]]
+					v1 = np.concatenate((positive,negative))
+					v2 = np.concatenate((negative,positive))
+					Xtr.append(v1)
+					Xtr.append(v2)
+					Ytr.append(indexdiffji)
+					Ytr.append(indexdiffij)
+		f.close()
+		Xtr = np.array(Xtr)
+		Ytr = np.array(Ytr)
+		self.model.fit(Xtr, Ytr, nb_epoch=epochs, batch_size=batch_size, verbose=0)
+		
+	def getRankings(self, victor_corpus):
+		"""
+		Ranks candidates using a neural ranker.
+		Candidates are ranked according to their simplicity score, which is calculated as the sum of the simplicity difference between a given candidate and the remainder.
+	
+		@param victor_corpus: Path to a testing corpus in VICTOR format.
+		For more information about the file's format, refer to the LEXenstein Manual.
+		@return: A list of ranked candidates for each instance in the VICTOR corpus, from simplest to most complex.
+		"""
+		#If feature values are not available, then estimate them:
+		feature_values = self.fe.calculateFeatures(victor_corpus)
+		
+		#Read feature values for each candidate in victor corpus:
+		ranks = []
+		c = -1
+		f = open(victor_corpus)
+		index = 0
+		for l in f:
+			#Get all substitutions in ranking instance:
+			line = l.strip().split('\t')
+			cands = [cand.strip().split(':')[1].strip() for cand in line[3:]]
+			
+			#Estimate feature and candidate maps:
+			featmap = {}
+			scoremap = {}
+			for cand in cands:
+				c += 1
+				featmap[cand] = features[c]
+				scoremap[cand] = 0.0
+			
+			#Calculate simplicity differences between candidates and update scores:
+			for i in range(0, len(cands)-1):
+				cand1 = cands[i]
+				for j in range(i+1, len(cands)):
+					cand2 = cands[j]
+					posneg = np.concatenate((featmap[cand1], featmap[cand2]))
+					probs = self.model.predict(np.array([posneg]))
+					score = probs[0]
+					scoremap[cand1] += score
+					negpos = np.concatenate((featmap[cand2], featmap[cand1]))
+					probs = self.model.predict(np.array([negpos]))
+					score = probs[0]
+					scoremap[cand1] -= score
+					
+			#Rank candidates according to score:
+			rank = sorted(scoremap.keys(), key=scoremap.__getitem__, reverse=True)
+			ranks.append(rank)
+		return ranks
 
 class GlavasRanker:
 
 	def __init__(self, fe):
 		"""
 		Creates an instance of the GlavasRanker class.
+		This ranker was introduced by "Simplifying Lexical Simplification: Do We Need Simplified Corpora?, Proceedings of the 2015 ACL, 2015".
 	
 		@param fe: A configured FeatureEstimator object.
 		"""
@@ -33,8 +173,7 @@ class GlavasRanker:
 		"""
 		
 		#If feature values are not available, then estimate them:
-		if self.feature_values == None:
-			self.feature_values = self.fe.calculateFeatures(victor_corpus)
+		self.feature_values = self.fe.calculateFeatures(victor_corpus)
 		
 		#Create object for results:
 		result = []
@@ -102,6 +241,7 @@ class SVMBoundaryRanker:
 	def __init__(self, fe):
 		"""
 		Creates an instance of the SVMBoundaryRanker class.
+		This simplifier was introduced by "LEXenstein: A Framework for Lexical Simplification, Proceedings of the 2015 ACL, 2015".
 	
 		@param fe: A configured FeatureEstimator object.
 		"""
@@ -427,6 +567,7 @@ class BottRanker:
 	def __init__(self, simple_lm):
 		"""
 		Creates an instance of the BottRanker class.
+		This simplifier was introduced by "Can Spanish Be Simpler? LexSiS: Lexical Simplification for Spanish, Proceedings of the 2012 COLING, 2012".
 	
 		@param simple_lm: Path to a language model built over simple text.
 		For more information on how to create the file, refer to the LEXenstein Manual.
@@ -483,6 +624,7 @@ class YamamotoRanker:
 	def __init__(self, simple_lm, cooc_model):
 		"""
 		Creates an instance of the YamamotoRanker class.
+		This simplifier was introduced by "Selecting Proper Lexical Paraphrase for Children, Proceedings of the 2013 ROCLING, 2013".
 	
 		@param simple_lm: Path to a language model built over simple text.
 		For more information on how to create the file, refer to the LEXenstein Manual.
@@ -625,6 +767,7 @@ class BiranRanker:
 	def __init__(self, complex_lm, simple_lm):
 		"""
 		Creates an instance of the BiranRanker class.
+		This simplifier was introduced by "Putting it Simply: a Context-Aware Approach to Lexical Simplification, Proceedings of the 2012 ACL, 2012".
 	
 		@param complex_lm: Path to a language model built over complex text.
 		For more information on how to create the file, refer to the LEXenstein Manual.
@@ -680,6 +823,7 @@ class BoundaryRanker:
 	def __init__(self, fe):
 		"""
 		Creates an instance of the BoundaryRanker class.
+		This simplifier was introduced by "LEXenstein: A Framework for Lexical Simplification, Proceedings of the 2015 ACL, 2015".
 	
 		@param fe: A configured FeatureEstimator object.
 		"""
@@ -921,6 +1065,7 @@ class SVMRanker:
 	def __init__(self, fe, svmrank_path):
 		"""
 		Creates an instance of the SVMRanker class.
+		This ranker was introduced in Lexical Simplification by "Learning a Lexical Simplifier Using Wikipedia, Proceedings of the 2014 ACL, 2014".
 	
 		@param fe: A configured FeatureEstimator object.
 		@param svmrank_path: Path to SVM-Rank's root installation folder.
@@ -1258,8 +1403,7 @@ class MetricRanker:
 		"""
 		
 		#If feature values are not available, then estimate them:
-		if self.feature_values == None:
-			self.feature_values = self.fe.calculateFeatures(victor_corpus)
+		self.feature_values = self.fe.calculateFeatures(victor_corpus)
 		
 		#Create object for results:
 		result = []
