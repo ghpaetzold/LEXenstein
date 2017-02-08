@@ -1,3 +1,5 @@
+from scipy.stats import *
+
 class IdentifierEvaluator:
 
 	def evaluateIdentifier(self, cwictor_corpus, predicted_labels):
