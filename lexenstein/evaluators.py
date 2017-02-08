@@ -257,7 +257,7 @@ class RankerEvaluator:
 		@param victor_corpus: Path to a training corpus in VICTOR format.
 		For more information about the file's format, refer to the LEXenstein Manual.
 		@param rankings: A vector of size N, containing a set of ranked substitutions for each instance in the VICTOR corpus.
-		@return: Values for TRank and Recall for the substitutions provided as input with respect to the gold-standard in the VICTOR corpus.
+		@return: Values for TRank-at-1/2/3, Recall-at-1/2/3, Spearman and Pearson correlation for the substitutions provided as input with respect to the gold-standard in the VICTOR corpus.
 		For more information on how the metrics are calculated, please refer to the LEXenstein Manual.
 		"""
 		
@@ -274,10 +274,12 @@ class RankerEvaluator:
 		trecall1 = 0
 		trecall2 = 0
 		trecall3 = 0
-	
+
 		#Read data:
 		index = -1
 		f = open(victor_corpus)
+		all_gold = []
+		all_ranks = []
 		for data in f:
 			index += 1
 			line = data.strip().split('\t')
@@ -289,14 +291,19 @@ class RankerEvaluator:
 				gold_rankings[word] = ranking
 			ranked_candidates = rankings[index]
 
+			for i in range(0, len(ranked_candidates)):
+				word = ranked_candidates[i]
+				all_gold.append(gold_rankings[word])
+				all_ranks.append(i)
+
 			first = gold_rankings[ranked_candidates[0]]
-	
+
 			#Get recall sets:
 			set1, set2, set3 = self.getRecallSets(line[3:len(line)])
 			rankedset1 = set([])
 			rankedset2 = set([])
 			rankedset3 = set([])
-	
+						
 			#Calculate TRank 1:
 			if first==1:
 				rankedset1 = set([ranked_candidates[0]])
@@ -304,7 +311,7 @@ class RankerEvaluator:
 			recall1 += len(rankedset1.intersection(set1))
 			trecall1 += len(set1)
 			total1 += 1
-	
+
 			#Calculate TRank 2:
 			if len(gold_rankings.keys())>2:
 				rankedset2 = rankedset1.union(set([ranked_candidates[1]]))
@@ -313,7 +320,7 @@ class RankerEvaluator:
 				if first<=2:
 					corrects2 += 1
 				total2 += 1
-	
+						
 			#Calculate TRank 3:
 			if len(gold_rankings.keys())>3:
 				rankedset3 = rankedset2.union(set([ranked_candidates[2]]))
@@ -322,9 +329,11 @@ class RankerEvaluator:
 				if first<=3:
 					corrects3 += 1
 				total3 += 1
-	
-		#Return measures:
-		return float(corrects1)/float(total1), float(corrects2)/float(total2), float(corrects3)/float(total3), float(recall1)/float(trecall1), float(recall2)/float(trecall2), float(recall3)/float(trecall3)
+
+		S, p = spearmanr(all_ranks, all_gold)
+		P = pearsonr(all_ranks, all_gold)
+
+		return float(corrects1)/float(total1), float(corrects2)/float(total2), float(corrects3)/float(total3), float(recall1)/float(trecall1), float(recall2)/float(trecall2), float(recall3)/float(trecall3), S, P[0]
 		
 	def getRecallSets(self, substs):
 		result1 = set([])
