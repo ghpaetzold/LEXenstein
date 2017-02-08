@@ -1,6 +1,9 @@
 import os
 import kenlm
 import math
+from keras.optimizers import *
+from keras.models import *
+from keras.layers.core import *
 from nltk.corpus import wordnet as wn
 from sklearn.preprocessing import normalize
 from sklearn.feature_selection import f_classif
@@ -39,7 +42,7 @@ class NNRegressionRanker:
 			model.add(Dropout(0.10))
 		model.add(Dense(output_dim=1))
 		model.add(Activation("linear"))
-		self.model.compile(loss='mean_squared_error', optimizer='adam')
+		model.compile(loss='mean_squared_error', optimizer='adam')
 		self.model = model
 		return model
 		
@@ -50,9 +53,9 @@ class NNRegressionRanker:
 		@param json_path: Path in which to save the JSON file containing the structure of the neural network.
 		@param h5_path: Path in which to save the H5 file containing the weights of the neural network.
 		"""
-		json_string = model.to_json()
+		json_string = self.model.to_json()
 		open(json_path, 'w').write(json_string)
-		model.save_weights(h5_path, overwrite=True)
+		self.model.save_weights(h5_path, overwrite=True)
 		
 	def loadRanker(self, json_path, h5_path):
 		"""
@@ -68,7 +71,7 @@ class NNRegressionRanker:
 		return model
 		
 	def trainRanker(self, victor_corpus, epochs, batch_size):
-		features = fe.calculateFeatures(victor_corpus)
+		features = self.fe.calculateFeatures(victor_corpus)
 		Xtr = []
 		Ytr = []
 		f = open(victor_corpus)
@@ -110,7 +113,7 @@ class NNRegressionRanker:
 		@return: A list of ranked candidates for each instance in the VICTOR corpus, from simplest to most complex.
 		"""
 		#If feature values are not available, then estimate them:
-		feature_values = self.fe.calculateFeatures(victor_corpus)
+		features = self.fe.calculateFeatures(victor_corpus)
 		
 		#Read feature values for each candidate in victor corpus:
 		ranks = []
