@@ -30,7 +30,7 @@ class PaetzoldGenerator:
 		"""
 		self.lemmatizer = WordNetLemmatizer()
 		self.stemmer = PorterStemmer()
-		self.model = gensim.models.word2vec.Word2Vec.load_word2vec_format(posw2vmodel, binary=True)
+		self.model = gensim.models.KeyedVectors.load_word2vec_format(posw2vmodel, binary=True)
 		self.nc = nc
 		os.environ['JAVAHOME'] = java_path
 		self.tagger = StanfordPOSTagger(pos_model, stanford_tagger)
@@ -262,7 +262,7 @@ class GlavasGenerator:
 		"""
 		self.lemmatizer = WordNetLemmatizer()
 		self.stemmer = PorterStemmer()
-		self.model = gensim.models.word2vec.Word2Vec.load_word2vec_format(w2vmodel, binary=True)
+		self.model = gensim.models.KeyedVectors.load_word2vec_format(w2vmodel, binary=True)
 
 	def getSubstitutions(self, victor_corpus, amount):
 		"""

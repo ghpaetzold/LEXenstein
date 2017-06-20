@@ -2041,7 +2041,7 @@ class FeatureEstimator:
 			print('Orientation must be Complexity or Simplicity')
 		else:
 			if model not in self.resources:
-				m = gensim.models.word2vec.Word2Vec.load_word2vec_format(model, binary=True)
+				m = gensim.models.KeyedVectors.load_word2vec_format(model, binary=True)
 				self.resources[model] = m
 			self.features.append((self.wordVectorValuesFeature, [model, size]))
 			for i in range(0, size):
@@ -2093,7 +2093,7 @@ class FeatureEstimator:
 			print('Orientation must be Complexity or Simplicity')
 		else:
 			if model not in self.resources:
-				m = gensim.models.word2vec.Word2Vec.load_word2vec_format(model, binary=True)
+				m = gensim.models.KeyedVectors.load_word2vec_format(model, binary=True)
 				self.resources[model] = m
 			self.features.append((self.wordVectorSimilarityFeature, [model]))
 			self.identifiers.append(('Word Vector Similarity (Model: '+model+')', orientation))
@@ -2124,7 +2124,7 @@ class FeatureEstimator:
 		else:
 			os.environ['JAVAHOME'] = java_path
 			if model not in self.resources:
-				m = gensim.models.word2vec.Word2Vec.load_word2vec_format(model, binary=True)
+				m = gensim.models.KeyedVectors.load_word2vec_format(model, binary=True)
 				self.resources[model] = m
 			if pos_model not in self.resources:
 				tagger = StanfordPOSTagger(pos_model, stanford_tagger)
@@ -3032,7 +3032,7 @@ class FeatureEstimator:
 			print('Orientation must be Complexity or Simplicity')
 		else:
 			if model not in self.resources:
-				m = gensim.models.word2vec.Word2Vec.load_word2vec_format(model, binary=True)
+				m = gensim.models.KeyedVectors.load_word2vec_format(model, binary=True)
 				self.resources[model] = m
 			os.environ['JAVAHOME'] = java_path
 			if pos_model not in self.resources:
@@ -3066,7 +3066,7 @@ class FeatureEstimator:
 			print('Orientation must be Complexity or Simplicity')
 		else:
 			if model not in self.resources:
-				m = gensim.models.word2vec.Word2Vec.load_word2vec_format(model, binary=True)
+				m = gensim.models.KeyedVectors.load_word2vec_format(model, binary=True)
 				self.resources[model] = m
 			os.environ['JAVAHOME'] = java_path
 			if pos_model not in self.resources:

@@ -1221,7 +1221,7 @@ class WordVectorSelector:
 		@param pos_type: The type of POS tags with which the model's words are annotated, if any.
 		Values supported: none, treebank, paetzold
 		"""
-		self.model = gensim.models.word2vec.Word2Vec.load_word2vec_format(vector_model, binary=True)
+		self.model = gensim.models.KeyedVectors.load_word2vec_format(vector_model, binary=True)
 		self.pos_type = pos_type
 		os.environ['JAVAHOME'] = java_path
 		self.tagger = StanfordPOSTagger(pos_model, stanford_tagger)
