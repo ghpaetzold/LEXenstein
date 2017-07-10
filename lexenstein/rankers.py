@@ -33,7 +33,7 @@ class NNRegressionRanker:
 		@param hidden_size: size of the hidden layers of the neural ranker.
 		"""
 		model = Sequential()
-		model.add(Dense(output_dim=hidden_size, input_dim=len(self.fe.features)*2, init="glorot_uniform"))
+		model.add(Dense(output_dim=hidden_size, input_dim=len(self.fe.identifiers)*2, init="glorot_uniform"))
 		model.add(Activation("tanh"))
 		model.add(Dropout(0.25))
 		for i in range(0, layers):
