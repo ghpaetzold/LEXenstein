@@ -275,6 +275,14 @@ class FeatureEstimator:
 				result.append(len(word))
 		return result
 		
+	def numberOfTokens(self, data, args):
+		result = []
+		for line in data:
+			for subst in line[3:len(line)]:
+				word = subst.strip().split(':')[1].strip().split(' ')
+				result.append(len(word))
+		return result
+		
 	def syllableFeature(self, data, args):
 		mat = args[0]
 		#Create the input for the Java application:
@@ -486,6 +494,60 @@ class FeatureEstimator:
 				prob = model.score(ngram, bos=bosv, eos=eosv)
 				#prob = model.score(ngram)
 				result.append(prob)
+		return result
+		
+	def averageTokenProbabilityFeature(self, data, args):
+		lm = args[0]
+		result = []
+		model = self.resources[lm]
+		for line in data:
+			sent = line[0].strip().split(' ')
+			target = line[1]
+			head = int(line[2])
+			for subst in line[3:len(line)]:
+				candidate = subst.split(':')[1].strip().split(' ')
+				probabilities = []
+				for token in candidate:
+					ngram, bosv, eosv = self.getNgram(candidate, sent, head, 0, 0)
+					prob = model.score(ngram, bos=bosv, eos=eosv)
+					probabilities.append(prob)
+				result.append(numpy.mean(probabilities))
+		return result
+		
+	def maximumTokenProbabilityFeature(self, data, args):
+		lm = args[0]
+		result = []
+		model = self.resources[lm]
+		for line in data:
+			sent = line[0].strip().split(' ')
+			target = line[1]
+			head = int(line[2])
+			for subst in line[3:len(line)]:
+				candidate = subst.split(':')[1].strip().split(' ')
+				probabilities = []
+				for token in candidate:
+					ngram, bosv, eosv = self.getNgram(candidate, sent, head, 0, 0)
+					prob = model.score(ngram, bos=bosv, eos=eosv)
+					probabilities.append(prob)
+				result.append(numpy.max(probabilities))
+		return result
+		
+	def minimumTokenProbabilityFeature(self, data, args):
+		lm = args[0]
+		result = []
+		model = self.resources[lm]
+		for line in data:
+			sent = line[0].strip().split(' ')
+			target = line[1]
+			head = int(line[2])
+			for subst in line[3:len(line)]:
+				candidate = subst.split(':')[1].strip().split(' ')
+				probabilities = []
+				for token in candidate:
+					ngram, bosv, eosv = self.getNgram(candidate, sent, head, 0, 0)
+					prob = model.score(ngram, bos=bosv, eos=eosv)
+					probabilities.append(prob)
+				result.append(numpy.min(probabilities))
 		return result
 		
 	def ngramFrequencyFeature(self, data, args):
@@ -3263,3 +3325,79 @@ class FeatureEstimator:
 			
 		self.features.append((self.POSNgramWithCandidateNominalFeature, [leftw, rightw, pos_model, pos_type]))
 		self.identifiers.append(('POS N-gram with Candidate Nominal Feature ['+str(leftw)+', '+str(rightw)+'] (POS Model: '+pos_model+') (POS Type: '+pos_type+')', 'Not Applicable'))
+
+##############################################################################################################################################################################################################################################
+#Phrase-level LS features:
+##############################################################################################################################################################################################################################################
+	
+	def addNumberOfTokensFeature(self, orientation):
+		"""
+		Adds a number of tokens feature to the estimator.
+		The value will be the number of tokens in each candidate.
+	
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Possible values: Complexity, Simplicity.
+		"""
+		
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:
+			self.features.append((self.numberOfTokens, []))
+			self.identifiers.append(('Number of Tokens', orientation))
+			
+	def addAverageTokenProbabilityFeature(self, language_model, orientation):
+		"""
+		Adds an average token probability feature to the estimator.
+		The value will be the average language model probability of all tokens that compose the candidate.
+	
+		@param language_model: Path to the language model from which to extract probabilities.
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Possible values: Complexity, Simplicity.
+		"""
+		
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:
+			if language_model not in self.resources:
+				model = kenlm.LanguageModel(language_model)
+				self.resources[language_model] = model
+			self.features.append((self.averageTokenProbabilityFeature, [language_model, leftw, rightw]))
+			self.identifiers.append(('Average Token Probability (LM: '+language_model+')', orientation))
+			
+	def addMaximumTokenProbabilityFeature(self, language_model, orientation):
+		"""
+		Adds an maximum token probability feature to the estimator.
+		The value will be the maximum language model probability of all tokens that compose the candidate.
+	
+		@param language_model: Path to the language model from which to extract probabilities.
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Possible values: Complexity, Simplicity.
+		"""
+		
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:
+			if language_model not in self.resources:
+				model = kenlm.LanguageModel(language_model)
+				self.resources[language_model] = model
+			self.features.append((self.maximumTokenProbabilityFeature, [language_model, leftw, rightw]))
+			self.identifiers.append(('Maximum Token Probability (LM: '+language_model+')', orientation))
+			
+	def addMinimumTokenProbabilityFeature(self, language_model, orientation):
+		"""
+		Adds an minimum token probability feature to the estimator.
+		The value will be the minimum language model probability of all tokens that compose the candidate.
+	
+		@param language_model: Path to the language model from which to extract probabilities.
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Possible values: Complexity, Simplicity.
+		"""
+		
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:
+			if language_model not in self.resources:
+				model = kenlm.LanguageModel(language_model)
+				self.resources[language_model] = model
+			self.features.append((self.minimumTokenProbabilityFeature, [language_model, leftw, rightw]))
+			self.identifiers.append(('Minimum Token Probability (LM: '+language_model+')', orientation))
