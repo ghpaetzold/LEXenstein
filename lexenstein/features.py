@@ -149,7 +149,7 @@ class FeatureEstimator:
 		model = self.resources[args[0]]
 		result = []
 		for line in data:
-			target = line[1].strip().lower()
+			target = line[1].strip().lower().replace(' ', '_')
 			for subst in line[3:len(line)]:
 				words = subst.strip().split(':')[1].strip()
 				similarities = []
@@ -163,15 +163,19 @@ class FeatureEstimator:
 							similarities.append(model.similarity(target, word.lower()))
 						except KeyError:
 							pass
-				similarity = numpy.min(similarities)
-				result.append(similarity)
+				if len(similarities)>0:
+					print 'Success!'
+					similarity = numpy.min(similarities)
+					result.append(similarity)
+				else:
+					result.append(0.0)
 		return result
 		
 	def maximumWordVectorSimilarityFeature(self, data, args):
 		model = self.resources[args[0]]
 		result = []
 		for line in data:
-			target = line[1].strip().lower()
+			target = line[1].strip().lower().replace(' ', '_')
 			for subst in line[3:len(line)]:
 				words = subst.strip().split(':')[1].strip()
 				similarities = []
@@ -185,15 +189,19 @@ class FeatureEstimator:
 							similarities.append(model.similarity(target, word.lower()))
 						except KeyError:
 							pass
-				similarity = numpy.max(similarities)
-				result.append(similarity)
+				if len(similarities)>0:
+					print 'Success!'
+					similarity = numpy.max(similarities)
+					result.append(similarity)
+				else:
+					result.append(0.0)
 		return result
 		
 	def averageWordVectorSimilarityFeature(self, data, args):
 		model = self.resources[args[0]]
 		result = []
 		for line in data:
-			target = line[1].strip().lower()
+			target = line[1].strip().lower().replace(' ', '_')
 			for subst in line[3:len(line)]:
 				words = subst.strip().split(':')[1].strip()
 				similarities = []
@@ -207,8 +215,12 @@ class FeatureEstimator:
 							similarities.append(model.similarity(target, word.lower()))
 						except KeyError:
 							pass
-				similarity = numpy.mean(similarities)
-				result.append(similarity)
+				if len(similarities)>0:
+					print 'Success!'
+					similarity = numpy.mean(similarities)
+					result.append(similarity)
+				else:
+					result.append(0.0)
 		return result
 	
 	def wordVectorSimilarityFeature(self, data, args):
