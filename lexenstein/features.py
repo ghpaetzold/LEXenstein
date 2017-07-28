@@ -3427,7 +3427,7 @@ class FeatureEstimator:
 			if language_model not in self.resources:
 				model = kenlm.LanguageModel(language_model)
 				self.resources[language_model] = model
-			self.features.append((self.averageTokenProbabilityFeature, [language_model, leftw, rightw]))
+			self.features.append((self.averageTokenProbabilityFeature, [language_model]))
 			self.identifiers.append(('Average Token Probability (LM: '+language_model+')', orientation))
 			
 	def addMaximumTokenProbabilityFeature(self, language_model, orientation):
@@ -3446,7 +3446,7 @@ class FeatureEstimator:
 			if language_model not in self.resources:
 				model = kenlm.LanguageModel(language_model)
 				self.resources[language_model] = model
-			self.features.append((self.maximumTokenProbabilityFeature, [language_model, leftw, rightw]))
+			self.features.append((self.maximumTokenProbabilityFeature, [language_model]))
 			self.identifiers.append(('Maximum Token Probability (LM: '+language_model+')', orientation))
 			
 	def addMinimumTokenProbabilityFeature(self, language_model, orientation):
@@ -3465,7 +3465,7 @@ class FeatureEstimator:
 			if language_model not in self.resources:
 				model = kenlm.LanguageModel(language_model)
 				self.resources[language_model] = model
-			self.features.append((self.minimumTokenProbabilityFeature, [language_model, leftw, rightw]))
+			self.features.append((self.minimumTokenProbabilityFeature, [language_model]))
 			self.identifiers.append(('Minimum Token Probability (LM: '+language_model+')', orientation))
 			
 	def addMinimumWordVectorSimilarityFeature(self, model, orientation):
