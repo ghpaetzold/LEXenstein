@@ -574,7 +574,7 @@ class FeatureEstimator:
 				candidate = subst.split(':')[1].strip().split(' ')
 				probabilities = []
 				for token in candidate:
-					ngram, bosv, eosv = self.getNgram(candidate, sent, head, 0, 0)
+					ngram, bosv, eosv = self.getNgram(token, sent, head, 0, 0)
 					prob = model.score(ngram, bos=bosv, eos=eosv)
 					probabilities.append(prob)
 				result.append(numpy.mean(probabilities))
@@ -592,7 +592,7 @@ class FeatureEstimator:
 				candidate = subst.split(':')[1].strip().split(' ')
 				probabilities = []
 				for token in candidate:
-					ngram, bosv, eosv = self.getNgram(candidate, sent, head, 0, 0)
+					ngram, bosv, eosv = self.getNgram(token, sent, head, 0, 0)
 					prob = model.score(ngram, bos=bosv, eos=eosv)
 					probabilities.append(prob)
 				result.append(numpy.max(probabilities))
@@ -610,7 +610,7 @@ class FeatureEstimator:
 				candidate = subst.split(':')[1].strip().split(' ')
 				probabilities = []
 				for token in candidate:
-					ngram, bosv, eosv = self.getNgram(candidate, sent, head, 0, 0)
+					ngram, bosv, eosv = self.getNgram(token, sent, head, 0, 0)
 					prob = model.score(ngram, bos=bosv, eos=eosv)
 					probabilities.append(prob)
 				result.append(numpy.min(probabilities))
