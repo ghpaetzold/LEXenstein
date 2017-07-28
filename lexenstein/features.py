@@ -145,6 +145,72 @@ class FeatureEstimator:
 				result.append(probability)
 		return result
 	
+	def minimumWordVectorSimilarityFeature(self, data, args):
+		model = self.resources[args[0]]
+		result = []
+		for line in data:
+			target = line[1].strip().lower()
+			for subst in line[3:len(line)]:
+				words = subst.strip().split(':')[1].strip()
+				similarities = []
+				cand_size = 0
+				for word in words.split(' '):
+					cand_size += 1
+					try:
+						similarities.append(model.similarity(target, word))
+					except KeyError:
+						try:
+							similarities.append(model.similarity(target, word.lower()))
+						except KeyError:
+							pass
+				similarity = numpy.min(similarities)
+				result.append(similarity)
+		return result
+		
+	def maximumWordVectorSimilarityFeature(self, data, args):
+		model = self.resources[args[0]]
+		result = []
+		for line in data:
+			target = line[1].strip().lower()
+			for subst in line[3:len(line)]:
+				words = subst.strip().split(':')[1].strip()
+				similarities = []
+				cand_size = 0
+				for word in words.split(' '):
+					cand_size += 1
+					try:
+						similarities.append(model.similarity(target, word))
+					except KeyError:
+						try:
+							similarities.append(model.similarity(target, word.lower()))
+						except KeyError:
+							pass
+				similarity = numpy.max(similarities)
+				result.append(similarity)
+		return result
+		
+	def averageWordVectorSimilarityFeature(self, data, args):
+		model = self.resources[args[0]]
+		result = []
+		for line in data:
+			target = line[1].strip().lower()
+			for subst in line[3:len(line)]:
+				words = subst.strip().split(':')[1].strip()
+				similarities = []
+				cand_size = 0
+				for word in words.split(' '):
+					cand_size += 1
+					try:
+						similarities.append(model.similarity(target, word))
+					except KeyError:
+						try:
+							similarities.append(model.similarity(target, word.lower()))
+						except KeyError:
+							pass
+				similarity = numpy.mean(similarities)
+				result.append(similarity)
+		return result
+	
 	def wordVectorSimilarityFeature(self, data, args):
 		model = self.resources[args[0]]
 		result = []
@@ -3401,3 +3467,63 @@ class FeatureEstimator:
 				self.resources[language_model] = model
 			self.features.append((self.minimumTokenProbabilityFeature, [language_model, leftw, rightw]))
 			self.identifiers.append(('Minimum Token Probability (LM: '+language_model+')', orientation))
+			
+	def addMinimumWordVectorSimilarityFeature(self, model, orientation):
+		"""
+		Adds a minimum word vector similarity feature to the estimator.
+		The value will be the minimum similarity between the word vectors of the words that compose the candidate and the word vector of the target complex word.
+	
+		@param model: Path to a binary word vector model.
+		For instructions on how to create the model, please refer to the LEXenstein Manual.
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Possible values: Complexity, Simplicity.
+		"""
+		
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:
+			if model not in self.resources:
+				m = gensim.models.KeyedVectors.load_word2vec_format(model, binary=True)
+				self.resources[model] = m
+			self.features.append((self.minimumWordVectorSimilarityFeature, [model]))
+			self.identifiers.append(('Minimum Word Vector Similarity (Model: '+model+')', orientation))
+			
+	def addMaximumWordVectorSimilarityFeature(self, model, orientation):
+		"""
+		Adds a maximum word vector similarity feature to the estimator.
+		The value will be the maximum similarity between the word vectors of the words that compose the candidate and the word vector of the target complex word.
+	
+		@param model: Path to a binary word vector model.
+		For instructions on how to create the model, please refer to the LEXenstein Manual.
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Possible values: Complexity, Simplicity.
+		"""
+		
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:
+			if model not in self.resources:
+				m = gensim.models.KeyedVectors.load_word2vec_format(model, binary=True)
+				self.resources[model] = m
+			self.features.append((self.maximumWordVectorSimilarityFeature, [model]))
+			self.identifiers.append(('Maximum Word Vector Similarity (Model: '+model+')', orientation))
+			
+	def addAverageWordVectorSimilarityFeature(self, model, orientation):
+		"""
+		Adds an average word vector similarity feature to the estimator.
+		The value will be the average similarity between the word vectors of the words that compose the candidate and the word vector of the target complex word.
+	
+		@param model: Path to a binary word vector model.
+		For instructions on how to create the model, please refer to the LEXenstein Manual.
+		@param orientation: Whether the feature is a simplicity of complexity measure.
+		Possible values: Complexity, Simplicity.
+		"""
+		
+		if orientation not in ['Complexity', 'Simplicity']:
+			print('Orientation must be Complexity or Simplicity')
+		else:
+			if model not in self.resources:
+				m = gensim.models.KeyedVectors.load_word2vec_format(model, binary=True)
+				self.resources[model] = m
+			self.features.append((self.averageWordVectorSimilarityFeature, [model]))
+			self.identifiers.append(('Average Word Vector Similarity (Model: '+model+')', orientation))
