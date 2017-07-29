@@ -164,7 +164,6 @@ class FeatureEstimator:
 						except KeyError:
 							pass
 				if len(similarities)>0:
-					print 'Success!'
 					similarity = numpy.min(similarities)
 					result.append(similarity)
 				else:
@@ -190,7 +189,6 @@ class FeatureEstimator:
 						except KeyError:
 							pass
 				if len(similarities)>0:
-					print 'Success!'
 					similarity = numpy.max(similarities)
 					result.append(similarity)
 				else:
@@ -216,7 +214,6 @@ class FeatureEstimator:
 						except KeyError:
 							pass
 				if len(similarities)>0:
-					print 'Success!'
 					similarity = numpy.mean(similarities)
 					result.append(similarity)
 				else:
