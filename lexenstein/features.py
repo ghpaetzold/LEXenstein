@@ -726,7 +726,7 @@ class FeatureEstimator:
 			result += cand + ' '
 			for i in range(head+1, min(len(tokens), head+configr+1)):
 				result += tokens[i] + ' '
-			return str(result.strip()), bosv, eosv
+			return result.strip(), bosv, eosv
 	
 	def getPopNgrams(self, cand, sent, head, configl, configr):
 		if configl==0 and configr==0:
