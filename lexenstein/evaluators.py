@@ -303,7 +303,10 @@ class PipelineEvaluator:
 			gold_subs = set([item.strip().split(':')[1].strip() for item in data])
 			
 			#Get highest ranked candidate:
-			first = rankings[i][0]
+			if len(rankings[i])>0:
+				first = rankings[i][0]
+			else:
+				first = '|||NULL|||'
 			
 			#Check if it is in gold candidates:
 			total += 1
