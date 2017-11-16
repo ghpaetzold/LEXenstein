@@ -58,7 +58,6 @@ class HeuristicSelector:
 			input = sent+'\t'+target+'\t'+targetindex
 			for candidate in candidates:
 				input += '\t0:'+candidate
-			input += '\n'
 			
 			#Calculate feature values:
 			features = self.fe.calculateFeatures(input, format='victor', input='text')
@@ -85,14 +84,14 @@ class HeuristicSelector:
 						else:
 							print('Feature has an invalid Complexity/Simplicity identifier!')
 							
-			#Filter candidates:
-			final_candidates = []
-			total_features = float(len(self.fe.identifiers))
-			for cand in scoremap:
-				proportion = scoremap[cand]/total_features
-				if proportion>=minimum_proportion:
-					final_candidates.append(cand)
-			selected_substitutions.append(final_candidates)
+				#Filter candidates:
+				final_candidates = []
+				total_features = float(len(self.fe.identifiers))
+				for cand in scoremap:
+					proportion = scoremap[cand]/total_features
+					if proportion>=minimum_proportion:
+						final_candidates.append(cand)
+				selected_substitutions.append(final_candidates)
 			
 		lexf.close()
 		return selected_substitutions
