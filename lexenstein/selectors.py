@@ -8,11 +8,11 @@ import numpy as np
 import os
 import pickle
 
-class HeuristicSelector:
+class ComparisonBasedSelector:
 
 	def __init__(self, fe):
 		"""
-		Creates an instance of the HeuristicSelector class.
+		Creates an instance of the ComparisonBasedSelector class.
 	
 		@param fe: An instance of the FeatureEstimator class.
 		"""
@@ -21,6 +21,8 @@ class HeuristicSelector:
 	def selectCandidates(self, substitutions, victor_corpus, minimum_proportion):
 		"""
 		Selects which candidates can replace the target complex words in each instance of a VICTOR corpus.
+		It calculates a set of features for the target and each candidate, then selects those candidates that have at least a minimum proportion of positive feature values.
+		Positive feature values occur when the value of a feature for the candidate is larger (for simplicity features) or smaller (for complexity features) than the value for the target.
 	
 		@param substitutions: Candidate substitutions to be filtered.
 		It can be in two formats:
