@@ -18,12 +18,12 @@ def dependencyParseSentences(parser, sentences):
 	Each dependency link is composed by the relation type, the source word, its position in the sentence, the target word, and its position in the sentence.
 	"""
 	cmd = [
-	    'edu.stanford.nlp.parser.lexparser.LexicalizedParser',
-	    '-model', parser.model_path,
-	    '-sentences', 'newline',
-	    '-outputFormat', 'typedDependencies',
-	    '-tokenized',
-	    '-escaper', 'edu.stanford.nlp.process.PTBEscapingProcessor',
+		'edu.stanford.nlp.parser.lexparser.LexicalizedParser',
+		'-model', parser.model_path,
+		'-sentences', 'newline',
+		'-outputFormat', 'typedDependencies',
+		'-tokenized',
+		'-escaper', 'edu.stanford.nlp.process.PTBEscapingProcessor',
 	]
 
 	output=parser._execute(cmd, '\n'.join(' '.join(sentence) for sentence in sentences), False)
@@ -33,10 +33,10 @@ def dependencyParseSentences(parser, sentences):
 	res = []
 	cur_lines = []
 	for line in output.splitlines(False):
-	    if line == '':
+		if line == '':
 			res.append(cur_lines)
 			cur_lines = []
-	    else:
+		else:
 			depdata = re.findall(depexp, line)
 			if len(depdata)>0:
 				link = depdata[0]
